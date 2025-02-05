@@ -16,10 +16,11 @@
     "supabase:gen:types": "npx supabase gen types --lang typescript --local > src/lib/types/generated/supabase.types.ts"
   },
   "dependencies": {
+    "@dev-plugins/react-native-mmkv": "^0.1.0",
+    "@dev-plugins/react-navigation": "^0.1.0",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@expo/vector-icons": "^14.0.0",
     "@gorhom/bottom-sheet": "^5.0.6",
-    "@react-native-async-storage/async-storage": "1.23.1",
     "@react-native-community/datetimepicker": "8.2.0",
     "@react-native-community/slider": "4.5.5",
     "@react-native-picker/picker": "2.9.0",
@@ -48,6 +49,7 @@
     "react-dom": "18.3.1",
     "react-native": "0.76.6",
     "react-native-gesture-handler": "~2.20.2",
+    "react-native-mmkv": "^3.2.0",
     "react-native-pager-view": "6.5.1",
     "react-native-reanimated": "3.16.2",
     "react-native-safe-area-context": "4.12.0",

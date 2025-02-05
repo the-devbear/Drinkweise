@@ -4,7 +4,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
 import { Icon } from '@roninoss/icons';
-import { Link, Stack } from 'expo-router';
+import { Link, Stack, useNavigationContainerRef } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -14,6 +14,8 @@ import { cn } from '@drinkweise/lib/cn';
 import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
 import { NAV_THEME } from '@drinkweise/theme';
 import * as SplashScreen from 'expo-splash-screen';
+import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
+import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv/build/useMMKVDevTools';
 
 SplashScreen.setOptions({
   duration: 500,
@@ -28,6 +30,10 @@ export {
 } from 'expo-router';
 
 export default function RootLayout() {
+  const navigationRef = useNavigationContainerRef();
+  useReactNavigationDevTools(navigationRef);
+  useMMKVDevTools();
+
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
   SplashScreen.hide();
