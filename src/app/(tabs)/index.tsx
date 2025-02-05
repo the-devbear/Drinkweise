@@ -19,18 +19,18 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Container } from '~/components/Container';
-import { ActivityIndicator } from '~/components/nativewindui/ActivityIndicator';
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/nativewindui/Avatar';
-import { DatePicker } from '~/components/nativewindui/DatePicker';
-import { Picker, PickerItem } from '~/components/nativewindui/Picker';
-import { ProgressIndicator } from '~/components/nativewindui/ProgressIndicator';
-import { Sheet, useSheetRef } from '~/components/nativewindui/Sheet';
-import { Slider } from '~/components/nativewindui/Slider';
-import { Text } from '~/components/nativewindui/Text';
-import { Toggle } from '~/components/nativewindui/Toggle';
-import { useColorScheme } from '~/lib/useColorScheme';
-import { useHeaderSearchBar } from '~/lib/useHeaderSearchBar';
+import { Container } from '@drinkweise/components/Container';
+import { ActivityIndicator } from '@drinkweise/components/nativewindui/ActivityIndicator';
+import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/components/nativewindui/Avatar';
+import { DatePicker } from '@drinkweise/components/nativewindui/DatePicker';
+import { Picker, PickerItem } from '@drinkweise/components/nativewindui/Picker';
+import { ProgressIndicator } from '@drinkweise/components/nativewindui/ProgressIndicator';
+import { Sheet, useSheetRef } from '@drinkweise/components/nativewindui/Sheet';
+import { Slider } from '@drinkweise/components/nativewindui/Slider';
+import { Text } from '@drinkweise/components/nativewindui/Text';
+import { Toggle } from '@drinkweise/components/nativewindui/Toggle';
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
+import { useHeaderSearchBar } from '@drinkweise/lib/useHeaderSearchBar';
 
 export default function Home() {
   const searchValue = useHeaderSearchBar({ hideWhenScrolling: COMPONENTS.length === 0 });

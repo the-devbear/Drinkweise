@@ -9,10 +9,10 @@ import { StatusBar } from 'expo-status-bar';
 import { Pressable, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { ThemeToggle } from '~/components/ThemeToggle';
-import { cn } from '~/lib/cn';
-import { useColorScheme, useInitialAndroidBarSync } from '~/lib/useColorScheme';
-import { NAV_THEME } from '~/theme';
+import { ThemeToggle } from '@drinkweise/components/ThemeToggle';
+import { cn } from '@drinkweise/lib/cn';
+import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
+import { NAV_THEME } from '@drinkweise/theme';
 
 export {
   // Catch any errors thrown by the Layout component.
