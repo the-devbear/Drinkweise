@@ -1,4 +1,4 @@
-import { router } from 'expo-router';
+import { buildTimeEnvironment, environment } from './env';
 
 /**
  * @param {import("expo/config").ConfigContext} config
@@ -8,7 +8,7 @@ export default ({ config }) => ({
   ...config,
   name: 'Drinkweise',
   slug: 'Drinkweise',
-  version: '0.0.1', // TODO:
+  version: buildTimeEnvironment.VERSION.toString(),
   scheme: 'drinkweise',
   web: {
     bundler: 'metro',
@@ -49,7 +49,7 @@ export default ({ config }) => ({
   },
   ios: {
     supportsTablet: false,
-    bundleIdentifier: 'com.drinkweise.app', // TODO
+    bundleIdentifier: buildTimeEnvironment.BUNDLE_ID,
     usesAppleSignIn: true,
   },
   android: {
@@ -57,10 +57,11 @@ export default ({ config }) => ({
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#FFFFFF',
     },
-    package: 'com.drinkweise.app', // TODO
+    package: buildTimeEnvironment.PACKAGE,
   },
   owner: 'dev_bear',
   extra: {
+    ...environment,
     router: {
       origin: false,
     },

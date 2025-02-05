@@ -1,0 +1,79 @@
+// This file is used to load environment variables from a .env files or EAS Secrets.
+// It needs to be a JavaScript file because it is used in the app.config.js file.
+const z = require('zod');
+
+const packageJson = require('./package.json');
+const APP_ENV = process.env.EXPO_PUBLIC_APP_ENV ?? 'eas';
+
+if (APP_ENV === 'eas') {
+  console.info('🚀 Running in EAS environment');
+  process.env.EXPO_PUBLIC_SUPABASE_URL ??= 'https://expo.dev/';
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??= '';
+}
+
+/** IOS Bundle ID */
+const BUNDLE_ID = 'com.drinkweise.app';
+/** Android Package name */
+const PACKAGE = 'com.drinkweise.app';
+const VERSION = packageJson.version;
+
+const clientEnvironmentSchema = z.object({
+  APP_ENV: z.enum(['development', 'staging', 'production', 'eas']),
+  BUNDLE_ID: z.string(),
+  PACKAGE: z.string(),
+  VERSION: z.string(),
+
+  SUPABASE_URL: z.string(),
+  SUPABASE_ANON_KEY: z.string(),
+});
+
+const buildTimeEnvironmentSchema = z.object({});
+
+/**
+ * @type {z.infer<typeof clientEnvironmentSchema>}
+ */
+const _clientEnvironment = {
+  APP_ENV,
+  BUNDLE_ID,
+  PACKAGE,
+  VERSION,
+
+  // Custom environment variables
+  SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
+  SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+};
+
+/**
+ * Add build time environment variables here
+ * This should only be used inside of `app.config.js`
+ * @type {z.infer<typeof buildTimeEnvironmentSchema>}
+ */
+const _buildTimeEnvironment = {
+  // Add build time environment variables here
+};
+
+const _mergedEnvironment = {
+  ..._clientEnvironment,
+  ..._buildTimeEnvironment,
+};
+
+const merged = buildTimeEnvironmentSchema.merge(clientEnvironmentSchema);
+const parsed = merged.safeParse(_mergedEnvironment);
+
+if (!parsed.success) {
+  console.error(
+    '❌ Invalid environment variables:',
+    parsed.error.flatten().fieldErrors,
+    `\n🔍 Missing variables in .env.${APP_ENV} file or in EAS Secrets. Make sure all required variables are defined in this .env.${APP_ENV} file or EAS Secrets.`,
+    `\n🤔 Tip: If you recently updated the .env.${APP_ENV} file and the error still persists, try restarting the server with the -c flag to clear the cache.`
+  );
+  throw new Error('Invalid environment variables');
+}
+
+const buildTimeEnvironment = parsed.data;
+const environment = clientEnvironmentSchema.parse(buildTimeEnvironment);
+
+module.exports = {
+  buildTimeEnvironment,
+  environment,
+};
