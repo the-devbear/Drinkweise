@@ -13,6 +13,14 @@ import { ThemeToggle } from '@drinkweise/components/ThemeToggle';
 import { cn } from '@drinkweise/lib/cn';
 import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
 import { NAV_THEME } from '@drinkweise/theme';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.setOptions({
+  duration: 500,
+  fade: true,
+});
+
+SplashScreen.preventAutoHideAsync();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -22,6 +30,7 @@ export {
 export default function RootLayout() {
   useInitialAndroidBarSync();
   const { colorScheme, isDarkColorScheme } = useColorScheme();
+  SplashScreen.hide();
 
   return (
     <>
