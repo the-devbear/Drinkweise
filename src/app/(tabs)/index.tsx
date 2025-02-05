@@ -20,15 +20,15 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Container } from '@drinkweise/components/Container';
-import { ActivityIndicator } from '@drinkweise/components/nativewindui/ActivityIndicator';
-import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/components/nativewindui/Avatar';
-import { DatePicker } from '@drinkweise/components/nativewindui/DatePicker';
-import { Picker, PickerItem } from '@drinkweise/components/nativewindui/Picker';
-import { ProgressIndicator } from '@drinkweise/components/nativewindui/ProgressIndicator';
-import { Sheet, useSheetRef } from '@drinkweise/components/nativewindui/Sheet';
-import { Slider } from '@drinkweise/components/nativewindui/Slider';
-import { Text } from '@drinkweise/components/nativewindui/Text';
-import { Toggle } from '@drinkweise/components/nativewindui/Toggle';
+import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
+import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/components/ui/Avatar';
+import { DatePicker } from '@drinkweise/components/ui/DatePicker';
+import { Picker, PickerItem } from '@drinkweise/components/ui/Picker';
+import { ProgressIndicator } from '@drinkweise/components/ui/ProgressIndicator';
+import { Sheet, useSheetRef } from '@drinkweise/components/ui/Sheet';
+import { Slider } from '@drinkweise/components/ui/Slider';
+import { Text } from '@drinkweise/components/ui/Text';
+import { Toggle } from '@drinkweise/components/ui/Toggle';
 import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { useHeaderSearchBar } from '@drinkweise/lib/useHeaderSearchBar';
 

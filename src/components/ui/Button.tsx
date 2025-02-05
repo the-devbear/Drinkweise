@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Platform, Pressable, PressableProps, View, ViewStyle } from 'react-native';
 
-import { TextClassContext } from '@drinkweise/components/nativewindui/Text';
+import { TextClassContext } from '@drinkweise/ui/Text';
 import { cn } from '@drinkweise/lib/cn';
 import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { COLORS } from '@drinkweise/theme/colors';

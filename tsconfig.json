@@ -7,6 +7,9 @@
       "@drinkweise/*": [
         "./src/*"
       ],
+      "@drinkweise/ui/*": [
+        "./src/components/ui/*"
+      ],
     }
   },
   "include": [
