@@ -16,7 +16,7 @@
     "audit:ci": "yarn audit --level high",
     "lint:write": "npx eslint --fix .",
     "lint:check": "npx eslint .",
-    "lint:ci  ": "npx eslint .",
+    "lint:ci": "npx eslint .",
     "format:write": "npx prettier --write .",
     "format:check": "npx prettier --check .",
     "format:ci": "npx prettier --check .",
