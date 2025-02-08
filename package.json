@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "main": "expo-router/entry",
   "scripts": {
+    "install:immutable": "yarn install --immutable",
     "start": "expo start --dev-client",
     "ios": "expo run:ios",
     "android": "expo run:android",
