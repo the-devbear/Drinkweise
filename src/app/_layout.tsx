@@ -1,6 +1,6 @@
 import '../../global.css';
 import 'expo-dev-client';
-import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv/build/useMMKVDevTools';
+import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 import {
   loadSelectedTheme,
