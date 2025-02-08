@@ -6,7 +6,6 @@ const packageJson = require('./package.json');
 const APP_ENV = process.env.EXPO_PUBLIC_APP_ENV ?? 'eas';
 
 if (APP_ENV === 'eas') {
-  console.info('🚀 Running in EAS environment');
   process.env.EXPO_PUBLIC_SUPABASE_URL ??= 'https://expo.dev/';
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??= '';
 }

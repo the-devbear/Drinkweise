@@ -45,7 +45,11 @@ export default ({ config }) => ({
   userInterfaceStyle: 'automatic',
   newArchEnabled: true,
   updates: {
+    url: 'https://u.expo.dev/967b29ad-3025-4104-a84e-d8a90004442a',
     assetPatternsToBeBundled: ['**/*'],
+  },
+  runtimeVersion: {
+    policy: 'appVersion',
   },
   ios: {
     supportsTablet: false,

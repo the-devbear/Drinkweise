@@ -1,6 +1,6 @@
 {
   "name": "drinkweise",
-  "version": "0.0.2",
+  "version": "0.0.1",
   "main": "expo-router/entry",
   "scripts": {
     "install:immutable": "yarn install --immutable",
@@ -11,6 +11,8 @@
     "build:preview": "eas build --profile preview",
     "build:prod": "eas build --profile production",
     "prebuild": "expo prebuild",
+    "build:production:ios": "eas build --profile production --platform ios",
+    "build:production:android": "eas build --profile production --platform android",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
     "audit:ci": "yarn audit --level high",
@@ -53,6 +55,7 @@
     "expo-status-bar": "~2.0.1",
     "expo-store-review": "~8.0.1",
     "expo-system-ui": "~4.0.7",
+    "expo-updates": "~0.26.17",
     "expo-web-browser": "~14.0.2",
     "nativewind": "latest",
     "react": "18.3.1",

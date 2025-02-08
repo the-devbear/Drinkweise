@@ -8,10 +8,13 @@
       "developmentClient": true,
       "distribution": "internal"
     },
-    "preview": {
+    "staging": {
+      "channel": "staging",
       "distribution": "internal"
     },
     "production": {
+      "channel": "production",
+      "distribution": "store",
       "autoIncrement": true
     }
   },
