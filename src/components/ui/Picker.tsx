@@ -3,7 +3,6 @@ import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { Picker as RNPicker } from '@react-native-picker/picker';
 import { View } from 'react-native';
 
-
 export function Picker<T>({
   mode = 'dropdown',
   style,

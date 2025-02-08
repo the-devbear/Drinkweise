@@ -3,7 +3,6 @@ import { COLORS } from '@drinkweise/theme/colors';
 import RNSlider from '@react-native-community/slider';
 import { Platform } from 'react-native';
 
-
 function Slider({
   thumbTintColor,
   minimumTrackTintColor,

@@ -1,4 +1,3 @@
-
 import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { COLORS } from '@drinkweise/theme/colors';
 import { Switch } from 'react-native';

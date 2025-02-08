@@ -1,6 +1,6 @@
-import { Container } from '@drinkweise/components/Container';
 import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
 import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/components/ui/Avatar';
+import { Button } from '@drinkweise/components/ui/Button';
 import { DatePicker } from '@drinkweise/components/ui/DatePicker';
 import { Picker, PickerItem } from '@drinkweise/components/ui/Picker';
 import { ProgressIndicator } from '@drinkweise/components/ui/ProgressIndicator';
@@ -15,7 +15,7 @@ import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Icon } from '@roninoss/icons';
 import { FlashList } from '@shopify/flash-list';
-import { Stack } from 'expo-router';
+import { Link, Stack } from 'expo-router';
 import * as StoreReview from 'expo-store-review';
 import { cssInterop } from 'nativewind';
 import * as React from 'react';
@@ -41,21 +41,19 @@ export default function Home() {
   return (
     <>
       <Stack.Screen options={{ title: 'Tab One' }} />
-      <Container>
-        <FlashList
-          contentInsetAdjustmentBehavior='automatic'
-          keyboardShouldPersistTaps='handled'
-          data={data}
-          estimatedItemSize={200}
-          contentContainerClassName='py-4 android:pb-12'
-          extraData={searchValue}
-          removeClippedSubviews={false} // used for selecting text on android
-          keyExtractor={keyExtractor}
-          ItemSeparatorComponent={renderItemSeparator}
-          renderItem={renderItem}
-          ListEmptyComponent={COMPONENTS.length === 0 ? ListEmptyComponent : undefined}
-        />
-      </Container>
+      <FlashList
+        contentInsetAdjustmentBehavior='automatic'
+        keyboardShouldPersistTaps='handled'
+        data={data}
+        estimatedItemSize={200}
+        contentContainerClassName='py-4 android:pb-12'
+        extraData={searchValue}
+        removeClippedSubviews={false} // used for selecting text on android
+        keyExtractor={keyExtractor}
+        ItemSeparatorComponent={renderItemSeparator}
+        renderItem={renderItem}
+        ListEmptyComponent={COMPONENTS.length === 0 ? ListEmptyComponent : undefined}
+      />
     </>
   );
 }
@@ -129,6 +127,45 @@ function Card({ children, title }: { children: React.ReactNode; title: string })
 let hasRequestedReview = false;
 
 const COMPONENTS: ComponentItem[] = [
+  {
+    name: 'Theme Selector',
+    component: function ThemeSelectorExample() {
+      const { colorScheme, setColorScheme } = useColorScheme();
+      return (
+        <View className='items-center gap-4'>
+          <Text variant={'title3'}>Theme Selector: {colorScheme ?? 'empty'}</Text>
+          <Button onPress={() => setColorScheme('light')}>
+            <Text>Light</Text>
+          </Button>
+          <Button onPress={() => setColorScheme('dark')}>
+            <Text>Dark</Text>
+          </Button>
+          <Button onPress={() => setColorScheme('system')}>
+            <Text>System</Text>
+          </Button>
+        </View>
+      );
+    },
+  },
+  {
+    name: 'Buttons',
+    component: function ButtonsExample() {
+      return (
+        <View className='gap-4'>
+          <Link href='/sign-in' asChild>
+            <Button>
+              <Text>Sign In</Text>
+            </Button>
+          </Link>
+          <Link href='/sign-up' asChild>
+            <Button variant='secondary'>
+              <Text>Sign Up</Text>
+            </Button>
+          </Link>
+        </View>
+      );
+    },
+  },
   {
     name: 'Picker',
     component: function PickerExample() {
@@ -418,7 +455,7 @@ const COMPONENTS: ComponentItem[] = [
                 } else if (result.action === Share.dismissedAction) {
                   // dismissed
                 }
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } catch (error: any) {
                 Alert.alert(error.message);
               }
@@ -443,7 +480,7 @@ const COMPONENTS: ComponentItem[] = [
             title='Open Bottom Sheet'
             onPress={() => bottomSheetModalRef.current?.present()}
           />
-          <Sheet ref={bottomSheetModalRef} snapPoints={[200]}>
+          <Sheet ref={bottomSheetModalRef} snapPoints={[200]} enableDynamicSizing={false}>
             <BottomSheetView className='flex-1 items-center justify-center pb-8'>
               <Text>@gorhom/bottom-sheet 🎉</Text>
             </BottomSheetView>

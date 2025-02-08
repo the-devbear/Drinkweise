@@ -2,21 +2,20 @@ import '../../global.css';
 import 'expo-dev-client';
 import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv/build/useMMKVDevTools';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
-import { ThemeToggle } from '@drinkweise/components/ThemeToggle';
-import { cn } from '@drinkweise/lib/cn';
-import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
+import {
+  loadSelectedTheme,
+  useColorScheme,
+  useInitialAndroidBarSync,
+} from '@drinkweise/lib/useColorScheme';
 import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
-import { Icon } from '@roninoss/icons';
-import { Link, Stack, useNavigationContainerRef } from 'expo-router';
+import { Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
-import { Pressable, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-
 
 SplashScreen.setOptions({
   duration: 500,
@@ -24,6 +23,7 @@ SplashScreen.setOptions({
 });
 
 SplashScreen.preventAutoHideAsync();
+loadSelectedTheme();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -36,7 +36,7 @@ export default function RootLayout() {
   useMMKVDevTools();
 
   useInitialAndroidBarSync();
-  const { colorScheme, isDarkColorScheme } = useColorScheme();
+  const { isDarkColorScheme } = useColorScheme();
   SplashScreen.hide();
 
   return (
@@ -45,59 +45,18 @@ export default function RootLayout() {
         key={`root-status-bar-${isDarkColorScheme ? 'light' : 'dark'}`}
         style={isDarkColorScheme ? 'light' : 'dark'}
       />
-      {/* WRAP YOUR APP WITH ANY ADDITIONAL PROVIDERS HERE */}
-      {/* <ExampleProvider> */}
-
       <GestureHandlerRootView style={{ flex: 1 }}>
         <BottomSheetModalProvider>
           <ActionSheetProvider>
-            <NavThemeProvider value={NAV_THEME[colorScheme]}>
-              <Stack screenOptions={SCREEN_OPTIONS}>
-                <Stack.Screen name='(tabs)' options={TABS_OPTIONS} />
-                <Stack.Screen name='modal' options={MODAL_OPTIONS} />
+            <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
+              <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
+                <Stack.Screen name='(auth)' />
+                <Stack.Screen name='(app)' />
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>
         </BottomSheetModalProvider>
       </GestureHandlerRootView>
-
-      {/* </ExampleProvider> */}
     </>
   );
 }
-
-const SCREEN_OPTIONS = {
-  animation: 'ios_from_right', // for android
-} as const;
-
-const TABS_OPTIONS = {
-  headerShown: false,
-} as const;
-
-const _INDEX_OPTIONS = {
-  headerLargeTitle: true,
-  title: 'NativeWindUI',
-  headerRight: () => <SettingsIcon />,
-} as const;
-
-function SettingsIcon() {
-  const { colors } = useColorScheme();
-  return (
-    <Link href='/modal' asChild>
-      <Pressable className='opacity-80'>
-        {({ pressed }) => (
-          <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
-            <Icon name='cog-outline' color={colors.foreground} />
-          </View>
-        )}
-      </Pressable>
-    </Link>
-  );
-}
-
-const MODAL_OPTIONS = {
-  presentation: 'modal',
-  animation: 'fade_from_bottom', // for android
-  title: 'Settings',
-  headerRight: () => <ThemeToggle />,
-} as const;

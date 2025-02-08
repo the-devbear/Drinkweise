@@ -6,7 +6,6 @@ import {
 } from '@gorhom/bottom-sheet';
 import * as React from 'react';
 
-
 const Sheet = React.forwardRef<
   BottomSheetModal,
   React.ComponentPropsWithoutRef<typeof BottomSheetModal>

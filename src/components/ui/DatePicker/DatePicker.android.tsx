@@ -5,7 +5,6 @@ import DateTimePicker, { DateTimePickerAndroid } from '@react-native-community/d
 import * as React from 'react';
 import { View } from 'react-native';
 
-
 export function DatePicker(
   props: React.ComponentProps<typeof DateTimePicker> & {
     mode: 'date' | 'time' | 'datetime';

@@ -5,7 +5,6 @@ import { SearchBarProps } from 'react-native-screens';
 
 import { useColorScheme } from './useColorScheme';
 
-
 export function useHeaderSearchBar(props: SearchBarProps = {}) {
   const { colorScheme, colors } = useColorScheme();
   const navigation = useNavigation();

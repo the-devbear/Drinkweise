@@ -4,7 +4,6 @@ import { cssInterop } from 'nativewind';
 import * as React from 'react';
 import { UITextView } from 'react-native-uitextview';
 
-
 cssInterop(UITextView, { className: 'style' });
 
 const textVariants = cva('text-foreground', {

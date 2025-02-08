@@ -9,7 +9,6 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-
 const DEFAULT_MAX = 100;
 
 const ProgressIndicator = React.forwardRef<
@@ -21,13 +20,7 @@ const ProgressIndicator = React.forwardRef<
   }
 >(
   (
-    {
-      value: valueProp,
-      max: maxProp,
-      getValueLabel = defaultGetValueLabel,
-      className,
-      ...props
-    },
+    { value: valueProp, max: maxProp, getValueLabel = defaultGetValueLabel, className, ...props },
     ref
   ) => {
     const max = maxProp ?? DEFAULT_MAX;

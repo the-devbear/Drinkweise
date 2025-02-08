@@ -7,7 +7,6 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
 import { Platform, Pressable, PressableProps, View, ViewStyle } from 'react-native';
 
-
 const buttonVariants = cva('flex-row items-center justify-center gap-2', {
   variants: {
     variant: {
@@ -122,7 +121,7 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
     { className, variant = 'primary', size, style = BORDER_CURVE, androidRootClassName, ...props },
     ref
   ) => {
-    const { colorScheme } = useColorScheme();
+    const { isDarkColorScheme } = useColorScheme();
 
     return (
       <TextClassContext.Provider value={buttonTextVariants({ variant, size })}>
@@ -141,7 +140,9 @@ const Button = React.forwardRef<React.ElementRef<typeof Pressable>, ButtonProps>
             )}
             ref={ref}
             style={style}
-            android_ripple={ANDROID_RIPPLE[colorScheme][variant]}
+            android_ripple={
+              (isDarkColorScheme ? ANDROID_RIPPLE.dark : ANDROID_RIPPLE.light)[variant]
+            }
             {...props}
           />
         </Root>

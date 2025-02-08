@@ -1,15 +1,22 @@
 import { COLORS } from '@drinkweise/theme/colors';
 import * as NavigationBar from 'expo-navigation-bar';
-import { useColorScheme as useNativewindColorScheme } from 'nativewind';
+import { colorScheme, useColorScheme as useNativewindColorScheme } from 'nativewind';
 import * as React from 'react';
 import { Platform } from 'react-native';
+import { useMMKVString } from 'react-native-mmkv';
+import { storage } from './storage/mmkv';
 
+const SELECTED_THEME_KEY = 'selected-theme';
+export type ColorScheme = 'light' | 'dark' | 'system';
 
 function useColorScheme() {
-  const { colorScheme, setColorScheme: setNativeWindColorScheme } = useNativewindColorScheme();
+  const { colorScheme: nativeWindColorScheme, setColorScheme: setNativeWindColorScheme } =
+    useNativewindColorScheme();
+  const [selectedColorScheme, setSelectedColorScheme] = useMMKVString(SELECTED_THEME_KEY);
 
-  async function setColorScheme(colorScheme: 'light' | 'dark') {
+  async function setColorScheme(colorScheme: ColorScheme) {
     setNativeWindColorScheme(colorScheme);
+    setSelectedColorScheme(colorScheme);
     if (Platform.OS !== 'android') return;
     try {
       await setNavigationBar(colorScheme);
@@ -18,16 +25,15 @@ function useColorScheme() {
     }
   }
 
-  function toggleColorScheme() {
-    return setColorScheme(colorScheme === 'light' ? 'dark' : 'light');
-  }
+  const colorScheme = ((selectedColorScheme ?? nativeWindColorScheme) as ColorScheme) ?? 'system';
+  const color = (colorScheme === 'system' ? nativeWindColorScheme : colorScheme) ?? 'light';
 
   return {
-    colorScheme: colorScheme ?? 'light',
-    isDarkColorScheme: colorScheme === 'dark',
+    colorScheme,
+    isDarkColorScheme:
+      colorScheme === 'dark' || (colorScheme === 'system' && nativeWindColorScheme === 'dark'),
     setColorScheme,
-    toggleColorScheme,
-    colors: COLORS[colorScheme ?? 'light'],
+    colors: COLORS[color],
   };
 }
 
@@ -46,10 +52,17 @@ function useInitialAndroidBarSync() {
 
 export { useColorScheme, useInitialAndroidBarSync };
 
-function setNavigationBar(colorScheme: 'light' | 'dark') {
+function setNavigationBar(colorScheme: ColorScheme) {
   return Promise.all([
     NavigationBar.setButtonStyleAsync(colorScheme === 'dark' ? 'light' : 'dark'),
     NavigationBar.setPositionAsync('absolute'),
     NavigationBar.setBackgroundColorAsync(colorScheme === 'dark' ? '#00000030' : '#ffffff80'),
   ]);
 }
+
+export const loadSelectedTheme = () => {
+  const theme = storage.getString(SELECTED_THEME_KEY);
+  if (theme !== undefined) {
+    colorScheme.set(theme as ColorScheme);
+  }
+};

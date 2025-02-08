@@ -2,7 +2,6 @@ import { cn } from '@drinkweise/lib/cn';
 import * as AvatarPrimitive from '@rn-primitives/avatar';
 import * as React from 'react';
 
-
 const Avatar = React.forwardRef<AvatarPrimitive.RootRef, AvatarPrimitive.RootProps>(
   ({ alt, className, ...props }, ref) => {
     return (
