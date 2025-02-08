@@ -1,0 +1,13 @@
+name: Setup Node + Yarn + Install Dependencies
+description: 'Setup Node, Yarn, and install dependencies'
+runs:
+  using: 'composite'
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4.1.0
+      with:
+        node-version-file: .nvmrc
+        cache: 'yarn'
+    - name: Install
+      run: yarn install:immutable
+      shell: bash
