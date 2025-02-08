@@ -1,0 +1,21 @@
+name: Audit Packages
+description: 'Audit packages for vulnerabilities'
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: .nvmrc
+    - name: Audit Packages
+      run: |
+        yarn run audit:ci
+        EXIT_CODE=$? # Capture the exit code of yarn audit
+        if [ $EXIT_CODE -ge $THRESHOLD ]; then
+          echo "Audit failed with exit code $EXIT_CODE which is >= threshold $THRESHOLD."
+          exit 1  # Fail the workflow if the exit code is 8 or higher
+        else
+          echo "Audit passed with exit code $EXIT_CODE which is below threshold $THRESHOLD."
+        fi
+      env:
+        THRESHOLD: 8
+      shell: bash --noprofile --norc -o pipefail {0}

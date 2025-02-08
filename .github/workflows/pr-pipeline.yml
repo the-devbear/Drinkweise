@@ -1,0 +1,103 @@
+name: Drinkweise Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Audit:
+    name: Audit for Vulnerabilities
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout Project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: ⚠️ Audit Packages
+        uses: ./.github/actions/audit
+
+  Installing:
+    name: Installing Dependencies
+    needs: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout Project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node + Yarn + Install Dependencies
+        uses: ./.github/actions/setup-node-yarn-install
+
+  Supabase:
+    needs: Audit
+    name: Supabase Types generated
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout Project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start Supabase DB
+        run: supabase db start
+      - name: Lint Supabase DB
+        run: supabase db lint
+      - name: Test Supabase DB
+        run: supabase test db
+      - name: Verify generated types are checked in
+        run: |
+          supabase gen types typescript --local > src/types/generated/supabase.ts
+          if ! git diff --ignore-space-at-eol --exit-code --quiet src/types/generated/supabase.ts; then
+            echo "Detected uncommitted changes after build. See status below:"
+            git diff
+            exit 1
+          fi
+
+  type-check:
+    needs: Installing
+    name: Type Check (tsc)
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: 📦 Checkout Project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node + Yarn + Install Dependencies
+        uses: ./.github/actions/setup-node-yarn-install
+      - name: 📦 Install Reviewdog
+        if: github.event_name == 'pull_request'
+        uses: reviewdog/action-setup@v1
+      - name: 🏃‍♂️ Run TypeScript PR
+        if: github.event_name == 'pull_request'
+        run: |
+          yarn type:check | reviewdog -name="tsc" -efm="%f(%l,%c): error TS%n: %m" -reporter="github-pr-review" -filter-mode="nofilter" -fail-on-error -tee
+        env:
+          REVIEWDOG_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🏃‍♂️ Run TypeScript
+        if: github.event_name != 'pull_request'
+        run: yarn run type:check
+
+  ESLint:
+    needs: Installing
+    name: Prettier and ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📦 Checkout Project
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node + Yarn + Install Dependencies
+        uses: ./.github/actions/setup-node-yarn-install
+      - name: 🏃‍♂️ Run ESLint
+        run: yarn run lint:ci
+      - name: 🧹 Run Prettier
+        run: yarn run format:ci
