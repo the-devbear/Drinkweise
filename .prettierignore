@@ -1,0 +1,7 @@
+**/generated/**
+ios/
+android/
+.vscode/
+.idea/
+node_modules/
+assets/

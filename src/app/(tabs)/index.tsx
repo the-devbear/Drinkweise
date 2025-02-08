@@ -44,11 +44,11 @@ export default function Home() {
       <Stack.Screen options={{ title: 'Tab One' }} />
       <Container>
         <FlashList
-          contentInsetAdjustmentBehavior="automatic"
-          keyboardShouldPersistTaps="handled"
+          contentInsetAdjustmentBehavior='automatic'
+          keyboardShouldPersistTaps='handled'
           data={data}
           estimatedItemSize={200}
-          contentContainerClassName="py-4 android:pb-12"
+          contentContainerClassName='py-4 android:pb-12'
           extraData={searchValue}
           removeClippedSubviews={false} // used for selecting text on android
           keyExtractor={keyExtractor}
@@ -79,17 +79,17 @@ function ListEmptyComponent() {
   const height = dimensions.height - headerHeight - insets.bottom - insets.top;
 
   return (
-    <View style={{ height }} className="flex-1 items-center justify-center gap-1 px-12">
-      <Icon name="file-plus-outline" size={42} color={colors.grey} />
-      <Text variant="title3" className="pb-1 text-center font-semibold">
+    <View style={{ height }} className='flex-1 items-center justify-center gap-1 px-12'>
+      <Icon name='file-plus-outline' size={42} color={colors.grey} />
+      <Text variant='title3' className='pb-1 text-center font-semibold'>
         No Components Installed
       </Text>
-      <Text color="tertiary" variant="subhead" className="pb-4 text-center">
+      <Text color='tertiary' variant='subhead' className='pb-4 text-center'>
         You can install any of the free components from the{' '}
         <Text
           onPress={() => Linking.openURL('https://nativewindui.com')}
-          variant="subhead"
-          className="text-primary">
+          variant='subhead'
+          className='text-primary'>
           NativeWindUI
         </Text>
         {' website.'}
@@ -105,7 +105,7 @@ function keyExtractor(item: ComponentItem) {
 }
 
 function renderItemSeparator() {
-  return <View className="p-2" />;
+  return <View className='p-2' />;
 }
 
 function renderItem({ item }: { item: ComponentItem }) {
@@ -118,9 +118,9 @@ function renderItem({ item }: { item: ComponentItem }) {
 
 function Card({ children, title }: { children: React.ReactNode; title: string }) {
   return (
-    <View className="px-4">
-      <View className="gap-4 rounded-xl border border-border bg-card p-4 pb-6 shadow-sm shadow-black/10 dark:shadow-none">
-        <Text className="text-center text-sm font-medium tracking-wider opacity-60">{title}</Text>
+    <View className='px-4'>
+      <View className='gap-4 rounded-xl border border-border bg-card p-4 pb-6 shadow-sm shadow-black/10 dark:shadow-none'>
+        <Text className='text-center text-sm font-medium tracking-wider opacity-60'>{title}</Text>
         {children}
       </View>
     </View>
@@ -138,24 +138,24 @@ const COMPONENTS: ComponentItem[] = [
       return (
         <Picker selectedValue={picker} onValueChange={(itemValue) => setPicker(itemValue)}>
           <PickerItem
-            label="Red"
-            value="red"
+            label='Red'
+            value='red'
             color={colors.foreground}
             style={{
               backgroundColor: colors.root,
             }}
           />
           <PickerItem
-            label="Blue"
-            value="blue"
+            label='Blue'
+            value='blue'
             color={colors.foreground}
             style={{
               backgroundColor: colors.root,
             }}
           />
           <PickerItem
-            label="Green"
-            value="green"
+            label='Green'
+            value='green'
             color={colors.foreground}
             style={{
               backgroundColor: colors.root,
@@ -171,10 +171,10 @@ const COMPONENTS: ComponentItem[] = [
     component: function DatePickerExample() {
       const [date, setDate] = React.useState(new Date());
       return (
-        <View className="items-center">
+        <View className='items-center'>
           <DatePicker
             value={date}
-            mode="datetime"
+            mode='datetime'
             onChange={(ev) => {
               setDate(new Date(ev.nativeEvent.timestamp));
             }}
@@ -197,7 +197,7 @@ const COMPONENTS: ComponentItem[] = [
     component: function ToggleExample() {
       const [switchValue, setSwitchValue] = React.useState(true);
       return (
-        <View className="items-center">
+        <View className='items-center'>
           <Toggle value={switchValue} onValueChange={setSwitchValue} />
         </View>
       );
@@ -220,7 +220,7 @@ const COMPONENTS: ComponentItem[] = [
         };
       }, []);
       return (
-        <View className="p-4">
+        <View className='p-4'>
           <ProgressIndicator value={progress} />
         </View>
       );
@@ -231,7 +231,7 @@ const COMPONENTS: ComponentItem[] = [
     name: 'Activity Indicator',
     component: function ActivityIndicatorExample() {
       return (
-        <View className="items-center p-4">
+        <View className='items-center p-4'>
           <ActivityIndicator />
         </View>
       );
@@ -244,9 +244,9 @@ const COMPONENTS: ComponentItem[] = [
       const { colorScheme, colors } = useColorScheme();
       const { showActionSheetWithOptions } = useActionSheet();
       return (
-        <View className="items-center">
+        <View className='items-center'>
           <DefaultButton
-            color="grey"
+            color='grey'
             onPress={async () => {
               const options = ['Delete', 'Save', 'Cancel'];
               const destructiveButtonIndex = 0;
@@ -280,7 +280,7 @@ const COMPONENTS: ComponentItem[] = [
                 }
               );
             }}
-            title="Open action sheet"
+            title='Open action sheet'
           />
         </View>
       );
@@ -291,38 +291,38 @@ const COMPONENTS: ComponentItem[] = [
     name: 'Text',
     component: function TextExample() {
       return (
-        <View className="gap-2">
-          <Text variant="largeTitle" className="text-center">
+        <View className='gap-2'>
+          <Text variant='largeTitle' className='text-center'>
             Large Title
           </Text>
-          <Text variant="title1" className="text-center">
+          <Text variant='title1' className='text-center'>
             Title 1
           </Text>
-          <Text variant="title2" className="text-center">
+          <Text variant='title2' className='text-center'>
             Title 2
           </Text>
-          <Text variant="title3" className="text-center">
+          <Text variant='title3' className='text-center'>
             Title 3
           </Text>
-          <Text variant="heading" className="text-center">
+          <Text variant='heading' className='text-center'>
             Heading
           </Text>
-          <Text variant="body" className="text-center">
+          <Text variant='body' className='text-center'>
             Body
           </Text>
-          <Text variant="callout" className="text-center">
+          <Text variant='callout' className='text-center'>
             Callout
           </Text>
-          <Text variant="subhead" className="text-center">
+          <Text variant='subhead' className='text-center'>
             Subhead
           </Text>
-          <Text variant="footnote" className="text-center">
+          <Text variant='footnote' className='text-center'>
             Footnote
           </Text>
-          <Text variant="caption1" className="text-center">
+          <Text variant='caption1' className='text-center'>
             Caption 1
           </Text>
-          <Text variant="caption2" className="text-center">
+          <Text variant='caption2' className='text-center'>
             Caption 2
           </Text>
         </View>
@@ -367,28 +367,28 @@ const COMPONENTS: ComponentItem[] = [
       }, []);
 
       return (
-        <View className="gap-3">
-          <Text className="pb-2 text-center font-semibold">Please follow the guidelines.</Text>
-          <View className="flex-row">
-            <Text className="w-6 text-center text-muted-foreground">·</Text>
-            <View className="flex-1">
-              <Text variant="caption1" className="text-muted-foreground">
+        <View className='gap-3'>
+          <Text className='pb-2 text-center font-semibold'>Please follow the guidelines.</Text>
+          <View className='flex-row'>
+            <Text className='w-6 text-center text-muted-foreground'>·</Text>
+            <View className='flex-1'>
+              <Text variant='caption1' className='text-muted-foreground'>
                 Don't call StoreReview.requestReview() from a button
               </Text>
             </View>
           </View>
-          <View className="flex-row">
-            <Text className="w-6 text-center text-muted-foreground">·</Text>
-            <View className="flex-1">
-              <Text variant="caption1" className="text-muted-foreground">
+          <View className='flex-row'>
+            <Text className='w-6 text-center text-muted-foreground'>·</Text>
+            <View className='flex-1'>
+              <Text variant='caption1' className='text-muted-foreground'>
                 Don't request a review when the user is doing something time sensitive.
               </Text>
             </View>
           </View>
-          <View className="flex-row">
-            <Text className="w-6 text-center text-muted-foreground">·</Text>
-            <View className="flex-1">
-              <Text variant="caption1" className="text-muted-foreground">
+          <View className='flex-row'>
+            <Text className='w-6 text-center text-muted-foreground'>·</Text>
+            <View className='flex-1'>
+              <Text variant='caption1' className='text-muted-foreground'>
                 Don't ask the user any questions before or while presenting the rating button or
                 card.
               </Text>
@@ -403,7 +403,7 @@ const COMPONENTS: ComponentItem[] = [
     name: 'Activity View',
     component: function ActivityViewExample() {
       return (
-        <View className="items-center">
+        <View className='items-center'>
           <DefaultButton
             onPress={async () => {
               try {
@@ -423,7 +423,7 @@ const COMPONENTS: ComponentItem[] = [
                 Alert.alert(error.message);
               }
             }}
-            title="Share a message"
+            title='Share a message'
           />
         </View>
       );
@@ -437,14 +437,14 @@ const COMPONENTS: ComponentItem[] = [
       const bottomSheetModalRef = useSheetRef();
 
       return (
-        <View className="items-center">
+        <View className='items-center'>
           <DefaultButton
             color={colorScheme === 'dark' && Platform.OS === 'ios' ? 'white' : 'black'}
-            title="Open Bottom Sheet"
+            title='Open Bottom Sheet'
             onPress={() => bottomSheetModalRef.current?.present()}
           />
           <Sheet ref={bottomSheetModalRef} snapPoints={[200]}>
-            <BottomSheetView className="flex-1 items-center justify-center pb-8">
+            <BottomSheetView className='flex-1 items-center justify-center pb-8'>
               <Text>@gorhom/bottom-sheet 🎉</Text>
             </BottomSheetView>
           </Sheet>
@@ -459,8 +459,8 @@ const COMPONENTS: ComponentItem[] = [
       const TWITTER_AVATAR_URI =
         'https://pbs.twimg.com/profile_images/1782428433898708992/1voyv4_A_400x400.jpg';
       return (
-        <View className="items-center">
-          <Avatar alt="NativeWindUI Avatar">
+        <View className='items-center'>
+          <Avatar alt='NativeWindUI Avatar'>
             <AvatarImage source={{ uri: TWITTER_AVATAR_URI }} />
             <AvatarFallback>
               <Text>NUI</Text>

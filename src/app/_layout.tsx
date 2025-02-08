@@ -52,8 +52,8 @@ export default function RootLayout() {
           <ActionSheetProvider>
             <NavThemeProvider value={NAV_THEME[colorScheme]}>
               <Stack screenOptions={SCREEN_OPTIONS}>
-                <Stack.Screen name="(tabs)" options={TABS_OPTIONS} />
-                <Stack.Screen name="modal" options={MODAL_OPTIONS} />
+                <Stack.Screen name='(tabs)' options={TABS_OPTIONS} />
+                <Stack.Screen name='modal' options={MODAL_OPTIONS} />
               </Stack>
             </NavThemeProvider>
           </ActionSheetProvider>
@@ -82,11 +82,11 @@ const INDEX_OPTIONS = {
 function SettingsIcon() {
   const { colors } = useColorScheme();
   return (
-    <Link href="/modal" asChild>
-      <Pressable className="opacity-80">
+    <Link href='/modal' asChild>
+      <Pressable className='opacity-80'>
         {({ pressed }) => (
           <View className={cn(pressed ? 'opacity-50' : 'opacity-90')}>
-            <Icon name="cog-outline" color={colors.foreground} />
+            <Icon name='cog-outline' color={colors.foreground} />
           </View>
         )}
       </Pressable>

@@ -12,6 +12,9 @@
     "prebuild": "expo prebuild",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx}\" && prettier -c \"**/*.{js,jsx,ts,tsx,json}\"",
     "format": "eslint \"**/*.{js,jsx,ts,tsx}\" --fix && prettier \"**/*.{js,jsx,ts,tsx,json}\" --write",
+    "format:write": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
+    "format:ci": "npx prettier --check .",
     "web": "expo start --web",
     "supabase:gen:types": "npx supabase gen types --lang typescript --local > src/lib/types/generated/supabase.types.ts"
   },
