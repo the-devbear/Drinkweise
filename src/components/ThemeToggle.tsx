@@ -1,10 +1,10 @@
+import { cn } from '@drinkweise/lib/cn';
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
+import { COLORS } from '@drinkweise/theme/colors';
 import { Icon } from '@roninoss/icons';
 import { Pressable, View } from 'react-native';
 import Animated, { LayoutAnimationConfig, ZoomInRotate } from 'react-native-reanimated';
 
-import { cn } from '@drinkweise/lib/cn';
-import { useColorScheme } from '@drinkweise/lib/useColorScheme';
-import { COLORS } from '@drinkweise/theme/colors';
 
 export function ThemeToggle() {
   const { colorScheme, toggleColorScheme } = useColorScheme();

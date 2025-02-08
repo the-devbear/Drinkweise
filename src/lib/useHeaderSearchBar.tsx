@@ -1,10 +1,10 @@
+import { COLORS } from '@drinkweise/theme/colors';
 import { useNavigation } from 'expo-router';
 import * as React from 'react';
 import { SearchBarProps } from 'react-native-screens';
 
 import { useColorScheme } from './useColorScheme';
 
-import { COLORS } from '@drinkweise/theme/colors';
 
 export function useHeaderSearchBar(props: SearchBarProps = {}) {
   const { colorScheme, colors } = useColorScheme();
@@ -27,7 +27,7 @@ export function useHeaderSearchBar(props: SearchBarProps = {}) {
         ...props,
       } satisfies SearchBarProps,
     });
-  }, [navigation, colorScheme]);
+  }, [navigation, colorScheme, colors.foreground, colors.primary, colors.grey, props]);
 
   return search;
 }

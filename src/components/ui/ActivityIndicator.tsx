@@ -1,6 +1,6 @@
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { ActivityIndicator as RNActivityIndicator } from 'react-native';
 
-import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 
 function ActivityIndicator(props: React.ComponentPropsWithoutRef<typeof RNActivityIndicator>) {
   const { colors } = useColorScheme();

@@ -1,8 +1,8 @@
+import { cn } from '@drinkweise/lib/cn';
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { Picker as RNPicker } from '@react-native-picker/picker';
 import { View } from 'react-native';
 
-import { cn } from '@drinkweise/lib/cn';
-import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 
 export function Picker<T>({
   mode = 'dropdown',

@@ -1,21 +1,21 @@
 import '../../global.css';
 import 'expo-dev-client';
+import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv/build/useMMKVDevTools';
+import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
+import { ThemeToggle } from '@drinkweise/components/ThemeToggle';
+import { cn } from '@drinkweise/lib/cn';
+import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
+import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
 import { Icon } from '@roninoss/icons';
 import { Link, Stack, useNavigationContainerRef } from 'expo-router';
+import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { Pressable, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
-import { ThemeToggle } from '@drinkweise/components/ThemeToggle';
-import { cn } from '@drinkweise/lib/cn';
-import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
-import { NAV_THEME } from '@drinkweise/theme';
-import * as SplashScreen from 'expo-splash-screen';
-import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
-import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv/build/useMMKVDevTools';
 
 SplashScreen.setOptions({
   duration: 500,
@@ -73,7 +73,7 @@ const TABS_OPTIONS = {
   headerShown: false,
 } as const;
 
-const INDEX_OPTIONS = {
+const _INDEX_OPTIONS = {
   headerLargeTitle: true,
   title: 'NativeWindUI',
   headerRight: () => <SettingsIcon />,

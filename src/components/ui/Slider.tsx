@@ -1,8 +1,8 @@
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
+import { COLORS } from '@drinkweise/theme/colors';
 import RNSlider from '@react-native-community/slider';
 import { Platform } from 'react-native';
 
-import { useColorScheme } from '@drinkweise/lib/useColorScheme';
-import { COLORS } from '@drinkweise/theme/colors';
 
 function Slider({
   thumbTintColor,

@@ -1,3 +1,15 @@
+import { Container } from '@drinkweise/components/Container';
+import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
+import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/components/ui/Avatar';
+import { DatePicker } from '@drinkweise/components/ui/DatePicker';
+import { Picker, PickerItem } from '@drinkweise/components/ui/Picker';
+import { ProgressIndicator } from '@drinkweise/components/ui/ProgressIndicator';
+import { Sheet, useSheetRef } from '@drinkweise/components/ui/Sheet';
+import { Slider } from '@drinkweise/components/ui/Slider';
+import { Text } from '@drinkweise/components/ui/Text';
+import { Toggle } from '@drinkweise/components/ui/Toggle';
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
+import { useHeaderSearchBar } from '@drinkweise/lib/useHeaderSearchBar';
 import { useActionSheet } from '@expo/react-native-action-sheet';
 import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
@@ -18,19 +30,6 @@ import {
   Alert,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-import { Container } from '@drinkweise/components/Container';
-import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
-import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/components/ui/Avatar';
-import { DatePicker } from '@drinkweise/components/ui/DatePicker';
-import { Picker, PickerItem } from '@drinkweise/components/ui/Picker';
-import { ProgressIndicator } from '@drinkweise/components/ui/ProgressIndicator';
-import { Sheet, useSheetRef } from '@drinkweise/components/ui/Sheet';
-import { Slider } from '@drinkweise/components/ui/Slider';
-import { Text } from '@drinkweise/components/ui/Text';
-import { Toggle } from '@drinkweise/components/ui/Toggle';
-import { useColorScheme } from '@drinkweise/lib/useColorScheme';
-import { useHeaderSearchBar } from '@drinkweise/lib/useHeaderSearchBar';
 
 export default function Home() {
   const searchValue = useHeaderSearchBar({ hideWhenScrolling: COMPONENTS.length === 0 });
@@ -419,6 +418,7 @@ const COMPONENTS: ComponentItem[] = [
                 } else if (result.action === Share.dismissedAction) {
                   // dismissed
                 }
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } catch (error: any) {
                 Alert.alert(error.message);
               }

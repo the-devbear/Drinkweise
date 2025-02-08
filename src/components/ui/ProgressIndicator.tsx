@@ -1,3 +1,4 @@
+import { cn } from '@drinkweise/lib/cn';
 import * as React from 'react';
 import { View } from 'react-native';
 import Animated, {
@@ -8,7 +9,6 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 
-import { cn } from '@drinkweise/lib/cn';
 
 const DEFAULT_MAX = 100;
 
@@ -26,7 +26,6 @@ const ProgressIndicator = React.forwardRef<
       max: maxProp,
       getValueLabel = defaultGetValueLabel,
       className,
-      children,
       ...props
     },
     ref
@@ -75,6 +74,6 @@ function defaultGetValueLabel(value: number, max: number) {
   return `${Math.round((value / max) * 100)}%`;
 }
 
-function isValidValueNumber(value: any, max: number): value is number {
+function isValidValueNumber(value: number | undefined, max: number): value is number {
   return typeof value === 'number' && !isNaN(value) && value <= max && value >= 0;
 }

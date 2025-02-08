@@ -1,7 +1,7 @@
-import { Switch } from 'react-native';
 
 import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { COLORS } from '@drinkweise/theme/colors';
+import { Switch } from 'react-native';
 
 function Toggle(props: React.ComponentPropsWithoutRef<typeof Switch>) {
   const { colors } = useColorScheme();

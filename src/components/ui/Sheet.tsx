@@ -1,3 +1,4 @@
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import {
   BottomSheetBackdrop,
   BottomSheetBackdropProps,
@@ -5,7 +6,6 @@ import {
 } from '@gorhom/bottom-sheet';
 import * as React from 'react';
 
-import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 
 const Sheet = React.forwardRef<
   BottomSheetModal,
@@ -20,7 +20,7 @@ const Sheet = React.forwardRef<
   return (
     <BottomSheetModal
       ref={ref}
-      index={0}
+      index={index}
       backgroundStyle={
         backgroundStyle ?? {
           backgroundColor: colors.card,
