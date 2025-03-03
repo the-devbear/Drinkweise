@@ -5,3 +5,4 @@ android/
 .idea/
 node_modules/
 assets/
+.github
