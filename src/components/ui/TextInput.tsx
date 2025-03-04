@@ -41,6 +41,7 @@ const textInputVariants = cva('flex-row items-center w-full rounded-md px-3 py-2
   },
 });
 
+// Using ios:leading-[0px] to fix inconsistent text alignment on iOS
 const textVariants = cva('flex-1 ios:leading-[0px] text-foreground', {
   variants: {
     variant: {

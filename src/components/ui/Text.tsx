@@ -65,4 +65,6 @@ const LinkText = React.forwardRef<RNText, VariantProps<typeof textVariants> & Te
   }
 );
 
+LinkText.displayName = 'LinkText';
+
 export { Text, LinkText, TextClassContext, textVariants };
