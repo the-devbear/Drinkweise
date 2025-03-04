@@ -2,6 +2,7 @@ import { cn } from '@drinkweise/lib/cn';
 import { VariantProps, cva } from 'class-variance-authority';
 import { cssInterop } from 'nativewind';
 import * as React from 'react';
+import { Text as RNText, TextProps } from 'react-native';
 import { UITextView } from 'react-native-uitextview';
 
 cssInterop(UITextView, { className: 'style' });
@@ -51,4 +52,19 @@ function Text({
   );
 }
 
-export { Text, TextClassContext, textVariants };
+const LinkText = React.forwardRef<RNText, VariantProps<typeof textVariants> & TextProps>(
+  ({ className, variant, color, ...props }, ref) => {
+    const textClassName = React.useContext(TextClassContext);
+    return (
+      <RNText
+        className={cn(textVariants({ variant, color }), textClassName, className)}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+
+LinkText.displayName = 'LinkText';
+
+export { Text, LinkText, TextClassContext, textVariants };

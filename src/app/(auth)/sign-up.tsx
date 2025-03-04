@@ -1,4 +1,4 @@
-import { Text } from '@drinkweise/components/ui/Text';
+import { LinkText, Text } from '@drinkweise/components/ui/Text';
 import { Link } from 'expo-router';
 import { View } from 'react-native';
 
@@ -7,10 +7,10 @@ export default function SignUpPage() {
     <View className='flex gap-4'>
       <Text>Sign-Up Page</Text>
       <Link href='/(app)' asChild>
-        <Text>Go to App</Text>
+        <LinkText>Go to App</LinkText>
       </Link>
       <Link href='/sign-in' asChild>
-        <Text>Go to Sign In</Text>
+        <LinkText>Go to Sign In</LinkText>
       </Link>
     </View>
   );
