@@ -52,6 +52,14 @@ export default [
           caughtErrorsIgnorePattern: '^_',
         },
       ],
+      '@typescript-eslint/prefer-nullish-coalescing': [
+        'warn',
+        {
+          ignorePrimitives: {
+            boolean: true,
+          },
+        },
+      ],
     },
   },
   {
