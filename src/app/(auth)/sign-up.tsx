@@ -1,24 +1,28 @@
 import { Button } from '@drinkweise/components/ui/Button';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
-import { LinkText, Text } from '@drinkweise/components/ui/Text';
+import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { Ionicons } from '@expo/vector-icons';
-import { Link } from 'expo-router';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { cssInterop } from 'nativewind';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View, TextInput as RNTextInput, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity } from 'react-native';
 import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
 
 cssInterop(Ionicons, {
   className: 'style',
 });
 
 const signUpSchema = z.object({
-  email: z.string({ required_error: 'Email is required' }).email().nonempty(),
-  password: z.string().min(8).nonempty(),
+  email: z
+    .string({ required_error: 'Email is required' })
+    .min(1, 'Email is required')
+    .email('Invalid email format'),
+  password: z
+    .string({ required_error: 'Password is required' })
+    .min(1, 'Password is required')
+    .min(8, 'Password must be at least 8 characters long'),
 });
 
 type SignUpForm = z.infer<typeof signUpSchema>;
@@ -34,6 +38,7 @@ export default function SignUpPage() {
   } = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
     shouldFocusError: false,
+    mode: 'onChange',
   });
 
   return (
@@ -56,7 +61,7 @@ export default function SignUpPage() {
               textContentType='emailAddress'
               autoCapitalize='none'
               autoCorrect={false}
-              onChange={onChange}
+              onChangeText={onChange}
               onBlur={onBlur}
               value={value}
               enterKeyHint='next'
@@ -70,13 +75,18 @@ export default function SignUpPage() {
           name='password'
           render={({ field: { onBlur, onChange, value, ref } }) => (
             <TextInput
-              className='mt-3'
+              ref={ref}
+              className='mb-5 mt-3'
               placeholder='Enter your password'
               autoComplete='password'
               secureTextEntry={!showPassword}
               textContentType='password'
               autoCapitalize='none'
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
               autoCorrect={false}
+              errorMessage={errors.password?.message}
               rightIcon={
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
                   <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color='black' />
@@ -86,15 +96,14 @@ export default function SignUpPage() {
           )}
         />
         <Button
-          className='mt-5'
-          disabled={!isValid || isSubmitting}
-          onPress={handleSubmit((data) => console.log(data))}>
-          {/* <Text>Create Account</Text> */}
-          {!isSubmitting ? (
-            <ActivityIndicator className='text-[24px] leading-6 color-white' />
-          ) : (
-            <Text>Create Account</Text>
-          )}
+          disabled={!isValid && isSubmitted}
+          loading={isSubmitting}
+          variant='destructive'
+          onPress={handleSubmit((data, event) => console.log({ data, event }))}>
+          <Text>Create Account</Text>
+        </Button>
+        <Button>
+          <Text>Create Account</Text>
         </Button>
       </View>
     </KeyboardAvoidingPage>
