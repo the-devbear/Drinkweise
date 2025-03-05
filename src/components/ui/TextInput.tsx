@@ -53,9 +53,6 @@ const textVariants = cva('flex-1 ios:leading-[0px] text-foreground', {
       md: 'text-base',
       lg: 'text-lg',
     },
-    error: {
-      true: 'text-destructive',
-    },
     disabled: {
       true: 'text-muted',
     },
@@ -63,7 +60,6 @@ const textVariants = cva('flex-1 ios:leading-[0px] text-foreground', {
   defaultVariants: {
     variant: 'default',
     size: 'md',
-    error: false,
     disabled: false,
   },
 });
@@ -101,6 +97,8 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(
       errorMessage,
       label,
       labelClassName = '',
+      onBlur,
+      onFocus,
       ...props
     },
     ref
@@ -113,12 +111,12 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(
 
     const handleFocus: RNTextInputProps['onFocus'] = (e) => {
       setIsFocused(true);
-      props.onFocus?.(e);
+      onFocus?.(e);
     };
 
     const handleBlur: RNTextInputProps['onBlur'] = (e) => {
       setIsFocused(false);
-      props.onBlur?.(e);
+      onBlur?.(e);
     };
 
     return (
@@ -149,7 +147,6 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(
               textVariants({
                 variant,
                 size,
-                error: !!errorMessage,
                 disabled: !!disabled,
               }),
               inputClassName
