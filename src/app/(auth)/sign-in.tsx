@@ -1,17 +1,119 @@
-import { LinkText, Text } from '@drinkweise/components/ui/Text';
-import { Link } from 'expo-router';
-import { View } from 'react-native';
+import { Button } from '@drinkweise/components/ui/Button';
+import { Divider } from '@drinkweise/components/ui/Divider';
+import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
+import { Text } from '@drinkweise/components/ui/Text';
+import { TextInput } from '@drinkweise/components/ui/TextInput';
+import { Ionicons } from '@expo/vector-icons';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
+import { cssInterop } from 'nativewind';
+import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { TouchableOpacity, View } from 'react-native';
+import { z } from 'zod';
+
+cssInterop(Ionicons, {
+  className: 'style',
+});
+
+const signInSchema = z.object({
+  email: z
+    .string({ required_error: 'Email is required' })
+    .min(1, 'Email is required')
+    .email('Invalid email format'),
+  password: z.string({ required_error: 'Password is required' }).min(1, 'Password is required'),
+});
 
 export default function SignInPage() {
+  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const {
+    control,
+    handleSubmit,
+    setFocus,
+    formState: { errors, isValid, isSubmitting, isSubmitted },
+  } = useForm({
+    resolver: zodResolver(signInSchema),
+    shouldFocusError: false,
+  });
+
   return (
-    <View className='flex gap-4'>
-      <Text>Sign-In Page</Text>
-      <Link href='/(app)' asChild>
-        <LinkText>Go to App</LinkText>
-      </Link>
-      <Link href='/sign-up' asChild push>
-        <LinkText>Go to Sign Up</LinkText>
-      </Link>
-    </View>
+    <KeyboardAvoidingPage>
+      <View className='w-full flex-1 justify-center self-center p-5'>
+        <Text variant='largeTitle'>Welcome back!</Text>
+        <Text variant='subhead' color='tertiary'>
+          Continue tracking your drinking habits.
+        </Text>
+        <Controller
+          control={control}
+          name='email'
+          render={({ field: { onBlur, onChange, value, ref } }) => (
+            <TextInput
+              ref={ref}
+              className='mt-5'
+              placeholder='Enter your email'
+              autoComplete='email'
+              keyboardType='email-address'
+              textContentType='emailAddress'
+              clearButtonMode='while-editing'
+              autoCapitalize='none'
+              autoCorrect={false}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              value={value}
+              enterKeyHint='next'
+              errorMessage={errors.email?.message}
+              onSubmitEditing={() => setFocus('password')}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name='password'
+          render={({ field: { onBlur, onChange, value, ref } }) => (
+            <TextInput
+              ref={ref}
+              className='mb-5 mt-3'
+              placeholder='Enter your password'
+              autoComplete='password'
+              secureTextEntry={!showPassword}
+              autoCapitalize='none'
+              autoCorrect={false}
+              returnKeyType='done'
+              onBlur={onBlur}
+              onChangeText={onChange}
+              value={value}
+              errorMessage={errors.password?.message}
+              rightIcon={
+                <TouchableOpacity onPress={() => setShowPassword((prev) => !prev)}>
+                  <Ionicons
+                    className='text-xl color-gray-500 dark:color-gray-400'
+                    name={showPassword ? 'eye-off' : 'eye'}
+                  />
+                </TouchableOpacity>
+              }
+            />
+          )}
+        />
+        <Button
+          disabled={!isValid && isSubmitted}
+          loading={isSubmitting}
+          onPress={handleSubmit((data) => {
+            // TODO: Logging for now. This is going to be implemented in DRINK-11
+            console.log(data);
+
+            router.replace('/');
+          })}>
+          <Text>Sign in</Text>
+        </Button>
+        <Divider />
+        <View className='flex-col items-center'>
+          <Text>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/sign-up')}>
+            <Text className='text-primary'>Sign up</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </KeyboardAvoidingPage>
   );
 }

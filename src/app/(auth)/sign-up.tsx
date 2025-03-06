@@ -115,10 +115,10 @@ export default function SignUpPage() {
           <Text>Create Account</Text>
         </Button>
         <Divider />
-        <View className='flex-col items-center justify-center'>
+        <View className='flex-col items-center'>
           <Text>Already have an account?</Text>
           <TouchableOpacity onPress={() => router.navigate('/sign-in')}>
-            <Text color='primary'>Sign In</Text>
+            <Text className='text-primary'>Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>
