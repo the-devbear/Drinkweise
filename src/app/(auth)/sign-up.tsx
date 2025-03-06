@@ -1,9 +1,11 @@
 import { Button } from '@drinkweise/components/ui/Button';
+import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'expo-router';
 import { cssInterop } from 'nativewind';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -25,9 +27,8 @@ const signUpSchema = z.object({
     .min(8, 'Password must be at least 8 characters long'),
 });
 
-type SignUpForm = z.infer<typeof signUpSchema>;
-
 export default function SignUpPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -35,10 +36,9 @@ export default function SignUpPage() {
     handleSubmit,
     setFocus,
     formState: { errors, isValid, isSubmitted, isSubmitting },
-  } = useForm<SignUpForm>({
+  } = useForm({
     resolver: zodResolver(signUpSchema),
     shouldFocusError: false,
-    mode: 'onChange',
   });
 
   return (
@@ -59,6 +59,7 @@ export default function SignUpPage() {
               autoComplete='email'
               keyboardType='email-address'
               textContentType='emailAddress'
+              clearButtonMode='while-editing'
               autoCapitalize='none'
               autoCorrect={false}
               onChangeText={onChange}
@@ -85,11 +86,15 @@ export default function SignUpPage() {
               onChangeText={onChange}
               onBlur={onBlur}
               value={value}
+              clearButtonMode='while-editing'
               autoCorrect={false}
               errorMessage={errors.password?.message}
               rightIcon={
                 <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-                  <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color='black' />
+                  <Ionicons
+                    className='text-xl color-gray-500 dark:color-gray-400'
+                    name={showPassword ? 'eye-off' : 'eye'}
+                  />
                 </TouchableOpacity>
               }
             />
@@ -98,13 +103,24 @@ export default function SignUpPage() {
         <Button
           disabled={!isValid && isSubmitted}
           loading={isSubmitting}
-          variant='destructive'
-          onPress={handleSubmit((data, event) => console.log({ data, event }))}>
+          onPress={handleSubmit(async ({ email, password }) => {
+            // Logging for now. This is going to be implemented in DRINK-11
+            console.log({
+              email,
+              password,
+            });
+
+            router.replace('/');
+          })}>
           <Text>Create Account</Text>
         </Button>
-        <Button>
-          <Text>Create Account</Text>
-        </Button>
+        <Divider />
+        <View className='flex-col items-center justify-center'>
+          <Text>Already have an account?</Text>
+          <TouchableOpacity onPress={() => router.navigate('/sign-in')}>
+            <Text color='primary'>Sign In</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingPage>
   );
