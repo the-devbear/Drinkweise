@@ -1,6 +1,6 @@
 import type { Result } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
-import type { PostgrestError } from '@supabase/supabase-js';
+import type { AuthError, PostgrestError } from '@supabase/supabase-js';
 
 import type { IAuthService } from '../interfaces/auth.service-api';
 import type { UserModel } from '../models/user.model';
@@ -8,11 +8,40 @@ import type { UserModel } from '../models/user.model';
 export class AuthService implements IAuthService {
   constructor(private readonly supabase: TypedSupabaseClient) {}
 
-  public async signInWithPassword(email: string, password: string): Result<UserModel> {
-    throw new Error(`Method not implemented. ${email} ${password}`);
+  public async signInWithPassword(
+    email: string,
+    password: string
+  ): Result<UserModel, AuthError | PostgrestError> {
+    const { data: authData, error: authError } = await this.supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (authError) {
+      return { error: authError };
+    }
+
+    const id = authData.user.id;
+
+    const { value: userData, error: userError } = await this.getUserData(id);
+
+    if (userError) {
+      return { error: userError };
+    }
+
+    return {
+      value: {
+        id,
+        email,
+        ...userData,
+      },
+    };
   }
 
-  public async signUpWithPassword(email: string, password: string): Result<UserModel> {
+  public async signUpWithPassword(
+    email: string,
+    password: string
+  ): Result<UserModel, AuthError | PostgrestError | Error> {
     const { data: authData, error: authError } = await this.supabase.auth.signUp({
       email,
       password,

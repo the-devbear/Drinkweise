@@ -1,3 +1,4 @@
+import { authService } from '@drinkweise/api/user';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
@@ -7,9 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { cssInterop } from 'nativewind';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { TouchableOpacity, View } from 'react-native';
+import { Alert, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod';
 
 cssInterop(Ionicons, {
@@ -36,6 +37,23 @@ export default function SignInPage() {
     resolver: zodResolver(signInSchema),
     shouldFocusError: false,
   });
+
+  const signInWithEmail = useMemo(
+    () =>
+      handleSubmit(async ({ email, password }) => {
+        const { value, error } = await authService.signInWithPassword(email, password);
+
+        if (error) {
+          Alert.alert('Error', error.message);
+          return;
+        }
+
+        console.log('Sign in successful', JSON.stringify(value, null, 2));
+
+        router.replace('/');
+      }),
+    [handleSubmit, router]
+  );
 
   return (
     <KeyboardAvoidingPage>
@@ -82,6 +100,7 @@ export default function SignInPage() {
               returnKeyType='done'
               onBlur={onBlur}
               onChangeText={onChange}
+              clearButtonMode='while-editing'
               value={value}
               errorMessage={errors.password?.message}
               rightIcon={
@@ -95,22 +114,14 @@ export default function SignInPage() {
             />
           )}
         />
-        <Button
-          disabled={!isValid && isSubmitted}
-          loading={isSubmitting}
-          onPress={handleSubmit((data) => {
-            // TODO: Logging for now. This is going to be implemented in DRINK-11
-            console.log(data);
-
-            router.replace('/');
-          })}>
+        <Button disabled={!isValid && isSubmitted} loading={isSubmitting} onPress={signInWithEmail}>
           <Text>Sign in</Text>
         </Button>
         <Divider />
         <View className='flex-col items-center'>
           <Text>Don't have an account?</Text>
           <TouchableOpacity onPress={() => router.push('/sign-up')}>
-            <Text className='text-primary'>Sign up</Text>
+            <Text className='text-primary'>Create Account</Text>
           </TouchableOpacity>
         </View>
       </View>
