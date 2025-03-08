@@ -78,13 +78,12 @@ grant truncate on table "public"."users" to "service_role";
 
 grant update on table "public"."users" to "service_role";
 
-create policy "Enable select for users based on id"
+create policy "Enable users to view their own data only"
 on "public"."users"
 as permissive
-for insert
-to public
-with check ((( SELECT auth.uid() AS uid) = id));
-
+for select
+to authenticated
+using ((( SELECT auth.uid() AS uid) = id));
 
 create policy "Enable update for users based on id"
 on "public"."users"
