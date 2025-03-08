@@ -1,3 +1,4 @@
+import { authService } from '@drinkweise/api/user';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
@@ -7,9 +8,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { cssInterop } from 'nativewind';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 import { z } from 'zod';
 
 cssInterop(Ionicons, {
@@ -40,6 +41,23 @@ export default function SignUpPage() {
     resolver: zodResolver(signUpSchema),
     shouldFocusError: false,
   });
+
+  const signUpWithEmail = useMemo(
+    () =>
+      handleSubmit(async ({ email, password }) => {
+        const { value, error } = await authService.signUpWithPassword(email, password);
+
+        if (error) {
+          Alert.alert('Error', error.message);
+          return;
+        }
+
+        console.log('Sign up successful', JSON.stringify(value, null, 2));
+
+        router.replace('/');
+      }),
+    [handleSubmit, router]
+  );
 
   return (
     <KeyboardAvoidingPage>
@@ -100,18 +118,7 @@ export default function SignUpPage() {
             />
           )}
         />
-        <Button
-          disabled={!isValid && isSubmitted}
-          loading={isSubmitting}
-          onPress={handleSubmit(async ({ email, password }) => {
-            // Logging for now. This is going to be implemented in DRINK-11
-            console.log({
-              email,
-              password,
-            });
-
-            router.replace('/');
-          })}>
+        <Button disabled={!isValid && isSubmitted} loading={isSubmitting} onPress={signUpWithEmail}>
           <Text>Create Account</Text>
         </Button>
         <Divider />

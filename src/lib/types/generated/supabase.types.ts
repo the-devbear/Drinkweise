@@ -34,7 +34,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      users: {
+        Row: {
+          created_at: string
+          gender: Database["public"]["Enums"]["gender"] | null
+          has_completed_onboarding: boolean
+          height: number
+          id: string
+          profile_picture: string | null
+          updated_at: string
+          username: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          gender?: Database["public"]["Enums"]["gender"] | null
+          has_completed_onboarding?: boolean
+          height?: number
+          id: string
+          profile_picture?: string | null
+          updated_at?: string
+          username?: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          gender?: Database["public"]["Enums"]["gender"] | null
+          has_completed_onboarding?: boolean
+          height?: number
+          id?: string
+          profile_picture?: string | null
+          updated_at?: string
+          username?: string
+          weight?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -43,7 +78,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      gender: "male" | "female" | "other"
     }
     CompositeTypes: {
       [_ in never]: never
