@@ -3,9 +3,11 @@ export interface Success<T> {
   error?: undefined;
 }
 
-export interface Failure<E extends Error = Error> {
+export interface Failure<E extends { message: string } = { message: string }> {
   value?: undefined;
   error: E;
 }
 
-export type Result<T, E extends Error = Error> = Promise<Success<T> | Failure<E>>;
+export type Result<T, E extends { message: string } = { message: string }> = Promise<
+  Success<T> | Failure<E>
+>;

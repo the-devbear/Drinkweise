@@ -17,6 +17,7 @@ export default ({ config }) => ({
   },
   plugins: [
     'expo-router',
+    'expo-apple-authentication',
     [
       'expo-dev-client',
       {
