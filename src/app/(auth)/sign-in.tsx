@@ -120,7 +120,11 @@ export default function SignInPage() {
         </Button>
         <Divider text='or' />
         <View className='flex-col items-center pb-2'>
-          <AppleAuthButton />
+          <AppleAuthButton
+            onSuccessfulSignIn={() => {
+              router.replace('/');
+            }}
+          />
         </View>
         <View className='flex-col items-center'>
           <Text>Don't have an account?</Text>
