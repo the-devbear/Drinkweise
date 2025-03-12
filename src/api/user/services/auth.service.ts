@@ -1,12 +1,58 @@
 import type { Result } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
+import { isCodedError } from '@drinkweise/lib/utils/error/is-coded-error';
 import type { AuthError, PostgrestError } from '@supabase/supabase-js';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import type { CodedError } from 'expo-modules-core';
 
 import type { IAuthService } from '../interfaces/auth.service-api';
 import type { UserModel } from '../models/user.model';
 
 export class AuthService implements IAuthService {
   constructor(private readonly supabase: TypedSupabaseClient) {}
+
+  public async signInWithApple(): Result<
+    UserModel,
+    AuthError | PostgrestError | CodedError | { message: string }
+  > {
+    try {
+      const credential = await AppleAuthentication.signInAsync({
+        requestedScopes: [AppleAuthentication.AppleAuthenticationScope.EMAIL],
+      });
+
+      if (!credential.identityToken) {
+        return { error: { message: 'No identity token returned' } };
+      }
+
+      const { data, error } = await this.supabase.auth.signInWithIdToken({
+        provider: 'apple',
+        token: credential.identityToken,
+      });
+
+      if (error) {
+        return { error };
+      }
+
+      const { value: userData, error: userError } = await this.getUserData(data.user.id);
+
+      if (userError) {
+        return { error: userError };
+      }
+
+      return {
+        value: {
+          id: data.user.id,
+          email: credential.email!,
+          ...userData,
+        },
+      };
+    } catch (error) {
+      if (isCodedError(error)) {
+        return { error };
+      }
+      return { error: { message: 'An unexpected error happened' } };
+    }
+  }
 
   public async signInWithPassword(
     email: string,
@@ -42,7 +88,10 @@ export class AuthService implements IAuthService {
     email: string,
     password: string
   ): Result<UserModel, AuthError | PostgrestError | Error> {
-    const { data: authData, error: authError } = await this.supabase.auth.signUp({
+    const {
+      data: { session, user },
+      error: authError,
+    } = await this.supabase.auth.signUp({
       email,
       password,
     });
@@ -51,11 +100,11 @@ export class AuthService implements IAuthService {
       return { error: authError };
     }
 
-    if (!authData.session || !authData.user) {
-      return { error: new Error('No session or user data returned') };
-    }
+    const id = session?.user.id ?? user?.id;
 
-    const id = authData.session.user.id || authData.user.id;
+    if (!id) {
+      return { error: new Error('No user ID returned') };
+    }
 
     const { value: userData, error: userError } = await this.getUserData(id);
 
