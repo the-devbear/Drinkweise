@@ -24,9 +24,13 @@ const clientEnvironmentSchema = z.object({
 
   SUPABASE_URL: z.string(),
   SUPABASE_ANON_KEY: z.string(),
+  GOOGLE_WEB_CLIENT_ID: z.string(),
+  GOOGLE_IOS_CLIENT_ID: z.string(),
 });
 
-const buildTimeEnvironmentSchema = z.object({});
+const buildTimeEnvironmentSchema = z.object({
+  GOOGLE_IOS_URL_SCHEME: z.string(),
+});
 
 /**
  * @type {z.infer<typeof clientEnvironmentSchema>}
@@ -40,6 +44,8 @@ const _clientEnvironment = {
   // Custom environment variables
   SUPABASE_URL: process.env.EXPO_PUBLIC_SUPABASE_URL,
   SUPABASE_ANON_KEY: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+  GOOGLE_WEB_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID,
+  GOOGLE_IOS_CLIENT_ID: process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID,
 };
 
 /**
@@ -49,6 +55,7 @@ const _clientEnvironment = {
  */
 const _buildTimeEnvironment = {
   // Add build time environment variables here
+  GOOGLE_IOS_URL_SCHEME: process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME,
 };
 
 const _mergedEnvironment = {
