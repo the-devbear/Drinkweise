@@ -1,6 +1,7 @@
-import { UserModel } from '@drinkweise/api/user';
+import { authService, UserModel } from '@drinkweise/api/user';
 import { Env } from '@drinkweise/lib/environment';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { Alert } from 'react-native';
 
 interface GoogleAuthButtonProps {
   onSuccessfulSignIn: (user: UserModel) => Promise<void> | void;
@@ -17,7 +18,23 @@ export function GoogleAuthButton({ onSuccessfulSignIn }: GoogleAuthButtonProps) 
       size={GoogleSigninButton.Size.Wide}
       color={GoogleSigninButton.Color.Light}
       onPress={async () => {
-        console.log('Google sign in');
+        try {
+          const { value, error } = await authService.signInWithGoogle();
+
+          if (error) {
+            if ('type' in error) {
+              return;
+            }
+
+            Alert.alert('Error', error.message);
+            return;
+          }
+
+          await onSuccessfulSignIn(value);
+        } catch (error) {
+          console.error('Error signing in with Google', error);
+          Alert.alert('Error', 'An unexpected error occurred. Please try again.');
+        }
       }}
     />
   );
