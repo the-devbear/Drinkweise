@@ -1,5 +1,6 @@
 import { authService } from '@drinkweise/api/user';
 import { AppleAuthButton } from '@drinkweise/components/auth/AppleAuthButton';
+import { GoogleAuthButton } from '@drinkweise/components/auth/GoogleAuthButton';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
@@ -123,12 +124,13 @@ export default function SignUpPage() {
           <Text>Create Account</Text>
         </Button>
         <Divider text='or' />
-        <View className='flex-col items-center pb-2'>
+        <View className='flex-col items-center gap-2 pb-2'>
           <AppleAuthButton
             onSuccessfulSignIn={() => {
               router.replace('/');
             }}
           />
+          <GoogleAuthButton onSuccessfulSignIn={() => {}} />
         </View>
         <View className='flex-col items-center'>
           <Text>Already have an account?</Text>
