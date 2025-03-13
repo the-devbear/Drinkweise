@@ -1,5 +1,6 @@
-import { authService } from '@drinkweise/api/user';
+import { authService, UserModel } from '@drinkweise/api/user';
 import { AppleAuthButton } from '@drinkweise/components/auth/AppleAuthButton';
+import { GoogleAuthButton } from '@drinkweise/components/auth/GoogleAuthButton';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
@@ -9,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { cssInterop } from 'nativewind';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod';
@@ -54,6 +55,14 @@ export default function SignInPage() {
         router.replace('/');
       }),
     [handleSubmit, router]
+  );
+
+  const onSuccessfulSignIn = useCallback(
+    (user: UserModel) => {
+      console.log('Sign in successful', JSON.stringify(user, null, 2));
+      router.replace('/');
+    },
+    [router]
   );
 
   return (
@@ -119,12 +128,9 @@ export default function SignInPage() {
           <Text>Sign in</Text>
         </Button>
         <Divider text='or' />
-        <View className='flex-col items-center pb-2'>
-          <AppleAuthButton
-            onSuccessfulSignIn={() => {
-              router.replace('/');
-            }}
-          />
+        <View className='flex-col items-center gap-2 pb-2'>
+          <AppleAuthButton onSuccessfulSignIn={onSuccessfulSignIn} />
+          <GoogleAuthButton onSuccessfulSignIn={onSuccessfulSignIn} />
         </View>
         <View className='flex-col items-center'>
           <Text>Don't have an account?</Text>

@@ -19,6 +19,12 @@ export default ({ config }) => ({
     'expo-router',
     'expo-apple-authentication',
     [
+      '@react-native-google-signin/google-signin',
+      {
+        iosUrlScheme: buildTimeEnvironment.GOOGLE_IOS_URL_SCHEME,
+      },
+    ],
+    [
       'expo-dev-client',
       {
         launcherMode: 'most-recent',
@@ -56,6 +62,9 @@ export default ({ config }) => ({
     supportsTablet: false,
     bundleIdentifier: buildTimeEnvironment.BUNDLE_ID,
     usesAppleSignIn: true,
+    infoPlist: {
+      ITSAppUsesNonExemptEncryption: false,
+    },
   },
   android: {
     adaptiveIcon: {
