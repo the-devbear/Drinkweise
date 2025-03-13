@@ -8,6 +8,9 @@ const APP_ENV = process.env.EXPO_PUBLIC_APP_ENV ?? 'eas';
 if (APP_ENV === 'eas') {
   process.env.EXPO_PUBLIC_SUPABASE_URL ??= 'https://expo.dev/';
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ??= '';
+  process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID ??= '';
+  process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID ??= '';
+  process.env.EXPO_PUBLIC_GOOGLE_IOS_URL_SCHEME ??= 'com.googleusercontent.apps.1234567890';
 }
 
 /** IOS Bundle ID */
