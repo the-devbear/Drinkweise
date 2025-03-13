@@ -1,6 +1,7 @@
-import { authService, UserModel } from '@drinkweise/api/user';
+import { authService, type UserModel } from '@drinkweise/api/user';
 import { Env } from '@drinkweise/lib/environment';
 import { GoogleSignin, GoogleSigninButton } from '@react-native-google-signin/google-signin';
+import { useEffect } from 'react';
 import { Alert } from 'react-native';
 
 interface GoogleAuthButtonProps {
@@ -8,10 +9,12 @@ interface GoogleAuthButtonProps {
 }
 
 export function GoogleAuthButton({ onSuccessfulSignIn }: GoogleAuthButtonProps) {
-  GoogleSignin.configure({
-    webClientId: Env.GOOGLE_WEB_CLIENT_ID,
-    iosClientId: Env.GOOGLE_IOS_CLIENT_ID,
-  });
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: Env.GOOGLE_WEB_CLIENT_ID,
+      iosClientId: Env.GOOGLE_IOS_CLIENT_ID,
+    });
+  }, []);
 
   return (
     <GoogleSigninButton
