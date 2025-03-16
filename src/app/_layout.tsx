@@ -7,6 +7,7 @@ import {
   useColorScheme,
   useInitialAndroidBarSync,
 } from '@drinkweise/lib/useColorScheme';
+import { rootStore } from '@drinkweise/store';
 import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -16,6 +17,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { Provider as ReduxProvider } from 'react-redux';
 
 SplashScreen.setOptions({
   duration: 500,
@@ -46,16 +48,18 @@ export default function RootLayout() {
         style={isDarkColorScheme ? 'light' : 'dark'}
       />
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <BottomSheetModalProvider>
-          <ActionSheetProvider>
-            <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
-              <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
-                <Stack.Screen name='(auth)' />
-                <Stack.Screen name='(app)' />
-              </Stack>
-            </NavThemeProvider>
-          </ActionSheetProvider>
-        </BottomSheetModalProvider>
+        <ReduxProvider store={rootStore}>
+          <BottomSheetModalProvider>
+            <ActionSheetProvider>
+              <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
+                <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
+                  <Stack.Screen name='(auth)' />
+                  <Stack.Screen name='(app)' />
+                </Stack>
+              </NavThemeProvider>
+            </ActionSheetProvider>
+          </BottomSheetModalProvider>
+        </ReduxProvider>
       </GestureHandlerRootView>
     </>
   );
