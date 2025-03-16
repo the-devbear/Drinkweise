@@ -1,11 +1,10 @@
-import { Result } from '@drinkweise/lib/types/result.types';
+import type { Result } from '@drinkweise/lib/types/result.types';
 
-import { SignInSuccessResponseModel } from '../models/sign-in-success-response.model';
-import { UserModel } from '../models/user.model';
+import type { SignInSuccessResponseModel } from '../models/sign-in-success-response.model';
 
 export interface IAuthService {
-  signInWithPassword(email: string, password: string): Result<UserModel>;
-  signInWithApple(): Result<UserModel>;
-  signInWithGoogle(): Result<UserModel>;
+  signInWithPassword(email: string, password: string): Result<SignInSuccessResponseModel>;
+  signInWithApple(): Result<SignInSuccessResponseModel>;
+  signInWithGoogle(): Result<SignInSuccessResponseModel>;
   signUpWithPassword(email: string, password: string): Result<SignInSuccessResponseModel>;
 }

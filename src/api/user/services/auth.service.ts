@@ -18,7 +18,7 @@ export class AuthService implements IAuthService {
   constructor(private readonly supabase: TypedSupabaseClient) {}
 
   public async signInWithGoogle(): Result<
-    UserModel,
+    SignInSuccessResponseModel,
     AuthError | PostgrestError | { message: string; type: 'cancelled' } | { message: string }
   > {
     try {
@@ -50,9 +50,16 @@ export class AuthService implements IAuthService {
 
       return {
         value: {
-          id: data.user.id,
-          email: userInfo.data.user.email,
-          ...userData,
+          user: {
+            id: data.user.id,
+            ...userData,
+          },
+          session: {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in,
+            expiresAt: data.session.expires_at,
+          },
         },
       };
     } catch (error) {
@@ -73,7 +80,7 @@ export class AuthService implements IAuthService {
   }
 
   public async signInWithApple(): Result<
-    UserModel,
+    SignInSuccessResponseModel,
     AuthError | PostgrestError | CodedError | { message: string }
   > {
     try {
@@ -102,9 +109,16 @@ export class AuthService implements IAuthService {
 
       return {
         value: {
-          id: data.user.id,
-          email: credential.email!,
-          ...userData,
+          user: {
+            id: data.user.id,
+            ...userData,
+          },
+          session: {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in,
+            expiresAt: data.session.expires_at,
+          },
         },
       };
     } catch (error) {
@@ -118,7 +132,7 @@ export class AuthService implements IAuthService {
   public async signInWithPassword(
     email: string,
     password: string
-  ): Result<UserModel, AuthError | PostgrestError> {
+  ): Result<SignInSuccessResponseModel, AuthError | PostgrestError> {
     const { data: authData, error: authError } = await this.supabase.auth.signInWithPassword({
       email,
       password,
@@ -138,9 +152,16 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
-        id,
-        email,
-        ...userData,
+        user: {
+          id,
+          ...userData,
+        },
+        session: {
+          accessToken: authData.session.access_token,
+          refreshToken: authData.session.refresh_token,
+          expiresIn: authData.session.expires_in,
+          expiresAt: authData.session.expires_at,
+        },
       },
     };
   }
