@@ -1,4 +1,3 @@
-import { authService, UserModel } from '@drinkweise/api/user';
 import { AppleAuthButton } from '@drinkweise/components/auth/AppleAuthButton';
 import { GoogleAuthButton } from '@drinkweise/components/auth/GoogleAuthButton';
 import { Button } from '@drinkweise/components/ui/Button';
@@ -6,6 +5,9 @@ import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
+import { useAppDispatch } from '@drinkweise/store';
+import { signInWithPasswordAction } from '@drinkweise/store/user/actions/sign-in-with-password.action';
+import type { UserModel } from '@drinkweise/store/user/models/user.model';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -30,6 +32,7 @@ const signInSchema = z.object({
 export default function SignInPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const {
     control,
     handleSubmit,
@@ -43,18 +46,18 @@ export default function SignInPage() {
   const signInWithEmail = useMemo(
     () =>
       handleSubmit(async ({ email, password }) => {
-        const { value, error } = await authService.signInWithPassword(email, password);
+        const response = await dispatch(signInWithPasswordAction({ email, password }));
 
-        if (error) {
-          Alert.alert('Error', error.message);
+        if (signInWithPasswordAction.rejected.match(response)) {
+          Alert.alert('Sign in failed', response.payload?.message ?? 'An error occurred');
           return;
         }
 
-        console.log('Sign in successful', JSON.stringify(value, null, 2));
+        console.log('Sign in successful', JSON.stringify(response.payload, null, 2));
 
         router.replace('/');
       }),
-    [handleSubmit, router]
+    [handleSubmit, router, dispatch]
   );
 
   const onSuccessfulSignIn = useCallback(

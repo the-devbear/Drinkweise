@@ -1,4 +1,3 @@
-import { authService } from '@drinkweise/api/user';
 import { AppleAuthButton } from '@drinkweise/components/auth/AppleAuthButton';
 import { GoogleAuthButton } from '@drinkweise/components/auth/GoogleAuthButton';
 import { Button } from '@drinkweise/components/ui/Button';
@@ -6,6 +5,8 @@ import { Divider } from '@drinkweise/components/ui/Divider';
 import { KeyboardAvoidingPage } from '@drinkweise/components/ui/KeyboardAvoidingPage';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
+import { useAppDispatch } from '@drinkweise/store';
+import { signUpWithPasswordAction } from '@drinkweise/store/user/actions/sign-up-with-password.action';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
@@ -32,6 +33,7 @@ const signUpSchema = z.object({
 
 export default function SignUpPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const [showPassword, setShowPassword] = useState(false);
 
   const {
@@ -47,18 +49,17 @@ export default function SignUpPage() {
   const signUpWithEmail = useMemo(
     () =>
       handleSubmit(async ({ email, password }) => {
-        const { value, error } = await authService.signUpWithPassword(email, password);
+        const response = await dispatch(signUpWithPasswordAction({ email, password }));
 
-        if (error) {
-          Alert.alert('Error', error.message);
+        if (signUpWithPasswordAction.rejected.match(response)) {
+          Alert.alert('Error', response.payload?.message ?? 'An unexpected error happened');
           return;
         }
 
-        console.log('Sign up successful', JSON.stringify(value, null, 2));
-
+        console.log('Sign up successful', JSON.stringify(response.payload, null, 2));
         router.replace('/');
       }),
-    [handleSubmit, router]
+    [dispatch, handleSubmit, router]
   );
 
   const onSuccessfulSignIn = useCallback(() => {

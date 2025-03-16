@@ -11,13 +11,13 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import type { CodedError } from 'expo-modules-core';
 
 import type { IAuthService } from '../interfaces/auth.service-api';
-import type { UserModel } from '../models/user.model';
+import type { SignInSuccessResponseModel } from '../models/sign-in-success-response.model';
 
 export class AuthService implements IAuthService {
   constructor(private readonly supabase: TypedSupabaseClient) {}
 
   public async signInWithGoogle(): Result<
-    UserModel,
+    SignInSuccessResponseModel,
     AuthError | PostgrestError | { message: string; type: 'cancelled' } | { message: string }
   > {
     try {
@@ -49,9 +49,13 @@ export class AuthService implements IAuthService {
 
       return {
         value: {
-          id: data.user.id,
-          email: userInfo.data.user.email,
-          ...userData,
+          user: userData,
+          session: {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in,
+            expiresAt: data.session.expires_at,
+          },
         },
       };
     } catch (error) {
@@ -72,7 +76,7 @@ export class AuthService implements IAuthService {
   }
 
   public async signInWithApple(): Result<
-    UserModel,
+    SignInSuccessResponseModel,
     AuthError | PostgrestError | CodedError | { message: string }
   > {
     try {
@@ -101,9 +105,13 @@ export class AuthService implements IAuthService {
 
       return {
         value: {
-          id: data.user.id,
-          email: credential.email!,
-          ...userData,
+          user: userData,
+          session: {
+            accessToken: data.session.access_token,
+            refreshToken: data.session.refresh_token,
+            expiresIn: data.session.expires_in,
+            expiresAt: data.session.expires_at,
+          },
         },
       };
     } catch (error) {
@@ -117,7 +125,7 @@ export class AuthService implements IAuthService {
   public async signInWithPassword(
     email: string,
     password: string
-  ): Result<UserModel, AuthError | PostgrestError> {
+  ): Result<SignInSuccessResponseModel, AuthError | PostgrestError> {
     const { data: authData, error: authError } = await this.supabase.auth.signInWithPassword({
       email,
       password,
@@ -137,9 +145,13 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
-        id,
-        email,
-        ...userData,
+        user: userData,
+        session: {
+          accessToken: authData.session.access_token,
+          refreshToken: authData.session.refresh_token,
+          expiresIn: authData.session.expires_in,
+          expiresAt: authData.session.expires_at,
+        },
       },
     };
   }
@@ -147,9 +159,9 @@ export class AuthService implements IAuthService {
   public async signUpWithPassword(
     email: string,
     password: string
-  ): Result<UserModel, AuthError | PostgrestError | Error> {
+  ): Result<SignInSuccessResponseModel, AuthError | PostgrestError | Error> {
     const {
-      data: { session, user },
+      data: { session },
       error: authError,
     } = await this.supabase.auth.signUp({
       email,
@@ -160,11 +172,11 @@ export class AuthService implements IAuthService {
       return { error: authError };
     }
 
-    const id = session?.user.id ?? user?.id;
-
-    if (!id) {
-      return { error: new Error('No user ID returned') };
+    if (!session) {
+      return { error: new Error('No session returned') };
     }
+
+    const id = session.user.id;
 
     const { value: userData, error: userError } = await this.getUserData(id);
 
@@ -174,22 +186,20 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
-        id,
-        email,
-        ...userData,
+        user: userData,
+        session: {
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+          expiresIn: session.expires_in,
+          expiresAt: session.expires_at,
+        },
       },
     };
   }
 
   private async getUserData(
     id: string
-  ): Result<
-    Pick<
-      UserModel,
-      'username' | 'profilePicture' | 'height' | 'weight' | 'gender' | 'hasCompletedOnboarding'
-    >,
-    PostgrestError
-  > {
+  ): Result<SignInSuccessResponseModel['user'], PostgrestError> {
     const { data, error } = await this.supabase
       .from('users')
       .select('username, profile_picture, height, weight, gender, has_completed_onboarding')
@@ -202,6 +212,7 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
+        id,
         username: data.username,
         profilePicture: data.profile_picture ?? undefined,
         height: data.height,
