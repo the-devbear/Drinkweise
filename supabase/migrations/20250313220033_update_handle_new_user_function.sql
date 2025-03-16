@@ -11,5 +11,6 @@ return new;
 end;$function$
 ;
 
-
+comment on column public.users.height is 'Height in centimeters';
+comment on column public.users.weight is 'Weight in kilograms';
 
