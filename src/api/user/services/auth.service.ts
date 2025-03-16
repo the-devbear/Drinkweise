@@ -11,6 +11,7 @@ import * as AppleAuthentication from 'expo-apple-authentication';
 import type { CodedError } from 'expo-modules-core';
 
 import type { IAuthService } from '../interfaces/auth.service-api';
+import type { SignInSuccessResponseModel } from '../models/sign-in-success-response.model';
 import type { UserModel } from '../models/user.model';
 
 export class AuthService implements IAuthService {
@@ -147,9 +148,9 @@ export class AuthService implements IAuthService {
   public async signUpWithPassword(
     email: string,
     password: string
-  ): Result<UserModel, AuthError | PostgrestError | Error> {
+  ): Result<SignInSuccessResponseModel, AuthError | PostgrestError | Error> {
     const {
-      data: { session, user },
+      data: { session },
       error: authError,
     } = await this.supabase.auth.signUp({
       email,
@@ -160,11 +161,11 @@ export class AuthService implements IAuthService {
       return { error: authError };
     }
 
-    const id = session?.user.id ?? user?.id;
-
-    if (!id) {
-      return { error: new Error('No user ID returned') };
+    if (!session) {
+      return { error: new Error('No session returned') };
     }
+
+    const id = session.user.id;
 
     const { value: userData, error: userError } = await this.getUserData(id);
 
@@ -174,9 +175,16 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
-        id,
-        email,
-        ...userData,
+        user: {
+          id,
+          ...userData,
+        },
+        session: {
+          accessToken: session.access_token,
+          refreshToken: session.refresh_token,
+          expiresIn: session.expires_in,
+          expiresAt: session.expires_at,
+        },
       },
     };
   }
