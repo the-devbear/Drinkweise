@@ -2,8 +2,12 @@ import { configureStore, createDraftSafeSelector } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 
+import { userStateSlice } from './user';
+
 export const rootStore = configureStore({
-  reducer: {},
+  reducer: {
+    [userStateSlice.name]: userStateSlice.reducer,
+  },
   devTools: false,
   enhancers: (getDefaultEnhancers) =>
     getDefaultEnhancers().concat(
