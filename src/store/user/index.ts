@@ -1,3 +1,4 @@
+import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-with-apple.action';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
@@ -12,7 +13,11 @@ export const userStateSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addMatcher(
-        isAnyOf(signInWithPasswordAction.fulfilled, signUpWithPasswordAction.fulfilled),
+        isAnyOf(
+          signInWithPasswordAction.fulfilled,
+          signUpWithPasswordAction.fulfilled,
+          signInWithAppleAction.fulfilled
+        ),
         (_state, { payload: { user, session } }) => ({
           status: 'signedIn',
           user,
@@ -20,7 +25,11 @@ export const userStateSlice = createSlice({
         })
       )
       .addMatcher(
-        isAnyOf(signInWithPasswordAction.rejected, signUpWithPasswordAction.rejected),
+        isAnyOf(
+          signInWithPasswordAction.rejected,
+          signUpWithPasswordAction.rejected,
+          signInWithAppleAction.rejected
+        ),
         () => ({ status: 'signedOut' })
       );
   },

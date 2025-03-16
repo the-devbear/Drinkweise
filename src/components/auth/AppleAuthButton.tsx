@@ -1,7 +1,9 @@
-import { authService, UserModel } from '@drinkweise/api/user';
 import { AppleAuthErrorsKeys } from '@drinkweise/api/user/enums/apple-auth-errors';
 import { useColorScheme } from '@drinkweise/lib/useColorScheme';
-import { isCodedError } from '@drinkweise/lib/utils/error/is-coded-error';
+import { isSerializedCodedError } from '@drinkweise/lib/utils/redux/is-serialize-error';
+import { useAppDispatch } from '@drinkweise/store';
+import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-with-apple.action';
+import type { UserModel } from '@drinkweise/store/user/models/user.model';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { Alert, Platform } from 'react-native';
 
@@ -11,6 +13,7 @@ interface AppleAuthButtonProps {
 
 export function AppleAuthButton({ onSuccessfulSignIn }: AppleAuthButtonProps) {
   const { isDarkColorScheme } = useColorScheme();
+  const dispatch = useAppDispatch();
   if (Platform.OS !== 'ios') {
     return null;
   }
@@ -26,20 +29,23 @@ export function AppleAuthButton({ onSuccessfulSignIn }: AppleAuthButtonProps) {
       cornerRadius={5}
       style={{ width: 300, height: 40 }}
       onPress={async () => {
-        const { value, error } = await authService.signInWithApple();
+        const response = await dispatch(signInWithAppleAction());
 
-        if (value) {
-          await onSuccessfulSignIn(value);
+        if (signInWithAppleAction.fulfilled.match(response)) {
+          await onSuccessfulSignIn(response.payload.user);
           return;
         }
 
-        if (isCodedError(error)) {
-          if (error.code === AppleAuthErrorsKeys.ERR_REQUEST_CANCELED) {
-            return;
-          }
+        const { payload: error } = response;
+
+        if (
+          isSerializedCodedError(error) &&
+          error.code === AppleAuthErrorsKeys.ERR_REQUEST_CANCELED
+        ) {
+          return;
         }
 
-        Alert.alert('Error', error.message);
+        Alert.alert('Error', error?.message ?? 'An unexpected error occurred');
       }}
     />
   );
