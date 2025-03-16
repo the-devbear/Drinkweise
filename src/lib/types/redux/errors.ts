@@ -14,3 +14,10 @@ export type SerializedPostgrestError = {
   details: string;
   hint: string;
 };
+
+export type SerializedCodedError<T = unknown> = {
+  type: 'CodedError';
+  message: string;
+  code: string;
+  info?: T;
+};
