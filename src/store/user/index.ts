@@ -1,4 +1,5 @@
 import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-with-apple.action';
+import { signInWithGoogleAction } from '@drinkweise/store/user/actions/sign-in-with-google.action';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
@@ -16,7 +17,8 @@ export const userStateSlice = createSlice({
         isAnyOf(
           signInWithPasswordAction.fulfilled,
           signUpWithPasswordAction.fulfilled,
-          signInWithAppleAction.fulfilled
+          signInWithAppleAction.fulfilled,
+          signInWithGoogleAction.fulfilled
         ),
         (_state, { payload: { user, session } }) => ({
           status: 'signedIn',
@@ -28,7 +30,8 @@ export const userStateSlice = createSlice({
         isAnyOf(
           signInWithPasswordAction.rejected,
           signUpWithPasswordAction.rejected,
-          signInWithAppleAction.rejected
+          signInWithAppleAction.rejected,
+          signInWithGoogleAction.rejected
         ),
         () => ({ status: 'signedOut' })
       );
