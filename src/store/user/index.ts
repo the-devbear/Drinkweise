@@ -1,15 +1,30 @@
+import { storage } from '@drinkweise/lib/storage/mmkv';
 import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-with-apple.action';
 import { signInWithGoogleAction } from '@drinkweise/store/user/actions/sign-in-with-google.action';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
 import { signUpWithPasswordAction } from './actions/sign-up-with-password.action';
-import { initialUserState } from './models/user-state.model';
+import { initialUserState, UserState } from './models/user-state.model';
 import { userSlice } from './user.slice';
+
+function getInitialUserState(): UserState {
+  const userState = storage.getString(userSlice);
+
+  if (!userState) {
+    return initialUserState;
+  }
+
+  try {
+    return JSON.parse(userState);
+  } catch {}
+
+  return initialUserState;
+}
 
 export const userStateSlice = createSlice({
   name: userSlice,
-  initialState: initialUserState,
+  initialState: getInitialUserState(),
   reducers: {},
   extraReducers: (builder) => {
     builder
