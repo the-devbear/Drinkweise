@@ -21,6 +21,6 @@ export const persistUserStateListener = startPersistUserStateListener({
     await listenerApi.delay(LISTENER_DELAY);
 
     console.info('Persisting user state');
-    storage.set(userSlice, JSON.stringify(listenerApi.getState()));
+    storage.set(userSlice, JSON.stringify(listenerApi.getState().user));
   },
 });
