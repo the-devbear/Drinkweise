@@ -1,26 +1,27 @@
-import type { ActionCasesBuilderHelper } from '@drinkweise/lib/types/redux/action-cases-builder-helper';
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 
+import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
 import { signUpWithPasswordAction } from './actions/sign-up-with-password.action';
-import { initialUserState, type UserState } from './models/user-state.model';
+import { initialUserState } from './models/user-state.model';
 import { userSlice } from './user.slice';
-
-type UserActionCasesBuilder = ActionCasesBuilderHelper<UserState>;
-
-const signUpWithPasswordActionCases: UserActionCasesBuilder = (builder) =>
-  builder
-    .addCase(signUpWithPasswordAction.fulfilled, (_state, { payload: { user, session } }) => ({
-      status: 'signedIn',
-      user,
-      session,
-    }))
-    .addCase(signUpWithPasswordAction.rejected, () => ({ status: 'signedOut' }));
 
 export const userStateSlice = createSlice({
   name: userSlice,
   initialState: initialUserState,
   reducers: {},
   extraReducers: (builder) => {
-    signUpWithPasswordActionCases(builder);
+    builder
+      .addMatcher(
+        isAnyOf(signInWithPasswordAction.fulfilled, signUpWithPasswordAction.fulfilled),
+        (_state, { payload: { user, session } }) => ({
+          status: 'signedIn',
+          user,
+          session,
+        })
+      )
+      .addMatcher(
+        isAnyOf(signInWithPasswordAction.rejected, signUpWithPasswordAction.rejected),
+        () => ({ status: 'signedOut' })
+      );
   },
 });

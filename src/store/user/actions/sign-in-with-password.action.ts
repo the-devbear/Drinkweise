@@ -1,0 +1,39 @@
+import { authService } from '@drinkweise/api/user';
+import type {
+  SerializedAuthError,
+  SerializedPostgrestError,
+} from '@drinkweise/lib/types/redux/errors';
+import {
+  serializeAuthError,
+  serializePostgrestError,
+} from '@drinkweise/lib/utils/redux/serialize-errors';
+import { createAsyncThunk, miniSerializeError, type SerializedError } from '@reduxjs/toolkit';
+import { isAuthError } from '@supabase/supabase-js';
+
+import type { SessionModel } from '../models/session.model';
+import type { UserModel } from '../models/user.model';
+import { userSlice } from '../user.slice';
+
+export const signInWithPasswordAction = createAsyncThunk<
+  { user: UserModel; session: SessionModel },
+  { email: string; password: string },
+  {
+    rejectValue: SerializedAuthError | SerializedPostgrestError | SerializedError;
+  }
+>(`${userSlice}/signInWithPassword`, async ({ email, password }, { rejectWithValue }) => {
+  const { value, error } = await authService.signInWithPassword(email, password);
+
+  if (!error) {
+    return value;
+  }
+
+  if (isAuthError(error)) {
+    return rejectWithValue(serializeAuthError(error));
+  }
+
+  if ('details' in error) {
+    return rejectWithValue(serializePostgrestError(error));
+  }
+
+  return rejectWithValue(miniSerializeError(error));
+});
