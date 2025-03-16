@@ -1,4 +1,3 @@
-import { UserModel } from '@drinkweise/api/user';
 import { AppleAuthButton } from '@drinkweise/components/auth/AppleAuthButton';
 import { GoogleAuthButton } from '@drinkweise/components/auth/GoogleAuthButton';
 import { Button } from '@drinkweise/components/ui/Button';
@@ -8,6 +7,7 @@ import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useAppDispatch } from '@drinkweise/store';
 import { signInWithPasswordAction } from '@drinkweise/store/user/actions/sign-in-with-password.action';
+import type { UserModel } from '@drinkweise/store/user/models/user.model';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';

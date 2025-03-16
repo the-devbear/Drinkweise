@@ -12,7 +12,6 @@ import type { CodedError } from 'expo-modules-core';
 
 import type { IAuthService } from '../interfaces/auth.service-api';
 import type { SignInSuccessResponseModel } from '../models/sign-in-success-response.model';
-import type { UserModel } from '../models/user.model';
 
 export class AuthService implements IAuthService {
   constructor(private readonly supabase: TypedSupabaseClient) {}
@@ -50,10 +49,7 @@ export class AuthService implements IAuthService {
 
       return {
         value: {
-          user: {
-            id: data.user.id,
-            ...userData,
-          },
+          user: userData,
           session: {
             accessToken: data.session.access_token,
             refreshToken: data.session.refresh_token,
@@ -109,10 +105,7 @@ export class AuthService implements IAuthService {
 
       return {
         value: {
-          user: {
-            id: data.user.id,
-            ...userData,
-          },
+          user: userData,
           session: {
             accessToken: data.session.access_token,
             refreshToken: data.session.refresh_token,
@@ -152,10 +145,7 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
-        user: {
-          id,
-          ...userData,
-        },
+        user: userData,
         session: {
           accessToken: authData.session.access_token,
           refreshToken: authData.session.refresh_token,
@@ -196,10 +186,7 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
-        user: {
-          id,
-          ...userData,
-        },
+        user: userData,
         session: {
           accessToken: session.access_token,
           refreshToken: session.refresh_token,
@@ -212,13 +199,7 @@ export class AuthService implements IAuthService {
 
   private async getUserData(
     id: string
-  ): Result<
-    Pick<
-      UserModel,
-      'username' | 'profilePicture' | 'height' | 'weight' | 'gender' | 'hasCompletedOnboarding'
-    >,
-    PostgrestError
-  > {
+  ): Result<SignInSuccessResponseModel['user'], PostgrestError> {
     const { data, error } = await this.supabase
       .from('users')
       .select('username, profile_picture, height, weight, gender, has_completed_onboarding')
@@ -231,6 +212,7 @@ export class AuthService implements IAuthService {
 
     return {
       value: {
+        id,
         username: data.username,
         profilePicture: data.profile_picture ?? undefined,
         height: data.height,
