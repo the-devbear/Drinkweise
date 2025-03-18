@@ -1,4 +1,4 @@
-import type { Result } from '@drinkweise/lib/types/result.types';
+import type { Failure, Result } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
 import { isCodedError } from '@drinkweise/lib/utils/error/is-coded-error';
 import {
@@ -195,6 +195,15 @@ export class AuthService implements IAuthService {
         },
       },
     };
+  }
+
+  public async signOut(): Promise<Failure<AuthError> | undefined> {
+    const { error } = await this.supabase.auth.signOut();
+
+    if (error) {
+      console.error('Error signing out', error);
+      return { error };
+    }
   }
 
   private async getUserData(
