@@ -7,12 +7,11 @@ import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useAppDispatch } from '@drinkweise/store';
 import { signInWithPasswordAction } from '@drinkweise/store/user/actions/sign-in-with-password.action';
-import type { UserModel } from '@drinkweise/store/user/models/user.model';
 import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { cssInterop } from 'nativewind';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, TouchableOpacity, View } from 'react-native';
 import { z } from 'zod';
@@ -50,22 +49,9 @@ export default function SignInPage() {
 
         if (signInWithPasswordAction.rejected.match(response)) {
           Alert.alert('Sign in failed', response.payload?.message ?? 'An error occurred');
-          return;
         }
-
-        console.log('Sign in successful', JSON.stringify(response.payload, null, 2));
-
-        router.replace('/');
       }),
-    [handleSubmit, router, dispatch]
-  );
-
-  const onSuccessfulSignIn = useCallback(
-    (user: UserModel) => {
-      console.log('Sign in successful', JSON.stringify(user, null, 2));
-      router.replace('/');
-    },
-    [router]
+    [handleSubmit, dispatch]
   );
 
   return (
@@ -132,8 +118,8 @@ export default function SignInPage() {
         </Button>
         <Divider text='or' />
         <View className='flex-col items-center gap-2 pb-2'>
-          <AppleAuthButton onSuccessfulSignIn={onSuccessfulSignIn} />
-          <GoogleAuthButton onSuccessfulSignIn={onSuccessfulSignIn} />
+          <AppleAuthButton />
+          <GoogleAuthButton />
         </View>
         <View className='flex-col items-center'>
           <Text>Don't have an account?</Text>
