@@ -3,12 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 
 import { userStateSlice } from './user';
+import { persistUserStateMiddleware } from './user/middleware/persist-user-state.middleware';
 
 export const rootStore = configureStore({
   reducer: {
     [userStateSlice.name]: userStateSlice.reducer,
   },
   devTools: false,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware().concat(persistUserStateMiddleware.middleware),
   enhancers: (getDefaultEnhancers) =>
     getDefaultEnhancers().concat(
       devToolsEnhancer({

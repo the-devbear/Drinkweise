@@ -3,15 +3,10 @@ import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { isSerializedCodedError } from '@drinkweise/lib/utils/redux/is-serialize-error';
 import { useAppDispatch } from '@drinkweise/store';
 import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-with-apple.action';
-import type { UserModel } from '@drinkweise/store/user/models/user.model';
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { Alert, Platform } from 'react-native';
 
-interface AppleAuthButtonProps {
-  onSuccessfulSignIn: (user: UserModel) => Promise<void> | void;
-}
-
-export function AppleAuthButton({ onSuccessfulSignIn }: AppleAuthButtonProps) {
+export function AppleAuthButton() {
   const { isDarkColorScheme } = useColorScheme();
   const dispatch = useAppDispatch();
   if (Platform.OS !== 'ios') {
@@ -32,7 +27,6 @@ export function AppleAuthButton({ onSuccessfulSignIn }: AppleAuthButtonProps) {
         const response = await dispatch(signInWithAppleAction());
 
         if (signInWithAppleAction.fulfilled.match(response)) {
-          await onSuccessfulSignIn(response.payload.user);
           return;
         }
 

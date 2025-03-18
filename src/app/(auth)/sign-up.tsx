@@ -11,7 +11,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'expo-router';
 import { cssInterop } from 'nativewind';
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { View, TouchableOpacity, Alert } from 'react-native';
 import { z } from 'zod';
@@ -53,18 +53,10 @@ export default function SignUpPage() {
 
         if (signUpWithPasswordAction.rejected.match(response)) {
           Alert.alert('Error', response.payload?.message ?? 'An unexpected error happened');
-          return;
         }
-
-        console.log('Sign up successful', JSON.stringify(response.payload, null, 2));
-        router.replace('/');
       }),
-    [dispatch, handleSubmit, router]
+    [dispatch, handleSubmit]
   );
-
-  const onSuccessfulSignIn = useCallback(() => {
-    router.replace('/');
-  }, [router]);
 
   return (
     <KeyboardAvoidingPage>
@@ -130,8 +122,8 @@ export default function SignUpPage() {
         </Button>
         <Divider text='or' />
         <View className='flex-col items-center gap-2 pb-2'>
-          <AppleAuthButton onSuccessfulSignIn={onSuccessfulSignIn} />
-          <GoogleAuthButton onSuccessfulSignIn={onSuccessfulSignIn} />
+          <AppleAuthButton />
+          <GoogleAuthButton />
         </View>
         <View className='flex-col items-center'>
           <Text>Already have an account?</Text>

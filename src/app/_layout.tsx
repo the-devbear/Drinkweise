@@ -7,6 +7,7 @@ import {
   useColorScheme,
   useInitialAndroidBarSync,
 } from '@drinkweise/lib/useColorScheme';
+import { AuthProvider } from '@drinkweise/providers/AuthProvider';
 import { rootStore } from '@drinkweise/store';
 import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
@@ -52,10 +53,12 @@ export default function RootLayout() {
           <BottomSheetModalProvider>
             <ActionSheetProvider>
               <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
-                <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
-                  <Stack.Screen name='(auth)' />
-                  <Stack.Screen name='(app)' />
-                </Stack>
+                <AuthProvider>
+                  <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name='(auth)' />
+                    <Stack.Screen name='(app)' />
+                  </Stack>
+                </AuthProvider>
               </NavThemeProvider>
             </ActionSheetProvider>
           </BottomSheetModalProvider>

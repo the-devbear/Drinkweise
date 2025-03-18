@@ -7,7 +7,7 @@ export const supabase: TypedSupabaseClient = createClient(Env.SUPABASE_URL, Env.
   auth: {
     storage: supabaseStorage,
     autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true,
+    persistSession: false,
+    detectSessionInUrl: false,
   },
 });
