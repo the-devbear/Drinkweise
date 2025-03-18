@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from './../../index';
 
 export const persistUserStateMiddleware = createListenerMiddleware();
 
-const LISTENER_DELAY = 5000;
+const LISTENER_DELAY = 2000;
 
 const startPersistUserStateListener = persistUserStateMiddleware.startListening.withTypes<
   RootState,
