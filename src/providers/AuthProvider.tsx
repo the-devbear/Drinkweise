@@ -98,14 +98,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     if (isInternetReachable === null) return;
 
-    // const {
-    //   data: { subscription: authSubscription },
-    // } = supabase.auth.onAuthStateChange(handleAuthStateChange);
+    const {
+      data: { subscription: authSubscription },
+    } = supabase.auth.onAuthStateChange(handleAuthStateChange);
 
     const appStateSubscription = AppState.addEventListener('change', handleAppStateChange);
 
     return () => {
-      // authSubscription.unsubscribe();
+      authSubscription.unsubscribe();
       appStateSubscription.remove();
     };
   }, [isInternetReachable, handleAuthStateChange, handleAppStateChange]);

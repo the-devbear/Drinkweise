@@ -40,9 +40,7 @@ export default function RootLayout() {
 
   useInitialAndroidBarSync();
   const { isDarkColorScheme } = useColorScheme();
-  React.useEffect(() => {
-    new Promise((resolve) => setTimeout(resolve, 500)).then(() => SplashScreen.hide());
-  }, []);
+  SplashScreen.hide();
 
   return (
     <>
