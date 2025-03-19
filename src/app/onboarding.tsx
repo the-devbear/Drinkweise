@@ -1,3 +1,4 @@
+import { Dot } from '@drinkweise/components/onboarding/Dot';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { useRef } from 'react';
@@ -69,11 +70,12 @@ export default function OnboardingPage() {
           {Array.from({ length: 3 }).map((_, index) => (
             <TouchableOpacity
               key={index}
+              hitSlop={{ top: 15, right: 4, bottom: 15, left: 4 }}
               onPress={() => {
                 flatListRef.current?.scrollToIndex({ index });
-              }}
-              className='h-6 w-6 rounded-full bg-gray-200'
-            />
+              }}>
+              <Dot index={index} x={x} screenWidth={width} isCompleted={index <= 1} />
+            </TouchableOpacity>
           ))}
         </View>
         <View className='flex-row items-stretch justify-between gap-3 px-5 pb-12'>
