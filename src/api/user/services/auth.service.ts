@@ -71,6 +71,12 @@ export class AuthService implements IAuthService {
             return { error: { message: 'Sign in required' } };
         }
       }
+
+      if (this.hasErrorMessage(error)) {
+        return { error: { message: error.message } };
+      }
+
+      console.error('Error signing in with Google', error);
       return { error: { message: 'An unexpected error happened' } };
     }
   }
@@ -117,6 +123,9 @@ export class AuthService implements IAuthService {
     } catch (error) {
       if (isCodedError(error)) {
         return { error };
+      }
+      if (this.hasErrorMessage(error)) {
+        return { error: { message: error.message } };
       }
       return { error: { message: 'An unexpected error happened' } };
     }
@@ -230,5 +239,9 @@ export class AuthService implements IAuthService {
         hasCompletedOnboarding: data.has_completed_onboarding,
       },
     };
+  }
+
+  private hasErrorMessage(error: unknown): error is { message: string } {
+    return !!error && typeof error === 'object' && 'message' in error;
   }
 }
