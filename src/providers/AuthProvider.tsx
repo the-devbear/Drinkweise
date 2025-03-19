@@ -127,7 +127,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     if (user && isAuthRoute) {
       console.log('[ROUTE] Redirecting to home (user already signed in)');
-      router.replace('/onboarding');
+      router.replace('/');
     }
   }, [router, user, isAuthRoute]);
 
