@@ -40,6 +40,13 @@ export default function RootLayout() {
 
   useInitialAndroidBarSync();
   const { isDarkColorScheme } = useColorScheme();
+  React.useEffect(() => {
+    // Set small timeout, so the splash screen doesn't flicker.
+    // Also so the user doesn't get to see the home screen for a second before maybe being redirected
+    new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+      SplashScreen.hide();
+    });
+  }, []);
   SplashScreen.hide();
 
   return (
