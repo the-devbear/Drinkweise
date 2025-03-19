@@ -120,7 +120,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
 
     if (user && !user.hasCompletedOnboarding) {
-      // TODO: Will be implemented in DRINK-13
       console.log('[ROUTE] User needs to complete onboarding');
       router.replace('/onboarding');
       return;
