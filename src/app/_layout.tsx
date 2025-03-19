@@ -20,12 +20,13 @@ import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider as ReduxProvider } from 'react-redux';
 
+SplashScreen.preventAutoHideAsync();
+
 SplashScreen.setOptions({
   duration: 500,
   fade: true,
 });
 
-SplashScreen.preventAutoHideAsync();
 loadSelectedTheme();
 
 export {
@@ -43,11 +44,10 @@ export default function RootLayout() {
   React.useEffect(() => {
     // Set small timeout, so the splash screen doesn't flicker.
     // Also so the user doesn't get to see the home screen for a second before maybe being redirected
-    new Promise((resolve) => setTimeout(resolve, 500)).then(() => {
+    new Promise((resolve) => setTimeout(resolve, 250)).then(() => {
       SplashScreen.hide();
     });
   }, []);
-  SplashScreen.hide();
 
   return (
     <>
