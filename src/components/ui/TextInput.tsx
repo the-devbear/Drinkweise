@@ -151,6 +151,7 @@ const TextInput = forwardRef<RNTextInput, TextInputProps>(
               }),
               inputClassName
             )}
+            hitSlop={{ top: 12, right: 16, bottom: 12, left: 16 }}
             placeholderTextColor={placeholderTextColor ?? defaultPlaceholderColor}
             editable={!disabled}
             onFocus={handleFocus}
