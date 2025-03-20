@@ -1,7 +1,7 @@
 import { Dot } from '@drinkweise/components/onboarding/Dot';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
-import { useRef } from 'react';
+import React, { ReactElement, useCallback, useRef } from 'react';
 import {
   FlatList,
   Platform,
@@ -17,6 +17,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const ONBOARDING_STEPS = ['WELCOME', 'DETIALS', 'COMPLETE'] as const;
+type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
+
 export default function OnboardingPage() {
   const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
@@ -30,12 +33,29 @@ export default function OnboardingPage() {
     },
   });
 
+  const renderOnboardingStep = useCallback(
+    (step: OnboardingStep): ReactElement => {
+      switch (step) {
+        case 'WELCOME':
+        case 'DETIALS':
+        case 'COMPLETE':
+          return (
+            <View className='flex-1 items-center justify-center' style={{ width }}>
+              <Text variant='largeTitle'>{step} Page</Text>
+            </View>
+          );
+      }
+    },
+    [width]
+  );
+
   return (
     <SafeAreaView
       style={{ flex: 1, paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0 }}>
       <View className='flex-1'>
         <Animated.FlatList
           ref={flatListRef}
+          data={ONBOARDING_STEPS}
           horizontal
           pagingEnabled
           showsHorizontalScrollIndicator={false}
@@ -55,15 +75,10 @@ export default function OnboardingPage() {
           }}
           viewabilityConfig={{ viewAreaCoveragePercentThreshold: 75 }}
           snapToInterval={width}
-          data={['Welcome', 'Details', 'Complete']}
           bounces={false}
           decelerationRate='fast'
           overScrollMode='never'
-          renderItem={({ item }) => (
-            <View className='flex-1 items-center justify-center' style={{ width }}>
-              <Text variant='largeTitle'>{item} Page</Text>
-            </View>
-          )}
+          renderItem={({ item }) => renderOnboardingStep(item)}
         />
         <View className='flex-row justify-center gap-3 pb-5'>
           {Array.from({ length: 3 }).map((_, index) => (
