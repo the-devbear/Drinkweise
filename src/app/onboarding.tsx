@@ -1,4 +1,5 @@
 import { Dot } from '@drinkweise/components/onboarding/Dot';
+import { WelcomeOnboardingStep } from '@drinkweise/components/onboarding/WelcomeOnboardingStep';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import React, { ReactElement, useCallback, useRef } from 'react';
@@ -37,6 +38,7 @@ export default function OnboardingPage() {
     (step: OnboardingStep): ReactElement => {
       switch (step) {
         case 'WELCOME':
+          return <WelcomeOnboardingStep />;
         case 'DETIALS':
         case 'COMPLETE':
           return (
@@ -78,7 +80,11 @@ export default function OnboardingPage() {
           bounces={false}
           decelerationRate='fast'
           overScrollMode='never'
-          renderItem={({ item }) => renderOnboardingStep(item)}
+          renderItem={({ item }) => (
+            <View key={item} className='flex-1' style={{ width }}>
+              {renderOnboardingStep(item)}
+            </View>
+          )}
         />
         <View className='flex-row justify-center gap-3 pb-5'>
           {Array.from({ length: 3 }).map((_, index) => (
