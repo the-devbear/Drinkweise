@@ -18,7 +18,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-const ONBOARDING_STEPS = ['WELCOME', 'DETIALS', 'COMPLETE'] as const;
+const ONBOARDING_STEPS = ['WELCOME', 'DETAILS', 'COMPLETE'] as const;
 type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
 
 export default function OnboardingPage() {
@@ -35,15 +35,15 @@ export default function OnboardingPage() {
   });
 
   const renderOnboardingStep = useCallback(
-    (step: OnboardingStep): ReactElement => {
-      switch (step) {
+    (onboardingStep: OnboardingStep): ReactElement => {
+      switch (onboardingStep) {
         case 'WELCOME':
           return <WelcomeOnboardingStep />;
-        case 'DETIALS':
+        case 'DETAILS':
         case 'COMPLETE':
           return (
             <View className='flex-1 items-center justify-center' style={{ width }}>
-              <Text variant='largeTitle'>{step} Page</Text>
+              <Text variant='largeTitle'>{onboardingStep} Page</Text>
             </View>
           );
       }
