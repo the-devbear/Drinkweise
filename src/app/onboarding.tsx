@@ -25,7 +25,7 @@ export default function OnboardingPage() {
   const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
 
-  const step = useSharedValue(1);
+  const step = useSharedValue(0);
   const x = useSharedValue(0);
 
   const onScroll = useAnimatedScrollHandler({
@@ -87,14 +87,14 @@ export default function OnboardingPage() {
           )}
         />
         <View className='flex-row justify-center gap-3 pb-5'>
-          {Array.from({ length: 3 }).map((_, index) => (
+          {ONBOARDING_STEPS.map((_, index) => (
             <TouchableOpacity
               key={index}
               hitSlop={{ top: 15, right: 4, bottom: 15, left: 4 }}
               onPress={() => {
                 flatListRef.current?.scrollToIndex({ index });
               }}>
-              <Dot index={index} x={x} screenWidth={width} isCompleted={index <= 1} />
+              <Dot index={index} x={x} screenWidth={width} />
             </TouchableOpacity>
           ))}
         </View>
