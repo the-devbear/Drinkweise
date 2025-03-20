@@ -2,17 +2,48 @@ import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { AnimatedText } from '@drinkweise/ui/Text';
 import { TextInput } from '@drinkweise/ui/TextInput';
 import { Ionicons } from '@expo/vector-icons';
+import { useEffect } from 'react';
 import { View } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withRepeat,
+  withTiming,
+  Easing,
+  withSequence,
+} from 'react-native-reanimated';
 
 export interface WelcomeOnboardingStepProps {}
 
 export function WelcomeOnboardingStep({}: WelcomeOnboardingStepProps) {
   const { colors } = useColorScheme();
+  const rotation = useSharedValue(0);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [{ rotate: `${rotation.value}deg` }],
+    };
+  });
+
+  useEffect(() => {
+    rotation.value = withRepeat(
+      withSequence(
+        withTiming(20, { duration: 1000, easing: Easing.linear }),
+        withTiming(-20, { duration: 1000, easing: Easing.linear })
+      ),
+      -1,
+      true
+    );
+  }, [rotation]);
 
   return (
     <View className='flex-1 p-5'>
-      <Animated.View entering={FadeIn.delay(300)} className='mb-5 mt-10 items-center'>
+      <Animated.View
+        entering={FadeIn.delay(300)}
+        className='mb-5 mt-10 items-center'
+        style={animatedStyle}>
         <Ionicons size={64} name='beer-outline' color={colors.primary} />
       </Animated.View>
       <View className='flex-1'>
