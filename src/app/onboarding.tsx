@@ -44,8 +44,7 @@ export default function OnboardingPage() {
           onScroll={onScroll}
           onScrollToIndexFailed={async (info) => {
             console.log('scroll to index failed', info);
-            const wait = await new Promise((resolve) => setTimeout(resolve, 100));
-            await wait;
+            await new Promise((resolve) => setTimeout(resolve, 100));
             flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
           }}
           onViewableItemsChanged={({ viewableItems }) => {
@@ -78,7 +77,7 @@ export default function OnboardingPage() {
             </TouchableOpacity>
           ))}
         </View>
-        <View className='flex-row items-stretch justify-between gap-3 px-5 pb-12'>
+        <View className='flex-row items-stretch justify-between gap-3 px-5 pb-3'>
           <Button
             variant='tonal'
             onPress={() => flatListRef.current?.scrollToIndex({ index: step.value - 1 })}>
