@@ -2,6 +2,7 @@ import { Dot } from '@drinkweise/components/onboarding/Dot';
 import { WelcomeOnboardingStep } from '@drinkweise/components/onboarding/WelcomeOnboardingStep';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
+import { useOnboardingForm } from '@drinkweise/lib/forms/onboarding';
 import React, { ReactElement, useCallback, useRef } from 'react';
 import {
   FlatList,
@@ -34,11 +35,13 @@ export default function OnboardingPage() {
     },
   });
 
+  const { control } = useOnboardingForm();
+
   const renderOnboardingStep = useCallback(
     (onboardingStep: OnboardingStep): ReactElement => {
       switch (onboardingStep) {
         case 'WELCOME':
-          return <WelcomeOnboardingStep />;
+          return <WelcomeOnboardingStep control={control} />;
         case 'DETAILS':
         case 'COMPLETE':
           return (
@@ -48,7 +51,7 @@ export default function OnboardingPage() {
           );
       }
     },
-    [width]
+    [width, control]
   );
 
   return (
