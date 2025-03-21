@@ -5,8 +5,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-export const ONBOARDING_STEPS = ['WELCOME', 'DETAILS', 'COMPLETE'] as const;
-export type OnboardingStep = (typeof ONBOARDING_STEPS)[number];
+export const ONBOARDING_STEPS = {
+  WELCOME: 0,
+  DETAILS: 1,
+  COMPLETE: 2,
+} as const;
+export type OnboardingStep = keyof typeof ONBOARDING_STEPS;
 
 export const onboardingSchema = z.object({
   username: z
@@ -34,10 +38,10 @@ export function useOnboardingForm() {
   const user = useAppSelector(selectUser);
   return useForm({
     defaultValues: {
-      username: user?.username.includes('@') ? '' : user?.username,
+      username: user?.username.includes('@') ? '' : (user?.username ?? ''),
     },
     shouldFocusError: false,
-    mode: 'onBlur',
+    mode: 'onTouched',
     reValidateMode: 'onChange',
     resolver: zodResolver(onboardingSchema),
   });
