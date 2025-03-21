@@ -10,7 +10,12 @@ import {
 import { never } from '@drinkweise/lib/utils/never';
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import { FlatList, Platform, StatusBar, useWindowDimensions, View } from 'react-native';
-import Animated, { useAnimatedScrollHandler, useSharedValue } from 'react-native-reanimated';
+import Animated, {
+  useAnimatedScrollHandler,
+  useSharedValue,
+  useAnimatedStyle,
+  interpolate,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function OnboardingPage() {
@@ -44,6 +49,7 @@ export default function OnboardingPage() {
     },
     [width, control]
   );
+
   const navigateToNextStep = useCallback(async (): Promise<void> => {
     let isValid = false;
 
@@ -74,6 +80,12 @@ export default function OnboardingPage() {
 
     // TODO: Handle form submission this is going to be implemented in DRINK-16
   }, [currentStep, trigger, handleSubmit]);
+
+  const backButtonAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(x.value, [0, width], [0, 1]),
+    };
+  });
 
   return (
     <SafeAreaView
@@ -117,17 +129,19 @@ export default function OnboardingPage() {
           ))}
         </View>
         <View className='flex-row items-stretch justify-between gap-3 px-5 pb-3'>
-          <Button
-            variant='tonal'
-            onPress={() => {
-              const step = ONBOARDING_STEPS[currentStep];
-              if (step === 0) {
-                return;
-              }
-              flatListRef.current?.scrollToIndex({ index: step - 1 });
-            }}>
-            <Text>Back</Text>
-          </Button>
+          <Animated.View style={backButtonAnimatedStyle}>
+            <Button
+              variant='tonal'
+              onPress={() => {
+                const step = ONBOARDING_STEPS[currentStep];
+                if (step === 0) {
+                  return;
+                }
+                flatListRef.current?.scrollToIndex({ index: step - 1 });
+              }}>
+              <Text className='flex-shrink-0'>Back</Text>
+            </Button>
+          </Animated.View>
           <Button className='flex-1' onPress={navigateToNextStep}>
             <Text>Continue</Text>
           </Button>
