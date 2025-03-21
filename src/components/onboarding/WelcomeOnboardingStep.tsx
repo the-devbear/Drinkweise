@@ -73,7 +73,7 @@ export function WelcomeOnboardingStep({ control }: WelcomeOnboardingStepProps) {
               placeholder='Enter a username'
               value={value}
               onBlur={onBlur}
-              onChangeText={onChange}
+              onChangeText={(text) => onChange(text.trimEnd())}
               errorMessage={error?.message}
             />
           )}
