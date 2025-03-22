@@ -40,7 +40,25 @@ export default function OnboardingPage() {
     },
   });
 
-  const { control, trigger, handleSubmit } = useOnboardingForm();
+  const {
+    control,
+    trigger,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useOnboardingForm();
+
+  const validateCurrentStep = useCallback(() => {
+    switch (currentStep) {
+      case 'WELCOME':
+        return !!errors.username;
+      case 'DETAILS':
+        return !!errors.height || !!errors.weight || !!errors.gender;
+      case 'COMPLETE':
+        return false;
+      default:
+        return never(currentStep);
+    }
+  }, [currentStep, errors]);
 
   const renderOnboardingStep = useCallback(
     (onboardingStep: OnboardingStep): ReactElement => {
@@ -171,29 +189,34 @@ export default function OnboardingPage() {
             </View>
           )}
         />
-        <View className='flex-row justify-center gap-3 pb-5'>
-          {Object.keys(ONBOARDING_STEPS).map((key, index) => (
-            <Dot key={key} index={index} x={x} screenWidth={width} />
-          ))}
-        </View>
-        <View className='flex-row items-stretch justify-between gap-3 px-5 pb-3'>
-          <Animated.View style={backButtonAnimatedStyle}>
+        <Animated.View entering={FadeInDown.delay(1100)}>
+          <View className='flex-row justify-center gap-3 pb-5'>
+            {Object.keys(ONBOARDING_STEPS).map((key, index) => (
+              <Dot key={key} index={index} x={x} screenWidth={width} />
+            ))}
+          </View>
+          <View className='flex-row items-stretch justify-between gap-3 px-5 pb-3'>
+            <Animated.View style={backButtonAnimatedStyle}>
+              <Button
+                variant='tonal'
+                onPress={() => {
+                  const step = ONBOARDING_STEPS[currentStep];
+                  if (step === 0) {
+                    return;
+                  }
+                  flatListRef.current?.scrollToIndex({ index: step - 1 });
+                }}>
+                <Text className='flex-shrink-0'>Back</Text>
+              </Button>
+            </Animated.View>
             <Button
-              variant='tonal'
-              onPress={() => {
-                const step = ONBOARDING_STEPS[currentStep];
-                if (step === 0) {
-                  return;
-                }
-                flatListRef.current?.scrollToIndex({ index: step - 1 });
-              }}>
-              <Text className='flex-shrink-0'>Back</Text>
+              className='flex-1'
+              loading={isSubmitting}
+              onPress={navigateToNextStep}
+              disabled={validateCurrentStep()}>
+              <Text>Continue</Text>
             </Button>
-          </Animated.View>
-          <Button className='flex-1' onPress={navigateToNextStep}>
-            <Text>Continue</Text>
-          </Button>
-        </View>
+          </View>
         </Animated.View>
       </View>
     </SafeAreaView>
