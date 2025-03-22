@@ -9,7 +9,15 @@ import {
 } from '@drinkweise/lib/forms/onboarding';
 import { never } from '@drinkweise/lib/utils/never';
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
-import { FlatList, Platform, StatusBar, useWindowDimensions, View } from 'react-native';
+import {
+  Alert,
+  FlatList,
+  Platform,
+  StatusBar,
+  useWindowDimensions,
+  View,
+  type ViewToken,
+} from 'react-native';
 import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
@@ -74,12 +82,57 @@ export default function OnboardingPage() {
       return;
     }
 
+    // TODO: Handle form submission this is going to be implemented in DRINK-16
     handleSubmit((data) => {
       console.log('form submitted', data);
     });
-
-    // TODO: Handle form submission this is going to be implemented in DRINK-16
   }, [currentStep, trigger, handleSubmit]);
+
+  const handleOnboardingStepSwipe = useCallback(
+    async ({ viewableItems }: { viewableItems: ViewToken<OnboardingStep>[] }) => {
+      const viewableItem = viewableItems[0];
+
+      if (!viewableItem) {
+        return;
+      }
+
+      const swipingToStep = ONBOARDING_STEPS[viewableItem.item];
+      const step = ONBOARDING_STEPS[currentStep];
+
+      if (swipingToStep === step) {
+        return;
+      }
+
+      // Always allow swiping back
+      if (swipingToStep < step) {
+        setCurrentStep(viewableItem.item);
+        return;
+      }
+
+      let isValid = false;
+
+      switch (currentStep) {
+        case 'WELCOME':
+          isValid = await trigger(['username']);
+          break;
+        case 'DETAILS':
+          isValid = await trigger(['height', 'weight', 'gender']);
+          break;
+        case 'COMPLETE':
+          break;
+        default:
+          never(currentStep);
+      }
+
+      if (isValid) {
+        setCurrentStep(viewableItem.item);
+      } else {
+        flatListRef.current?.scrollToIndex({ index: step });
+        Alert.alert('Please fill out the form, before continuing');
+      }
+    },
+    [currentStep, trigger]
+  );
 
   const backButtonAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -105,13 +158,7 @@ export default function OnboardingPage() {
             await new Promise((resolve) => setTimeout(resolve, 100));
             flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
           }}
-          onViewableItemsChanged={({ viewableItems }) => {
-            const viewableItem = viewableItems[0];
-            if (!viewableItem) {
-              return;
-            }
-            setCurrentStep(viewableItem.item);
-          }}
+          onViewableItemsChanged={handleOnboardingStepSwipe}
           viewabilityConfig={{ viewAreaCoveragePercentThreshold: 75 }}
           snapToInterval={width}
           bounces={false}
