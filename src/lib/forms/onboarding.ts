@@ -41,7 +41,7 @@ export function useOnboardingForm() {
       username: user?.username.includes('@') ? '' : (user?.username ?? ''),
     },
     shouldFocusError: false,
-    mode: 'onTouched',
+    mode: 'onChange',
     reValidateMode: 'onChange',
     resolver: zodResolver(onboardingSchema),
   });
