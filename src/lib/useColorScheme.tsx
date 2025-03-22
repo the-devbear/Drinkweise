@@ -1,10 +1,10 @@
+import { storage } from '@drinkweise/lib/storage/mmkv';
 import { COLORS } from '@drinkweise/theme/colors';
 import * as NavigationBar from 'expo-navigation-bar';
 import { colorScheme, useColorScheme as useNativewindColorScheme } from 'nativewind';
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { useMMKVString } from 'react-native-mmkv';
-import { storage } from './storage/mmkv';
 
 const SELECTED_THEME_KEY = 'selected-theme';
 export type ColorScheme = 'light' | 'dark' | 'system';

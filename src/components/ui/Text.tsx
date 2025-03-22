@@ -3,6 +3,7 @@ import { VariantProps, cva } from 'class-variance-authority';
 import { cssInterop } from 'nativewind';
 import * as React from 'react';
 import { Text as RNText, TextProps } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { UITextView } from 'react-native-uitextview';
 
 cssInterop(UITextView, { className: 'style' });
@@ -67,4 +68,6 @@ const LinkText = React.forwardRef<RNText, VariantProps<typeof textVariants> & Te
 
 LinkText.displayName = 'LinkText';
 
-export { Text, LinkText, TextClassContext, textVariants };
+const AnimatedText = Animated.createAnimatedComponent(LinkText);
+
+export { Text, LinkText, TextClassContext, textVariants, AnimatedText };
