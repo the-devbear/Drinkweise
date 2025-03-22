@@ -21,12 +21,18 @@ export const onboardingSchema = z.object({
       message: 'Username can only contain letters, numbers, and underscores',
     }),
   height: z
-    .number({ required_error: 'A height between 80 and 250cm must be provided' })
+    .number({
+      required_error: 'A height between 80 and 250cm must be provided',
+      invalid_type_error: 'Height must be a number',
+    })
     .int({ message: 'Height must be a whole number' })
     .min(80, { message: 'Height must be at least 80' })
     .max(250, { message: 'Height must be at most 250' }),
   weight: z
-    .number({ required_error: 'A weight between 30 and 250kg must be provided' })
+    .number({
+      required_error: 'A weight between 30 and 250kg must be provided',
+      invalid_type_error: 'Weight must be a number',
+    })
     .min(30, { message: 'Weight must be at least 30' })
     .max(250, { message: 'Weight must be at most 250' }),
   gender: z.custom<UserModel['gender']>(),
