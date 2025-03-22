@@ -23,6 +23,7 @@ import Animated, {
   useSharedValue,
   useAnimatedStyle,
   interpolate,
+  FadeInDown,
 } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -193,6 +194,7 @@ export default function OnboardingPage() {
             <Text>Continue</Text>
           </Button>
         </View>
+        </Animated.View>
       </View>
     </SafeAreaView>
   );
