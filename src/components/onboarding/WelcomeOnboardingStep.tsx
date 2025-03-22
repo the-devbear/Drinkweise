@@ -45,23 +45,23 @@ export function WelcomeOnboardingStep({ control }: WelcomeOnboardingStepProps) {
   return (
     <View className='flex-1 p-5'>
       <Animated.View
-        entering={FadeIn.delay(300)}
+        entering={FadeIn.delay(200)}
         className='mb-5 mt-[20vw] items-center'
         style={animatedStyle}>
         <Ionicons size={64} name='beer-outline' color={colors.primary} />
       </Animated.View>
       <AnimatedText
-        entering={FadeInDown.delay(600)}
+        entering={FadeInDown.delay(500)}
         variant='title1'
         className='mb-4 text-center font-bold'>
         Welcome to Drinkweise!
       </AnimatedText>
       <AnimatedText
-        entering={FadeInDown.delay(900)}
+        entering={FadeInDown.delay(700)}
         className='text-center text-gray-600 dark:text-gray-400'>
         Track your drinks, understand your habits, and maintain a healthy relationship with alcohol.
       </AnimatedText>
-      <Animated.View entering={FadeInDown.delay(1200)} className='p-6'>
+      <Animated.View entering={FadeInDown.delay(900)} className='p-6'>
         <Controller
           control={control}
           name='username'
