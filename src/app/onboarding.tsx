@@ -1,3 +1,4 @@
+import { DetailsOnboardingStep } from '@drinkweise/components/onboarding/DetailsOnboardingStep';
 import { Dot } from '@drinkweise/components/onboarding/Dot';
 import { WelcomeOnboardingStep } from '@drinkweise/components/onboarding/WelcomeOnboardingStep';
 import { Button } from '@drinkweise/components/ui/Button';
@@ -66,6 +67,7 @@ export default function OnboardingPage() {
         case 'WELCOME':
           return <WelcomeOnboardingStep control={control} />;
         case 'DETAILS':
+          return <DetailsOnboardingStep control={control} />;
         case 'COMPLETE':
           return (
             <View className='flex-1 items-center justify-center' style={{ width }}>
@@ -170,7 +172,7 @@ export default function OnboardingPage() {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           keyboardDismissMode='on-drag'
-          initialScrollIndex={0}
+          initialScrollIndex={1}
           onScroll={onScroll}
           onScrollToIndexFailed={async (info) => {
             console.log('scroll to index failed', info);
