@@ -1,5 +1,5 @@
 import { useAppSelector } from '@drinkweise/store';
-import { selectUser } from '@drinkweise/store/user';
+import { userSelector } from '@drinkweise/store/user';
 import { UserModel } from '@drinkweise/store/user/models/user.model';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -35,7 +35,7 @@ export const onboardingSchema = z.object({
 export type OnboardingFormData = z.infer<typeof onboardingSchema>;
 
 export function useOnboardingForm() {
-  const user = useAppSelector(selectUser);
+  const user = useAppSelector(userSelector);
   return useForm({
     defaultValues: {
       username: user?.username.includes('@') ? '' : (user?.username ?? ''),
