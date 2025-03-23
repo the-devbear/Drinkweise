@@ -1,34 +1,26 @@
 import { OnboardingFormControl } from '@drinkweise/lib/forms/onboarding';
+import { BottomSheetPicker } from '@drinkweise/ui/BottomSheetPicker';
 import { Text } from '@drinkweise/ui/Text';
 import { TextInput } from '@drinkweise/ui/TextInput';
-import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { View } from 'react-native';
 
-import { BottomSheetPicker } from '../ui/BottomSheetPicker';
+import { ExpandableDetailsInfoCard } from './ExpandableDetailsInfoCard';
 
 export interface DetailsOnboardingStepProps {
   control: OnboardingFormControl;
 }
 
 export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
+  const [infoExpanded, setInfoExpanded] = useState(false);
+
   return (
     <View className='flex-1 gap-5 p-5 pt-10'>
       <Text variant='title2' className='font-semibold'>
         Complete your profile
       </Text>
-      {/* TODO: make it expandable */}
-      <View className='gap-2 rounded-lg bg-blue-200 p-3'>
-        {/* <Text variant='title3' className='font-medium'> */}
-        <View className='flex-row items-center justify-between'>
-          <Text variant='heading'>Why do we need this information?</Text>
-          <Ionicons size={20} name='chevron-up' />
-        </View>
-        <Text className='text-sm text-gray-800 dark:text-gray-200'>
-          {/* TODO: more text */}
-          We use this information to provide you with personalized recommendations and insights.
-        </Text>
-      </View>
+      <ExpandableDetailsInfoCard infoExpanded={infoExpanded} setInfoExpanded={setInfoExpanded} />
       <Controller
         control={control}
         name='height'
@@ -42,6 +34,7 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
             clearButtonMode='while-editing'
             autoCapitalize='none'
             autoCorrect={false}
+            onFocus={() => setInfoExpanded(false)}
             onChangeText={(value) => {
               // TODO: This needs to be improved
               const parsedValue = parseInt(value, 10);
@@ -67,6 +60,7 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
             placeholder='Enter your weight'
             keyboardType='numeric'
             clearButtonMode='while-editing'
+            onFocus={() => setInfoExpanded(false)}
             onChangeText={(value) => {
               // TODO: This needs to be improved
               const parsedValue = parseFloat(value);
