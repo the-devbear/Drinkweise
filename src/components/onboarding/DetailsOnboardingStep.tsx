@@ -1,11 +1,11 @@
 import { OnboardingFormControl } from '@drinkweise/lib/forms/onboarding';
-import { Genders } from '@drinkweise/store/user/enums/gender';
-import { Picker, PickerItem } from '@drinkweise/ui/Picker';
 import { Text } from '@drinkweise/ui/Text';
 import { TextInput } from '@drinkweise/ui/TextInput';
 import { Ionicons } from '@expo/vector-icons';
 import { Controller } from 'react-hook-form';
 import { View } from 'react-native';
+
+import { BottomSheetPicker } from '../ui/BottomSheetPicker';
 
 export interface DetailsOnboardingStepProps {
   control: OnboardingFormControl;
@@ -17,7 +17,7 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
       <Text variant='title2' className='font-semibold'>
         Complete your profile
       </Text>
-      {/* TODO make it expandable */}
+      {/* TODO: make it expandable */}
       <View className='gap-2 rounded-lg bg-blue-200 p-3'>
         {/* <Text variant='title3' className='font-medium'> */}
         <View className='flex-row items-center justify-between'>
@@ -82,22 +82,33 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
           />
         )}
       />
+
       <Controller
         control={control}
         name='gender'
-        render={({ field: { onBlur, onChange, value } }) => (
-          <View className='gap-1'>
-            <Text className='text-sm text-gray-800 dark:text-gray-200'>Gender</Text>
-            <Picker selectedValue={value} onBlur={onBlur} onValueChange={onChange}>
-              {Object.entries(Genders).map(([key, value]) => (
-                <PickerItem
-                  key={key}
-                  value={value}
-                  label={value.at(0)?.toUpperCase() + value.slice(1)}
-                />
-              ))}
-            </Picker>
-          </View>
+        render={({ field: { onBlur, onChange, value }, fieldState: { error } }) => (
+          <BottomSheetPicker
+            selectedValue={value}
+            onItemSelected={(item) => onChange(item.value)}
+            onDismiss={onBlur}
+            label='Gender'
+            errorMessage={error?.message}
+            placeholder='Select your gender'
+            items={[
+              {
+                value: 'male',
+                label: 'Male',
+              },
+              {
+                label: 'Female',
+                value: 'female',
+              },
+              {
+                label: 'Other',
+                value: 'other',
+              },
+            ]}
+          />
         )}
       />
     </View>
