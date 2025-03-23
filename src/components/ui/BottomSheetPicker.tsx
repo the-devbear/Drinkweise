@@ -121,18 +121,14 @@ export function BottomSheetPicker<T extends ItemValue>({
               </Text>
             </View>
           )}
-          <View className='mx-5 flex-1 rounded-lg bg-background dark:bg-neutral-900 '>
+          <View className='dark:android:bg-gray-900 mx-5 flex-1 rounded-lg bg-background dark:bg-neutral-900'>
             {items.map((item, index) => (
               <TouchableOpacity key={item.value} onPress={() => onItemSelected(item)}>
                 <View
                   key={item.value}
-                  className={cn(
-                    'flex-row items-center justify-between border-b border-border px-5 py-4',
-                    {
-                      'border-b-none': index === items.length - 1,
-                      'rounded-lg ': selectedValue === item.value,
-                    }
-                  )}>
+                  className={cn('flex-row items-center justify-between border-border px-5 py-4', {
+                    'border-b': index !== items.length - 1,
+                  })}>
                   <Text className='text-[18px] leading-8'>{item.label}</Text>
                   <LayoutAnimationConfig skipEntering>
                     {selectedValue === item.value && (
