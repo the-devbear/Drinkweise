@@ -172,7 +172,7 @@ export default function OnboardingPage() {
           pagingEnabled
           showsHorizontalScrollIndicator={false}
           keyboardDismissMode='on-drag'
-          initialScrollIndex={1}
+          initialScrollIndex={0}
           onScroll={onScroll}
           onScrollToIndexFailed={async (info) => {
             console.log('scroll to index failed', info);
