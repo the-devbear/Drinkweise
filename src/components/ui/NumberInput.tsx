@@ -11,7 +11,7 @@ interface NumberInputProps
   /**
    * The initial value of the input field
    */
-  initailValue?: number;
+  initialValue?: number;
   /** Returns the parsed number or undefined if the input field is left empty */
   onValueChange?: (value?: number) => void;
   keyboardType?: 'number-pad' | 'decimal-pad' | 'numeric';
@@ -25,7 +25,7 @@ interface NumberInputProps
 const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
   (
     {
-      initailValue,
+      initialValue,
       keyboardType = 'numeric',
       onValueChange,
       onEndEditing,
@@ -38,9 +38,9 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
     const groupingSeparator = useMemo(() => locales[0]?.digitGroupingSeparator ?? ',', [locales]);
 
     const [displayValue, setDisplayValue] = useState(
-      initailValue === undefined || isNaN(initailValue)
+      initialValue === undefined || isNaN(initialValue)
         ? ''
-        : initailValue.toString().replaceAll('.', decimalSeparator)
+        : initialValue.toString().replaceAll('.', decimalSeparator)
     );
 
     const handleChangeText: (value: string) => void = useCallback(

@@ -40,7 +40,7 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
             autoCorrect={false}
             onFocus={() => setInfoExpanded(false)}
             onBlur={onBlur}
-            initailValue={defaultValues?.height}
+            initialValue={defaultValues?.height}
             onValueChange={onChange}
             errorMessage={error?.message}
           />
@@ -57,7 +57,7 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
           <NumberInput
             ref={ref}
             label='Weight (kg)'
-            initailValue={defaultValues?.weight}
+            initialValue={defaultValues?.weight}
             placeholder='Enter your weight in kilograms'
             keyboardType='numeric'
             clearButtonMode='while-editing'
