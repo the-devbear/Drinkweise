@@ -35,7 +35,7 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
   ) => {
     const locales = useLocales();
     const decimalSeparator = useMemo(() => locales[0]?.decimalSeparator ?? '.', [locales]);
-    const groupingSeperator = useMemo(() => locales[0]?.digitGroupingSeparator ?? ',', [locales]);
+    const groupingSeparator = useMemo(() => locales[0]?.digitGroupingSeparator ?? ',', [locales]);
 
     const [displayValue, setDisplayValue] = useState(
       initailValue === undefined || isNaN(initailValue)
@@ -56,7 +56,7 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
         if (value.length - displayValue.length > 1) {
           const parsedValue = value
             .replace(/[^0-9.,]/g, '')
-            .replaceAll(groupingSeperator, '')
+            .replaceAll(groupingSeparator, '')
             .replaceAll(decimalSeparator, '.');
 
           const numberValue = Number(parsedValue);
@@ -90,7 +90,7 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
           setDisplayValue(value);
         }
       },
-      [onValueChange, displayValue, decimalSeparator, groupingSeperator]
+      [onValueChange, displayValue, decimalSeparator, groupingSeparator]
     );
 
     const handleEndEditing: OnEndEditingType = useCallback(
