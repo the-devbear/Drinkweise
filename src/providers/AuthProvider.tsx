@@ -1,6 +1,10 @@
 import { supabase } from '@drinkweise/lib/supabase';
 import { rootStore, useAppDispatch, useAppSelector } from '@drinkweise/store';
-import { selectUser, supabaseSignOutAction, updateUserSessionAction } from '@drinkweise/store/user';
+import {
+  userSelector,
+  supabaseSignOutAction,
+  updateUserSessionAction,
+} from '@drinkweise/store/user';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { useRouter, useSegments } from 'expo-router';
@@ -42,7 +46,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const dispatch = useAppDispatch();
   const segments = useSegments();
   const { isInternetReachable } = useNetInfo();
-  const user = useAppSelector(selectUser);
+  const user = useAppSelector(userSelector);
   const isAuthRoute = segments[0] === '(auth)';
 
   const handleAuthStateChange = useCallback(
