@@ -32,7 +32,8 @@ export function ExpandableDetailsInfoCard({
   );
 
   useEffect(() => {
-    expansionValue.value = withTiming(infoExpanded ? 1 : 0, { duration: 500 });
+    const targetValue = infoExpanded ? 1 : 0;
+    expansionValue.value = withTiming(targetValue, { duration: 500 });
   }, [expansionValue, infoExpanded]);
 
   const infoContentStyle = useAnimatedStyle(() => {
