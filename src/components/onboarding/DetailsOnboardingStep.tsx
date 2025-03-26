@@ -1,7 +1,7 @@
 import { OnboardingFormControl } from '@drinkweise/lib/forms/onboarding';
 import { BottomSheetPicker } from '@drinkweise/ui/BottomSheetPicker';
+import { NumberInput } from '@drinkweise/ui/NumberInput';
 import { Text } from '@drinkweise/ui/Text';
-import { TextInput } from '@drinkweise/ui/TextInput';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { View } from 'react-native';
@@ -24,28 +24,24 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
       <Controller
         control={control}
         name='height'
-        render={({ field: { onBlur, onChange, value, ref }, fieldState: { error } }) => (
-          <TextInput
+        render={({
+          field: { onBlur, onChange, ref },
+          fieldState: { error },
+          formState: { defaultValues },
+        }) => (
+          <NumberInput
             ref={ref}
-            label='Height'
-            placeholder='Enter your height'
-            keyboardType='numeric'
+            label='Height (cm)'
+            placeholder='Enter your height in centimeters'
+            keyboardType='number-pad'
             textContentType='none'
             clearButtonMode='while-editing'
             autoCapitalize='none'
             autoCorrect={false}
             onFocus={() => setInfoExpanded(false)}
-            onChangeText={(value) => {
-              // TODO: This needs to be improved
-              const parsedValue = parseInt(value, 10);
-              if (isNaN(parsedValue)) {
-                onChange(null);
-              } else {
-                onChange(parsedValue);
-              }
-            }}
             onBlur={onBlur}
-            value={value?.toString()}
+            initailValue={defaultValues?.height}
+            onValueChange={onChange}
             errorMessage={error?.message}
           />
         )}
@@ -53,25 +49,21 @@ export function DetailsOnboardingStep({ control }: DetailsOnboardingStepProps) {
       <Controller
         control={control}
         name='weight'
-        render={({ field: { onBlur, onChange, value, ref }, fieldState: { error } }) => (
-          <TextInput
+        render={({
+          field: { onBlur, onChange, ref },
+          fieldState: { error },
+          formState: { defaultValues },
+        }) => (
+          <NumberInput
             ref={ref}
-            label='Weight'
-            placeholder='Enter your weight'
+            label='Weight (kg)'
+            initailValue={defaultValues?.weight}
+            placeholder='Enter your weight in kilograms'
             keyboardType='numeric'
             clearButtonMode='while-editing'
             onFocus={() => setInfoExpanded(false)}
-            onChangeText={(value) => {
-              // TODO: This needs to be improved
-              const parsedValue = parseFloat(value);
-              if (isNaN(parsedValue)) {
-                onChange(null);
-              } else {
-                onChange(parsedValue);
-              }
-            }}
+            onValueChange={onChange}
             onBlur={onBlur}
-            value={value?.toString()}
             errorMessage={error?.message}
           />
         )}
