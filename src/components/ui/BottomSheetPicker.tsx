@@ -125,7 +125,6 @@ export function BottomSheetPicker<T extends ItemValue>({
             {items.map((item, index) => (
               <TouchableOpacity key={item.value} onPress={() => onItemSelected(item)}>
                 <View
-                  key={item.value}
                   className={cn('flex-row items-center justify-between border-border px-5 py-4', {
                     'border-b': index !== items.length - 1,
                   })}>
