@@ -54,7 +54,6 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
         // A number was pasted in the input
         // We need to parse the number and update the value if it's valid
         if (value.length - displayValue.length > 1) {
-          console.log('pasted number', value);
           const parsedValue = value
             .replace(/[^0-9.,]/g, '')
             .replaceAll(groupingSeperator, '')
@@ -64,8 +63,14 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
 
           if (!isNaN(numberValue)) {
             onValueChange?.(numberValue);
-            setDisplayValue(parsedValue);
+            setDisplayValue(parsedValue.replace('.', decimalSeparator));
           }
+          return;
+        }
+
+        if (value.startsWith('-') && value.length === 1) {
+          onValueChange?.(-0);
+          setDisplayValue(value);
           return;
         }
 
@@ -97,9 +102,13 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
           return;
         }
 
+        // Remove leading zeros after minus sign
+        if (split[0] && split[0].length > 2 && split[0].startsWith('-0')) {
+          split[0] = split[0].replace(/^-0+/, '-');
+        }
+
         // Remove leading zeros
         if (split[0] && split[0].length > 1 && split[0].startsWith('0')) {
-          console.log('remove leading zeros');
           split[0] = split[0].replace(/^0+/, '');
         }
 
