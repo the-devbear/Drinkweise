@@ -1,3 +1,4 @@
+import { CompleteOnboardingStep } from '@drinkweise/components/onboarding/CompleteOnboardingStep';
 import { DetailsOnboardingStep } from '@drinkweise/components/onboarding/DetailsOnboardingStep';
 import { Dot } from '@drinkweise/components/onboarding/Dot';
 import { WelcomeOnboardingStep } from '@drinkweise/components/onboarding/WelcomeOnboardingStep';
@@ -61,6 +62,10 @@ export default function OnboardingPage() {
     }
   }, [currentStep, errors]);
 
+  const submitOnboardingForm = handleSubmit(async (data) => {
+    console.log('form submitted', data);
+  });
+
   const renderOnboardingStep = useCallback(
     (onboardingStep: OnboardingStep): ReactElement => {
       switch (onboardingStep) {
@@ -69,14 +74,10 @@ export default function OnboardingPage() {
         case 'DETAILS':
           return <DetailsOnboardingStep control={control} />;
         case 'COMPLETE':
-          return (
-            <View className='flex-1 items-center justify-center' style={{ width }}>
-              <Text variant='largeTitle'>{onboardingStep} Page</Text>
-            </View>
-          );
+          return <CompleteOnboardingStep isActive={currentStep === 'COMPLETE'} />;
       }
     },
-    [width, control]
+    [control, currentStep]
   );
 
   const navigateToNextStep = useCallback(async (): Promise<void> => {
@@ -103,11 +104,8 @@ export default function OnboardingPage() {
       return;
     }
 
-    // TODO: Handle form submission this is going to be implemented in DRINK-16
-    handleSubmit((data) => {
-      console.log('form submitted', data);
-    });
-  }, [currentStep, trigger, handleSubmit]);
+    await submitOnboardingForm();
+  }, [currentStep, trigger, submitOnboardingForm]);
 
   const handleOnboardingStepSwipe = useCallback(
     async ({ viewableItems }: { viewableItems: ViewToken<OnboardingStep>[] }) => {
@@ -216,7 +214,7 @@ export default function OnboardingPage() {
               loading={isSubmitting}
               onPress={navigateToNextStep}
               disabled={validateCurrentStep()}>
-              <Text>Continue</Text>
+              <Text>{currentStep === 'COMPLETE' ? 'Get started' : 'Continue'}</Text>
             </Button>
           </View>
         </Animated.View>
