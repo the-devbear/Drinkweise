@@ -3,6 +3,7 @@ import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-wi
 import { signInWithGoogleAction } from '@drinkweise/store/user/actions/sign-in-with-google.action';
 import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
+import { completeOnboardingAction } from './actions/complete-onboarding.action';
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
 import { signOutAction } from './actions/sign-out.action';
 import { signUpWithPasswordAction } from './actions/sign-up-with-password.action';
@@ -41,6 +42,19 @@ export const userStateSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(
+        completeOnboardingAction.fulfilled,
+        (state, { payload: { username, weight, height, gender } }) => {
+          if (state.status !== 'signedIn') {
+            return;
+          }
+          state.user.username = username;
+          state.user.height = height;
+          state.user.weight = weight;
+          state.user.gender = gender;
+          state.user.hasCompletedOnboarding = true;
+        }
+      )
       .addMatcher(
         isAnyOf(
           signInWithPasswordAction.fulfilled,

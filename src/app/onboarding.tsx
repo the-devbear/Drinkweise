@@ -10,6 +10,8 @@ import {
   useOnboardingForm,
 } from '@drinkweise/lib/forms/onboarding';
 import { never } from '@drinkweise/lib/utils/never';
+import { useAppDispatch } from '@drinkweise/store';
+import { completeOnboardingAction } from '@drinkweise/store/user/actions/complete-onboarding.action';
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import {
   Alert,
@@ -32,6 +34,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function OnboardingPage() {
   const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
+  const dispatch = useAppDispatch();
 
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('WELCOME');
   const x = useSharedValue(0);
@@ -63,7 +66,11 @@ export default function OnboardingPage() {
   }, [currentStep, errors]);
 
   const submitOnboardingForm = handleSubmit(async (data) => {
-    console.log('form submitted', data);
+    const result = await dispatch(completeOnboardingAction(data));
+
+    if (completeOnboardingAction.rejected.match(result)) {
+      Alert.alert('Failed to complete onboarding', result.payload?.message ?? 'An error occurred');
+    }
   });
 
   const renderOnboardingStep = useCallback(
