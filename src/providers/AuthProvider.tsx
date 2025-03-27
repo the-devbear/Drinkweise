@@ -47,7 +47,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const segments = useSegments();
   const { isInternetReachable } = useNetInfo();
   const user = useAppSelector(userSelector);
-  const isAuthRoute = segments[0] === '(auth)';
 
   const handleAuthStateChange = useCallback(
     (event: AuthChangeEvent, session: Session | null) => {
@@ -117,6 +116,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useInitializeSupabaseSession();
 
   useEffect(() => {
+    const isAuthRoute = segments[0] === '(auth)';
+    const isOnboardingRoute = segments[0] === 'onboarding';
+
     if (!user && !isAuthRoute) {
       console.log('[ROUTE] Redirecting to sign-in (no user) ');
       router.replace('/(auth)/sign-in');
@@ -129,11 +131,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
       return;
     }
 
-    if (user && isAuthRoute) {
+    if (user && (isAuthRoute || isOnboardingRoute)) {
       console.log('[ROUTE] Redirecting to home (user already signed in)');
       router.replace('/');
     }
-  }, [router, user, isAuthRoute]);
+  }, [router, user, segments]);
 
   return <>{children}</>;
 }
