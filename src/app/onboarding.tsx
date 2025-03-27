@@ -1,3 +1,4 @@
+import { CompleteOnboardingStep } from '@drinkweise/components/onboarding/CompleteOnboardingStep';
 import { DetailsOnboardingStep } from '@drinkweise/components/onboarding/DetailsOnboardingStep';
 import { Dot } from '@drinkweise/components/onboarding/Dot';
 import { WelcomeOnboardingStep } from '@drinkweise/components/onboarding/WelcomeOnboardingStep';
@@ -9,6 +10,8 @@ import {
   useOnboardingForm,
 } from '@drinkweise/lib/forms/onboarding';
 import { never } from '@drinkweise/lib/utils/never';
+import { useAppDispatch } from '@drinkweise/store';
+import { completeOnboardingAction } from '@drinkweise/store/user/actions/complete-onboarding.action';
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import {
   Alert,
@@ -31,6 +34,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 export default function OnboardingPage() {
   const { width } = useWindowDimensions();
   const flatListRef = useRef<FlatList>(null);
+  const dispatch = useAppDispatch();
 
   const [currentStep, setCurrentStep] = useState<OnboardingStep>('WELCOME');
   const x = useSharedValue(0);
@@ -61,6 +65,14 @@ export default function OnboardingPage() {
     }
   }, [currentStep, errors]);
 
+  const submitOnboardingForm = handleSubmit(async (data) => {
+    const result = await dispatch(completeOnboardingAction(data));
+
+    if (completeOnboardingAction.rejected.match(result)) {
+      Alert.alert('Failed to complete onboarding', result.payload?.message ?? 'An error occurred');
+    }
+  });
+
   const renderOnboardingStep = useCallback(
     (onboardingStep: OnboardingStep): ReactElement => {
       switch (onboardingStep) {
@@ -69,14 +81,10 @@ export default function OnboardingPage() {
         case 'DETAILS':
           return <DetailsOnboardingStep control={control} />;
         case 'COMPLETE':
-          return (
-            <View className='flex-1 items-center justify-center' style={{ width }}>
-              <Text variant='largeTitle'>{onboardingStep} Page</Text>
-            </View>
-          );
+          return <CompleteOnboardingStep isActive={currentStep === 'COMPLETE'} />;
       }
     },
-    [width, control]
+    [control, currentStep]
   );
 
   const navigateToNextStep = useCallback(async (): Promise<void> => {
@@ -103,11 +111,8 @@ export default function OnboardingPage() {
       return;
     }
 
-    // TODO: Handle form submission this is going to be implemented in DRINK-16
-    handleSubmit((data) => {
-      console.log('form submitted', data);
-    });
-  }, [currentStep, trigger, handleSubmit]);
+    await submitOnboardingForm();
+  }, [currentStep, trigger, submitOnboardingForm]);
 
   const handleOnboardingStepSwipe = useCallback(
     async ({ viewableItems }: { viewableItems: ViewToken<OnboardingStep>[] }) => {
@@ -216,7 +221,7 @@ export default function OnboardingPage() {
               loading={isSubmitting}
               onPress={navigateToNextStep}
               disabled={validateCurrentStep()}>
-              <Text>Continue</Text>
+              <Text>{currentStep === 'COMPLETE' ? 'Get started' : 'Continue'}</Text>
             </Button>
           </View>
         </Animated.View>
