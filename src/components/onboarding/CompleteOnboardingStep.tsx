@@ -72,31 +72,30 @@ export function CompleteOnboardingStep({ isActive }: { isActive: boolean }) {
       </Animated.View>
 
       <View className='gap-8'>
-        {isActive &&
-          FEATURES.map((feature, index) => (
-            <Animated.View
-              key={feature.title}
-              className='flex-row gap-4'
-              entering={(index % 2 === 0 ? SlideInRight : SlideInLeft).delay(index * 200)}>
-              <View className='pt-px'>
-                <Icon
-                  namingScheme='material'
-                  name={feature.icon}
-                  size={38}
-                  color={colors.primary}
-                  materialIcon={feature.materialIcon ? { name: feature.materialIcon } : {}}
-                  ios={{
-                    renderingMode: 'hierarchical',
-                    ...(feature.iosIcon ? { name: feature.iosIcon } : {}),
-                  }}
-                />
-              </View>
-              <View className='flex-1'>
-                <Text className='font-bold'>{feature.title}</Text>
-                <Text variant='footnote'>{feature.description}</Text>
-              </View>
-            </Animated.View>
-          ))}
+        {FEATURES.map((feature, index) => (
+          <Animated.View
+            key={feature.title}
+            className='flex-row gap-4'
+            entering={(index % 2 === 0 ? SlideInRight : SlideInLeft).delay(index * 200)}>
+            <View className='pt-px'>
+              <Icon
+                namingScheme='material'
+                name={feature.icon}
+                size={38}
+                color={colors.primary}
+                materialIcon={feature.materialIcon ? { name: feature.materialIcon } : {}}
+                ios={{
+                  renderingMode: 'hierarchical',
+                  ...(feature.iosIcon ? { name: feature.iosIcon } : {}),
+                }}
+              />
+            </View>
+            <View className='flex-1'>
+              <Text className='font-bold'>{feature.title}</Text>
+              <Text variant='footnote'>{feature.description}</Text>
+            </View>
+          </Animated.View>
+        ))}
       </View>
 
       <Animated.View entering={FadeInDown.delay(200)}>
