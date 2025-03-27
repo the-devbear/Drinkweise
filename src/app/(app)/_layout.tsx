@@ -30,6 +30,16 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name='session'
+        options={{
+          title: 'Session',
+          headerShown: false,
+          tabBarIcon: ({ color, size, focused }) => (
+            <TabBarIcon name={focused ? 'beer' : 'beer-outline'} color={color} size={size} />
+          ),
+        }}
+      />
+      <Tabs.Screen
         name='two'
         options={{
           title: 'Tab Two',
