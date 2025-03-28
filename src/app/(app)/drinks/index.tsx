@@ -7,14 +7,26 @@ import {
   CardTitle,
 } from '@drinkweise/components/ui/Card';
 import { Text } from '@drinkweise/components/ui/Text';
-import { useRouter } from 'expo-router';
+import { useAppDispatch, useAppSelector } from '@drinkweise/store';
+import {
+  isDrinkSessionActiveSelector,
+  startDrinkSessionAction,
+} from '@drinkweise/store/drink-session';
+import { Redirect } from 'expo-router';
 import { ScrollView, TouchableOpacity } from 'react-native';
 
 export default function DrinksPage() {
-  const router = useRouter();
+  const dispatch = useAppDispatch();
+
+  const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
+
+  if (isDrinkSessionActive) {
+    return <Redirect href='/drinks/session' />;
+  }
+
   return (
     <ScrollView className='p-3'>
-      <TouchableOpacity onPress={() => router.replace('/drinks/session')}>
+      <TouchableOpacity onPress={() => dispatch(startDrinkSessionAction())}>
         <Card>
           <CardHeader>
             <CardTitle className='text-xl'>Open your Tab!</CardTitle>
@@ -23,7 +35,7 @@ export default function DrinksPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className='gap-4'>
-            <Button onPress={() => router.replace('/drinks/session')}>
+            <Button onPress={() => dispatch(startDrinkSessionAction())}>
               <Text>Begin Session</Text>
             </Button>
           </CardContent>
