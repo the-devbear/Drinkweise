@@ -10,4 +10,13 @@ export const drinkSessionStateSlice = createSlice({
     startDrinkSession: (): DrinkSessionState => ({ status: 'active' }),
     cancelDrinkSession: (): DrinkSessionState => ({ status: 'inactive' }),
   },
+  selectors: {
+    isDrinkSessionActiveSelector: (state: DrinkSessionState): boolean => state.status === 'active',
+  },
 });
+
+export const {
+  startDrinkSession: startDrinkSessionAction,
+  cancelDrinkSession: cancelDrinkSessionAction,
+} = drinkSessionStateSlice.actions;
+export const { isDrinkSessionActiveSelector } = drinkSessionStateSlice.selectors;
