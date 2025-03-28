@@ -6,7 +6,7 @@ import { SearchBarProps } from 'react-native-screens';
 import { useColorScheme } from './useColorScheme';
 
 export function useHeaderSearchBar(props: SearchBarProps = {}) {
-  const { colorScheme, colors } = useColorScheme();
+  const { colors, isDarkColorScheme } = useColorScheme();
   const navigation = useNavigation();
   const [search, setSearch] = React.useState('');
 
@@ -14,7 +14,7 @@ export function useHeaderSearchBar(props: SearchBarProps = {}) {
     navigation.setOptions({
       headerSearchBarOptions: {
         placeholder: 'Search...',
-        barTintColor: colorScheme === 'dark' ? COLORS.black : COLORS.white,
+        barTintColor: isDarkColorScheme ? COLORS.black : COLORS.white,
         textColor: colors.foreground,
         tintColor: colors.primary,
         headerIconColor: colors.foreground,
@@ -26,7 +26,7 @@ export function useHeaderSearchBar(props: SearchBarProps = {}) {
         ...props,
       } satisfies SearchBarProps,
     });
-  }, [navigation, colorScheme, colors.foreground, colors.primary, colors.grey, props]);
+  }, [navigation, isDarkColorScheme, colors.foreground, colors.primary, colors.grey, props]);
 
   return search;
 }
