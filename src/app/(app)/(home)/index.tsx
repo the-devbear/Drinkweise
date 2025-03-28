@@ -15,7 +15,7 @@ import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useHeaderHeight } from '@react-navigation/elements';
 import { Icon } from '@roninoss/icons';
 import { FlashList } from '@shopify/flash-list';
-import { Link, Stack } from 'expo-router';
+import { Link } from 'expo-router';
 import * as StoreReview from 'expo-store-review';
 import { cssInterop } from 'nativewind';
 import * as React from 'react';
@@ -40,7 +40,6 @@ export default function Home() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Tab One' }} />
       <FlashList
         contentInsetAdjustmentBehavior='automatic'
         keyboardShouldPersistTaps='handled'
@@ -277,7 +276,7 @@ const COMPONENTS: ComponentItem[] = [
   {
     name: 'Action Sheet',
     component: function ActionSheetExample() {
-      const { colorScheme, colors } = useColorScheme();
+      const { colors, isDarkColorScheme } = useColorScheme();
       const { showActionSheetWithOptions } = useActionSheet();
       return (
         <View className='items-center'>
@@ -294,7 +293,7 @@ const COMPONENTS: ComponentItem[] = [
                   cancelButtonIndex,
                   destructiveButtonIndex,
                   containerStyle: {
-                    backgroundColor: colorScheme === 'dark' ? 'black' : 'white',
+                    backgroundColor: isDarkColorScheme ? 'black' : 'white',
                   },
                   textStyle: {
                     color: colors.foreground,

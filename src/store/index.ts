@@ -2,12 +2,14 @@ import { configureStore, createDraftSafeSelector } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 
+import { drinkSessionStateSlice } from './drink-session';
 import { userStateSlice } from './user';
 import { persistUserStateMiddleware } from './user/middleware/persist-user-state.middleware';
 
 export const rootStore = configureStore({
   reducer: {
     [userStateSlice.name]: userStateSlice.reducer,
+    [drinkSessionStateSlice.name]: drinkSessionStateSlice.reducer,
   },
   devTools: false,
   middleware: (getDefaultMiddleware) =>
