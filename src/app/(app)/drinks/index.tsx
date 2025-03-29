@@ -26,7 +26,7 @@ export default function DrinksPage() {
 
   return (
     <ScrollView className='p-3'>
-      <TouchableOpacity onPress={() => dispatch(startDrinkSessionAction())}>
+      <TouchableOpacity onPress={() => dispatch(startDrinkSessionAction())} activeOpacity={0.5}>
         <Card>
           <CardHeader>
             <CardTitle className='text-xl'>Open your Tab!</CardTitle>
