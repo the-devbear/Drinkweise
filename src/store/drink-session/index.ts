@@ -16,7 +16,7 @@ export const drinkSessionStateSlice = createSlice({
         status: 'active',
         name: '',
         startTime: Date.now(),
-        drinks: {},
+        drinks: [],
       }) satisfies DrinkSessionState,
     cancelDrinkSession: () => initialDrinkSessionState,
     addDrink: (state, { payload: { drink } }: PayloadAction<{ drink: AddDrinkModel }>) => {
@@ -24,13 +24,14 @@ export const drinkSessionStateSlice = createSlice({
         return;
       }
 
-      const hasAlreadyBeenAdded = state.drinks[drink.id] !== undefined;
+      const hasAlreadyBeenAdded =
+        state.drinks.findIndex((currentDrink) => currentDrink.id === drink.id) !== -1;
 
       if (hasAlreadyBeenAdded) {
         return;
       }
 
-      state.drinks[drink.id] = {
+      state.drinks.push({
         id: drink.id,
         name: drink.name,
         type: drink.type,
@@ -43,13 +44,13 @@ export const drinkSessionStateSlice = createSlice({
             startTime: Date.now(),
           },
         ],
-      };
+      });
     },
   },
   selectors: {
     isDrinkSessionActiveSelector: (state: DrinkSessionState): boolean => state.status === 'active',
     drinksSelector: (state: DrinkSessionState) =>
-      state.status === 'active' ? Object.values(state.drinks) : undefined,
+      state.status === 'active' ? state.drinks : undefined,
   },
 });
 
