@@ -34,6 +34,127 @@ export type Database = {
   }
   public: {
     Tables: {
+      consumptions: {
+        Row: {
+          created_at: string
+          drink_id: string
+          drink_session_id: string
+          end_time: string
+          id: number
+          start_time: string
+          volume: number
+        }
+        Insert: {
+          created_at?: string
+          drink_id: string
+          drink_session_id: string
+          end_time?: string
+          id?: number
+          start_time: string
+          volume: number
+        }
+        Update: {
+          created_at?: string
+          drink_id?: string
+          drink_session_id?: string
+          end_time?: string
+          id?: number
+          start_time?: string
+          volume?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consumptions_drink_id_fkey"
+            columns: ["drink_id"]
+            isOneToOne: false
+            referencedRelation: "drinks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consumptions_drink_session_id_fkey"
+            columns: ["drink_session_id"]
+            isOneToOne: false
+            referencedRelation: "drink_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drink_sessions: {
+        Row: {
+          created_at: string
+          end_time: string
+          id: string
+          name: string
+          note: string | null
+          start_time: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          end_time?: string
+          id?: string
+          name: string
+          note?: string | null
+          start_time: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          end_time?: string
+          id?: string
+          name?: string
+          note?: string | null
+          start_time?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drink_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      drinks: {
+        Row: {
+          alcohol: number
+          barcode: string | null
+          created_at: string
+          created_by: string | null
+          default_volume: number
+          id: string
+          type: string
+        }
+        Insert: {
+          alcohol: number
+          barcode?: string | null
+          created_at?: string
+          created_by?: string | null
+          default_volume: number
+          id?: string
+          type: string
+        }
+        Update: {
+          alcohol?: number
+          barcode?: string | null
+          created_at?: string
+          created_by?: string | null
+          default_volume?: number
+          id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drinks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           created_at: string
