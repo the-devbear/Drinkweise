@@ -9,7 +9,12 @@ export default function DrinksTabLayout() {
           headerTitle: 'Drinks',
         }}
       />
-      <Stack.Screen name='session/index' options={{ headerTitle: 'Session' }} />
+      <Stack.Screen
+        name='session'
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack>
   );
 }

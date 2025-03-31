@@ -1,5 +1,5 @@
 export interface DrinkConsumption {
-  id: string;
+  id: number;
   volume: number;
   startTime: number;
   endTime?: number;

@@ -1,6 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { drinkSessionSlice } from './drink-session.slice';
+import { AddDrinkModel } from './models/add-drink.model';
 import {
   type DrinkSessionState,
   initialDrinkSessionState,
@@ -18,6 +19,32 @@ export const drinkSessionStateSlice = createSlice({
         drinks: {},
       }) satisfies DrinkSessionState,
     cancelDrinkSession: () => initialDrinkSessionState,
+    addDrink: (state, { payload: { drink } }: PayloadAction<{ drink: AddDrinkModel }>) => {
+      if (state.status !== 'active') {
+        return;
+      }
+
+      const hasAlreadyBeenAdded = state.drinks[drink.id] !== undefined;
+
+      if (hasAlreadyBeenAdded) {
+        return;
+      }
+
+      state.drinks[drink.id] = {
+        id: drink.id,
+        name: drink.name,
+        type: drink.type,
+        alcohol: drink.alcohol,
+        defaultVolume: drink.defaultVolume,
+        consumptions: [
+          {
+            id: 1,
+            volume: drink.defaultVolume,
+            startTime: Date.now(),
+          },
+        ],
+      };
+    },
   },
   selectors: {
     isDrinkSessionActiveSelector: (state: DrinkSessionState): boolean => state.status === 'active',
@@ -29,5 +56,6 @@ export const drinkSessionStateSlice = createSlice({
 export const {
   startDrinkSession: startDrinkSessionAction,
   cancelDrinkSession: cancelDrinkSessionAction,
+  addDrink: addDrinkAction,
 } = drinkSessionStateSlice.actions;
 export const { isDrinkSessionActiveSelector, drinksSelector } = drinkSessionStateSlice.selectors;
