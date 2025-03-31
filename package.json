@@ -25,6 +25,7 @@
     "type:check": "tsc --noEmit",
     "web": "expo start --web",
     "supabase:gen:types": "npx supabase gen types --lang typescript --local > src/lib/types/generated/supabase.types.ts",
+    "supabase:gen:migrate": "sh -c 'MIGRATION=$(npx supabase migration new \"$0\") && echo \"$MIGRATION\" && npx supabase db diff > $(echo \"$MIGRATION\" | grep -o \"supabase/migrations/.*\")'",
     "app:release": "np --no-publish --no-cleanup --no-release-draft --no-tests",
     "test": "jest --watchAll"
   },
