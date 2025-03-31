@@ -1,47 +1,30 @@
-import { Button } from '@drinkweise/components/ui/Button';
+import { DrinkSessionFooter } from '@drinkweise/components/session/DrinkSessionFooter';
 import { Text } from '@drinkweise/components/ui/Text';
-import { useAppDispatch, useAppSelector } from '@drinkweise/store';
-import {
-  cancelDrinkSessionAction,
-  isDrinkSessionActiveSelector,
-} from '@drinkweise/store/drink-session';
-import { Redirect, useRouter } from 'expo-router';
-import { Alert, View } from 'react-native';
+import { useAppSelector } from '@drinkweise/store';
+import { drinksSelector } from '@drinkweise/store/drink-session';
+import { FlashList } from '@shopify/flash-list';
+import { Redirect } from 'expo-router';
+import { KeyboardAvoidingView, Platform } from 'react-native';
 
 export default function SessionPage() {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
+  const drinks = useAppSelector(drinksSelector);
 
-  if (!isDrinkSessionActive) {
+  if (!drinks) {
     return <Redirect href='/drinks' />;
   }
 
   return (
-    <View>
-      <Text>This is the session starting page</Text>
-      <Button
-        onPress={() => {
-          router.navigate('/drinks/session/add');
-        }}>
-        <Text>Add new drink</Text>
-      </Button>
-      <Button
-        onPress={() =>
-          Alert.alert('Cancel session?', 'Are you sure?', [
-            {
-              text: 'No',
-              style: 'cancel',
-            },
-            {
-              text: 'Yes',
-              onPress: () => dispatch(cancelDrinkSessionAction()),
-              style: 'destructive',
-            },
-          ])
-        }>
-        <Text>Go back to drinks</Text>
-      </Button>
-    </View>
+    <KeyboardAvoidingView
+      className='flex-1'
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <FlashList
+        data={drinks}
+        keyboardShouldPersistTaps='handled'
+        keyboardDismissMode='on-drag'
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => <Text>{item.name}</Text>}
+        ListFooterComponent={<DrinkSessionFooter />}
+      />
+    </KeyboardAvoidingView>
   );
 }
