@@ -1,17 +1,20 @@
 import { Avatar } from '@drinkweise/components/ui/Avatar';
 import { Text } from '@drinkweise/components/ui/Text';
-import type { Drink } from '@drinkweise/store/drink-session/models/drink.model';
+import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { TouchableOpacity, View } from 'react-native';
 
 import { DrinkAvatarFallback } from './DrinkAvatarFallback';
 
 interface DrinkListProps {
-  drink: Omit<Drink, 'consumptions'>;
+  drink: AddDrinkModel;
 }
 
 export function AddDrinkListItem({ drink }: DrinkListProps) {
   return (
-    <TouchableOpacity className=' border-b border-border bg-card' activeOpacity={0.6}>
+    <TouchableOpacity
+      className='border-b border-border bg-card'
+      activeOpacity={0.6}
+      onPress={() => {}}>
       <View className='p-2'>
         <View className='flex-row items-center justify-between'>
           <View className='flex-row items-center'>

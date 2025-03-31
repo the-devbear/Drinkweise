@@ -1,11 +1,11 @@
-import type { Drink } from '@drinkweise/store/drink-session/models/drink.model';
+import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { FlashList } from '@shopify/flash-list';
 import React from 'react';
 
 import { AddDrinkListItem } from './AddDrinkListItem';
 
 interface DrinkListProps {
-  data: Omit<Drink, 'consumptions'>[];
+  data: AddDrinkModel[];
 }
 
 export function AddDrinkList({ data }: DrinkListProps) {

@@ -1,9 +1,9 @@
 import { AddDrinkList } from '@drinkweise/components/session/add/AddDrinkList';
-import type { Drink } from '@drinkweise/store/drink-session/models/drink.model';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
+import { View } from 'react-native';
 
 // This is a mock data for the drinks
-const DATA: Omit<Drink, 'consumptions'>[] = [
+const DATA: AddDrinkModel[] = [
   {
     id: '1',
     name: 'Heineken',
@@ -163,8 +163,8 @@ const DATA: Omit<Drink, 'consumptions'>[] = [
 
 export default function AddDrinkPage() {
   return (
-    <SafeAreaView className='flex-1'>
+    <View className='flex-1'>
       <AddDrinkList data={DATA} />
-    </SafeAreaView>
+    </View>
   );
 }
