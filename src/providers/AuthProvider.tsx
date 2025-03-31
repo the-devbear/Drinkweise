@@ -1,9 +1,10 @@
 import { supabase } from '@drinkweise/lib/supabase';
-import { rootStore, useAppDispatch, useAppSelector } from '@drinkweise/store';
+import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import {
   userSelector,
   supabaseSignOutAction,
   updateUserSessionAction,
+  userSessionSelector,
 } from '@drinkweise/store/user';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
@@ -16,13 +17,18 @@ interface AuthProviderProps {
 }
 
 const useInitializeSupabaseSession = () => {
+  const session = useAppSelector(userSessionSelector);
   const initialized = useRef(false);
 
   useEffect(() => {
     if (initialized.current) return;
 
-    const session = rootStore.getState().user.session;
-    if (!session) return;
+    if (!session) {
+      initialized.current = true;
+      return;
+    }
+
+    console.log('[SUPABASE] Initializing session:', session);
 
     supabase.auth
       .setSession({
@@ -31,14 +37,14 @@ const useInitializeSupabaseSession = () => {
       })
       .then(({ error }) => {
         if (error) {
-          console.error('Failed to set Supabase session:', error);
+          console.error('[SUPABASE]: Failed to set Supabase session:', error);
         } else {
-          console.log('Supabase session initialized successfully');
+          console.log('[SUPABASE]: Supabase session initialized successfully');
         }
       });
 
     initialized.current = true;
-  }, []);
+  }, [session]);
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
