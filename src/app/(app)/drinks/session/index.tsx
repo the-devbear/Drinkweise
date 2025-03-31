@@ -5,10 +5,11 @@ import {
   cancelDrinkSessionAction,
   isDrinkSessionActiveSelector,
 } from '@drinkweise/store/drink-session';
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import { Alert, View } from 'react-native';
 
 export default function SessionPage() {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
 
@@ -19,6 +20,12 @@ export default function SessionPage() {
   return (
     <View>
       <Text>This is the session starting page</Text>
+      <Button
+        onPress={() => {
+          router.navigate('/drinks/session/add');
+        }}>
+        <Text>Add new drink</Text>
+      </Button>
       <Button
         onPress={() =>
           Alert.alert('Cancel session?', 'Are you sure?', [
