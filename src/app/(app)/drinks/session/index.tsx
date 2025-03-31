@@ -1,5 +1,5 @@
+import { DrinkSessionDrinkItem } from '@drinkweise/components/session/DrinkSessionDrinkItem';
 import { DrinkSessionFooter } from '@drinkweise/components/session/DrinkSessionFooter';
-import { Text } from '@drinkweise/components/ui/Text';
 import { useAppSelector } from '@drinkweise/store';
 import { drinksSelector } from '@drinkweise/store/drink-session';
 import { FlashList } from '@shopify/flash-list';
@@ -22,7 +22,7 @@ export default function SessionPage() {
         keyboardShouldPersistTaps='handled'
         keyboardDismissMode='on-drag'
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <Text>{item.name}</Text>}
+        renderItem={({ item }) => <DrinkSessionDrinkItem drink={item} />}
         ListFooterComponent={<DrinkSessionFooter />}
       />
     </KeyboardAvoidingView>
