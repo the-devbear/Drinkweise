@@ -46,6 +46,19 @@ export const drinkSessionStateSlice = createSlice({
         ],
       });
     },
+    removeDrink: (state, { payload: { drinkId } }: PayloadAction<{ drinkId: string }>) => {
+      if (state.status !== 'active') {
+        return;
+      }
+
+      const drinkIndex = state.drinks.findIndex((drink) => drink.id === drinkId);
+
+      if (drinkIndex === -1) {
+        return;
+      }
+
+      state.drinks.splice(drinkIndex, 1);
+    },
   },
   selectors: {
     isDrinkSessionActiveSelector: (state: DrinkSessionState): boolean => state.status === 'active',
@@ -58,5 +71,6 @@ export const {
   startDrinkSession: startDrinkSessionAction,
   cancelDrinkSession: cancelDrinkSessionAction,
   addDrink: addDrinkAction,
+  removeDrink: removeDrinkAction,
 } = drinkSessionStateSlice.actions;
 export const { isDrinkSessionActiveSelector, drinksSelector } = drinkSessionStateSlice.selectors;
