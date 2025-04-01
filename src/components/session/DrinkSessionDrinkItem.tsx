@@ -34,6 +34,24 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
           <Ionicons className='text-2xl text-destructive' name='trash-outline' />
         </TouchableOpacity>
       </View>
+      <View className='flex-row'>
+        <Text className='flex-1 text-center'>Count</Text>
+        <Text className='flex-[2] text-center'>Volume in ml</Text>
+        <Text className='flex-[2] text-center'>Start Time</Text>
+        <Text className='flex-[2] text-center'>End Time</Text>
+      </View>
+      {drink.consumptions.map((consumption, index) => (
+        <View key={consumption.id} className='flex-row items-center justify-between'>
+          <Text className='flex-1 text-center'>{index + 1}.</Text>
+          <Text className='flex-[2] text-center'>{consumption.volume}</Text>
+          <Text className='flex-[2] text-center'>
+            {new Date(consumption.startTime).toLocaleTimeString('de-DE')}
+          </Text>
+          <Text className='flex-[2] text-center'>
+            {new Date(consumption.endTime ?? -1).toLocaleTimeString('de-DE')}
+          </Text>
+        </View>
+      ))}
     </View>
   );
 }
