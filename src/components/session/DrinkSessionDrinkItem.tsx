@@ -1,6 +1,10 @@
 import { Text } from '@drinkweise/components/ui/Text';
-import { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
-import { View } from 'react-native';
+import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
+import { Ionicons } from '@expo/vector-icons';
+import { View, TouchableOpacity } from 'react-native';
+
+import { Avatar } from '../ui/Avatar';
+import { DrinkAvatarFallback } from './add/DrinkAvatarFallback';
 
 interface DrinkSessionDrinkItemProps {
   drink: DrinkModel;
@@ -8,18 +12,25 @@ interface DrinkSessionDrinkItemProps {
 
 export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
   return (
-    <View>
-      <View className='flex-row justify-between'>
-        <Text>{drink.name}</Text>
-        <Text>{drink.alcohol}</Text>
-        <Text>{drink.defaultVolume}</Text>
-      </View>
-      {drink.consumptions.map((consumption) => (
-        <View key={consumption.id} className='flex-row justify-between'>
-          <Text>{consumption.volume}</Text>
-          <Text>{new Date(consumption.startTime).toLocaleString('de-DE')}</Text>
+    <View className='flex gap-2 py-3'>
+      <View className='flex-row justify-between gap-5 px-3'>
+        <Avatar className='h-16 w-16' alt={drink.name}>
+          <DrinkAvatarFallback type={drink.type} />
+        </Avatar>
+        <View className='flex-1 justify-center'>
+          <Text variant='title2' className='font-bold'>
+            {drink.name}
+          </Text>
+          <Text className='text-end text-sm'>{drink.alcohol} % alcohol</Text>
         </View>
-      ))}
+        <TouchableOpacity
+          className='self-center'
+          onPress={() => {
+            console.log('Delete drink');
+          }}>
+          <Ionicons className='text-2xl text-destructive' name='trash-outline' />
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
