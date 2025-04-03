@@ -1,7 +1,8 @@
 import { Avatar } from '@drinkweise/components/ui/Avatar';
+import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { useAppDispatch } from '@drinkweise/store';
-import { removeDrinkAction } from '@drinkweise/store/drink-session';
+import { addConsumptionAction, removeDrinkAction } from '@drinkweise/store/drink-session';
 import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
 import { Ionicons } from '@expo/vector-icons';
 import { View, TouchableOpacity, Alert } from 'react-native';
@@ -41,7 +42,7 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
                   text: 'Remove',
                   style: 'destructive',
                   onPress: () => {
-            dispatch(removeDrinkAction({ drinkId: drink.id }));
+                    dispatch(removeDrinkAction({ drinkId: drink.id }));
                   },
                 },
               ]
@@ -68,6 +69,13 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
           </Text>
         </View>
       ))}
+      <Button
+        variant='tonal'
+        className='mx-3'
+        onPress={() => dispatch(addConsumptionAction({ drinkId: drink.id }))}>
+        <Ionicons name='add-sharp' className='android:text-foreground text-xl text-primary' />
+        <Text>Add {drink.name}</Text>
+      </Button>
     </View>
   );
 }
