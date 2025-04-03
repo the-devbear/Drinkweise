@@ -4,7 +4,7 @@ import { useAppDispatch } from '@drinkweise/store';
 import { removeDrinkAction } from '@drinkweise/store/drink-session';
 import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
 import { Ionicons } from '@expo/vector-icons';
-import { View, TouchableOpacity } from 'react-native';
+import { View, TouchableOpacity, Alert } from 'react-native';
 
 import { DrinkAvatarFallback } from './add/DrinkAvatarFallback';
 
@@ -29,7 +29,23 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
         <TouchableOpacity
           className='self-center'
           onPress={() => {
+            Alert.alert(
+              `Remove ${drink.name}`,
+              `Are you sure you want to remove ${drink.name} from your session?`,
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Remove',
+                  style: 'destructive',
+                  onPress: () => {
             dispatch(removeDrinkAction({ drinkId: drink.id }));
+                  },
+                },
+              ]
+            );
           }}>
           <Ionicons className='text-2xl text-destructive' name='trash-outline' />
         </TouchableOpacity>
