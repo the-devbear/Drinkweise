@@ -1,3 +1,4 @@
+import { now } from '@drinkweise/lib/utils/date/now';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { drinkSessionSlice } from './drink-session.slice';
@@ -15,7 +16,7 @@ export const drinkSessionStateSlice = createSlice({
       ({
         status: 'active',
         name: '',
-        startTime: Date.now(),
+        startTime: now(),
         drinks: [],
       }) satisfies DrinkSessionState,
     cancelDrinkSession: () => initialDrinkSessionState,
@@ -41,7 +42,7 @@ export const drinkSessionStateSlice = createSlice({
           {
             id: 1,
             volume: drink.defaultVolume,
-            startTime: Date.now(),
+            startTime: now(),
           },
         ],
       });
@@ -75,7 +76,7 @@ export const drinkSessionStateSlice = createSlice({
       drink.consumptions.push({
         id: lastConsumption ? lastConsumption.id + 1 : 1,
         volume: lastConsumption?.volume ?? drink.defaultVolume,
-        startTime: Date.now(),
+        startTime: now(),
       });
     },
   },
