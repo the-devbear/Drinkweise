@@ -60,6 +60,19 @@ describe('NumberInput Component', () => {
       expect(onValueChangeMock).toHaveBeenCalledWith(123.12);
       expect(input).toHaveDisplayValue('123,12');
     });
+
+    it('handles when only zeros are input', async () => {
+      const onValueChangeMock = jest.fn();
+      const { getByTestId } = render(
+        <NumberInput testID='number-input' onValueChange={onValueChangeMock} />
+      );
+
+      const input = getByTestId('number-input');
+      await userEvent.type(input, '0000');
+
+      expect(onValueChangeMock).toHaveBeenCalledWith(0);
+      expect(input).toHaveDisplayValue('0');
+    });
   });
 
   // Decimal input tests
