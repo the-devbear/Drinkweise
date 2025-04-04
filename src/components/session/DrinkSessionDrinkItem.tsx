@@ -60,7 +60,12 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
       </View>
       <View>
         {drink.consumptions.map((consumption, index) => (
-          <ConsumptionItem key={consumption.id} consumption={consumption} index={index} />
+          <ConsumptionItem
+            key={consumption.id}
+            drinkId={drink.id}
+            consumption={consumption}
+            index={index}
+          />
         ))}
       </View>
       <Button

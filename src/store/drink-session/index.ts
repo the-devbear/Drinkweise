@@ -79,6 +79,23 @@ export const drinkSessionStateSlice = createSlice({
         startTime: now(),
       });
     },
+    removeConsumption: (
+      state,
+      {
+        payload: { drinkId, consumptionIndex },
+      }: PayloadAction<{ drinkId: string; consumptionIndex: number }>
+    ) => {
+      if (state.status !== 'active') {
+        return;
+      }
+
+      const drink = state.drinks.find((currentDrink) => currentDrink.id === drinkId);
+      if (!drink) {
+        return;
+      }
+
+      drink.consumptions.splice(consumptionIndex, 1);
+    },
   },
 
   selectors: {
@@ -94,5 +111,6 @@ export const {
   addDrink: addDrinkAction,
   removeDrink: removeDrinkAction,
   addConsumption: addConsumptionAction,
+  removeConsumption: removeConsumptionAction,
 } = drinkSessionStateSlice.actions;
 export const { isDrinkSessionActiveSelector, drinksSelector } = drinkSessionStateSlice.selectors;
