@@ -127,7 +127,7 @@ export default function SignUpPage() {
         </View>
         <View className='flex-col items-center'>
           <Text>Already have an account?</Text>
-          <TouchableOpacity onPress={() => router.navigate('/sign-in')}>
+          <TouchableOpacity onPress={() => router.dismissTo('/sign-in')}>
             <Text className='text-primary'>Sign In</Text>
           </TouchableOpacity>
         </View>
