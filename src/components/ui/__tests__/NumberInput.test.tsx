@@ -284,6 +284,19 @@ describe('NumberInput Component', () => {
       expect(onValueChangeMock).toHaveBeenCalledWith(123.45);
       expect(input).toHaveDisplayValue('123,45');
     });
+
+    it("handles 0' before negative sign, negative sign is being ignored", async () => {
+      const onValueChangeMock = jest.fn();
+      const { getByTestId } = render(
+        <NumberInput testID='number-input' onValueChange={onValueChangeMock} />
+      );
+
+      const input = getByTestId('number-input');
+      await userEvent.type(input, '00-123,45');
+
+      expect(onValueChangeMock).toHaveBeenCalledWith(123.45);
+      expect(input).toHaveDisplayValue('123,45');
+    });
   });
 
   describe('Additional Test Cases', () => {
