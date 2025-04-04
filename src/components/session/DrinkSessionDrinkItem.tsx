@@ -7,6 +7,7 @@ import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.mo
 import { Ionicons } from '@expo/vector-icons';
 import { View, TouchableOpacity, Alert } from 'react-native';
 
+import { ConsumptionItem } from './ConsumptionItem';
 import { DrinkAvatarFallback } from './add/DrinkAvatarFallback';
 
 interface DrinkSessionDrinkItemProps {
@@ -57,18 +58,11 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
         <Text className='flex-[2] text-center'>Start Time</Text>
         <Text className='flex-[2] text-center'>End Time</Text>
       </View>
-      {drink.consumptions.map((consumption, index) => (
-        <View key={consumption.id} className='flex-row items-center justify-between'>
-          <Text className='flex-1 text-center'>{index + 1}.</Text>
-          <Text className='flex-[2] text-center'>{consumption.volume}</Text>
-          <Text className='flex-[2] text-center'>
-            {new Date(consumption.startTime).toLocaleTimeString('de-DE')}
-          </Text>
-          <Text className='flex-[2] text-center'>
-            {new Date(consumption.endTime ?? -1).toLocaleTimeString('de-DE')}
-          </Text>
-        </View>
-      ))}
+      <View>
+        {drink.consumptions.map((consumption, index) => (
+          <ConsumptionItem key={consumption.id} consumption={consumption} index={index} />
+        ))}
+      </View>
       <Button
         variant='tonal'
         className='mx-3'
