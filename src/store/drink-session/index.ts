@@ -3,6 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { drinkSessionSlice } from './drink-session.slice';
 import { AddDrinkModel } from './models/add-drink.model';
+import { DrinkConsumptionModel } from './models/consumption.model';
 import {
   type DrinkSessionState,
   initialDrinkSessionState,
@@ -96,6 +97,35 @@ export const drinkSessionStateSlice = createSlice({
 
       drink.consumptions.splice(consumptionIndex, 1);
     },
+    updateConsumption: (
+      state,
+      {
+        payload,
+      }: PayloadAction<{
+        drinkId: string;
+        consumptionIndex: number;
+        updatedConsumption: Partial<Omit<DrinkConsumptionModel, 'id'>>;
+      }>
+    ) => {
+      if (state.status !== 'active') {
+        return;
+      }
+
+      const drink = state.drinks.find((currentDrink) => currentDrink.id === payload.drinkId);
+      if (!drink) {
+        return;
+      }
+
+      const consumption = drink.consumptions[payload.consumptionIndex];
+      if (!consumption) {
+        return;
+      }
+
+      drink.consumptions[payload.consumptionIndex] = {
+        ...consumption,
+        ...payload.updatedConsumption,
+      };
+    },
   },
 
   selectors: {
@@ -112,5 +142,6 @@ export const {
   removeDrink: removeDrinkAction,
   addConsumption: addConsumptionAction,
   removeConsumption: removeConsumptionAction,
+  updateConsumption: updateConsumptionAction,
 } = drinkSessionStateSlice.actions;
 export const { isDrinkSessionActiveSelector, drinksSelector } = drinkSessionStateSlice.selectors;

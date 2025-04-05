@@ -63,6 +63,7 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
           <ConsumptionItem
             key={consumption.id}
             drinkId={drink.id}
+            drinkDefaultVolume={drink.defaultVolume}
             consumption={consumption}
             index={index}
           />
