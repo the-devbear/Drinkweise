@@ -52,7 +52,7 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
           <Ionicons className='text-2xl text-destructive' name='trash-outline' />
         </TouchableOpacity>
       </View>
-      <View className='flex-row'>
+      <View className='flex-row justify-around py-2'>
         <Text className='flex-1 text-center'>Count</Text>
         <Text className='flex-[2] text-center'>Volume in ml</Text>
         <Text className='flex-[2] text-center'>Start Time</Text>
