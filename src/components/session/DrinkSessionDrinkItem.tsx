@@ -17,7 +17,7 @@ interface DrinkSessionDrinkItemProps {
 export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
   const dispatch = useAppDispatch();
   return (
-    <View className='flex gap-2 py-3'>
+    <View className='flex py-3'>
       <View className='flex-row justify-between gap-5 px-3'>
         <Avatar className='h-16 w-16' alt={drink.name}>
           <DrinkAvatarFallback type={drink.type} />
@@ -71,7 +71,7 @@ export function DrinkSessionDrinkItem({ drink }: DrinkSessionDrinkItemProps) {
       </View>
       <Button
         variant='tonal'
-        className='mx-3'
+        className='mx-3 mt-2'
         onPress={() => dispatch(addConsumptionAction({ drinkId: drink.id }))}>
         <Ionicons name='add-sharp' className='android:text-foreground text-xl text-primary' />
         <Text>Add {drink.name}</Text>
