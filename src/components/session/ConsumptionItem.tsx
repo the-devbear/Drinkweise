@@ -1,13 +1,12 @@
+import { IntegerInput } from '@drinkweise/components/ui/IntegerInput';
 import { Text } from '@drinkweise/components/ui/Text';
 import { cn } from '@drinkweise/lib/cn';
-import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { useAppDispatch } from '@drinkweise/store';
-import { removeConsumptionAction, updateConsumptionAction } from '@drinkweise/store/drink-session';
+import { updateConsumptionAction } from '@drinkweise/store/drink-session';
 import type { DrinkConsumptionModel } from '@drinkweise/store/drink-session/models/consumption.model';
-import { Ionicons } from '@expo/vector-icons';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
-import { IntegerInput } from '../ui/IntegerInput';
+import { TimePicker } from './TimePicker';
 
 interface ConsumptionItemProps {
   drinkId: string;
@@ -25,7 +24,7 @@ export function ConsumptionItem({
   const dispatch = useAppDispatch();
   return (
     <View
-      className={cn('flex-row items-center justify-between px-3 py-1', {
+      className={cn('flex-row items-center py-2', {
         'bg-card': index % 2 === 0,
       })}>
       <Text variant='title3' className='flex-1 text-center'>
@@ -52,21 +51,67 @@ export function ConsumptionItem({
           }
         />
       </View>
-      <Text className='flex-[2] text-center'>
-        {shortTimeFormatter.format(consumption.startTime)}
-      </Text>
-      <View className='flex-[2] items-center justify-center'>
+      <View className='flex-[2] items-center'>
+        <TimePicker
+          value={new Date(consumption.startTime)}
+          onChange={({ type, nativeEvent: { timestamp } }) => {
+            if (type !== 'set') {
+              return;
+            }
+            dispatch(
+              updateConsumptionAction({
+                drinkId,
+                consumptionIndex: index,
+                updatedConsumption: {
+                  startTime: timestamp,
+                },
+              })
+            );
+          }}
+        />
+      </View>
+      <View className='flex-[2] items-center'>
         {consumption.endTime ? (
-          <Text className='text-center'>{shortTimeFormatter.format(consumption.endTime)}</Text>
+          <TimePicker
+            value={new Date(consumption.endTime)}
+            onChange={({ type, nativeEvent: { timestamp } }) => {
+              if (type !== 'set') {
+                return;
+              }
+
+              // TODO: Think of a better way to handle this
+              if (timestamp < consumption.startTime) {
+                return;
+              }
+
+              dispatch(
+                updateConsumptionAction({
+                  drinkId,
+                  consumptionIndex: index,
+                  updatedConsumption: {
+                    endTime: timestamp,
+                  },
+                })
+              );
+            }}
+          />
         ) : (
-          <View className='h-6 w-6 items-center justify-center rounded-md border border-primary' />
+          <TouchableOpacity
+            className='h-6 w-6 items-center justify-center rounded-md border border-primary'
+            onPress={() => {
+              dispatch(
+                updateConsumptionAction({
+                  drinkId,
+                  consumptionIndex: index,
+                  updatedConsumption: {
+                    endTime: new Date().getTime(),
+                  },
+                })
+              );
+            }}
+          />
         )}
       </View>
-      <Ionicons
-        className='text-xl text-destructive'
-        name='trash-outline'
-        onPress={() => dispatch(removeConsumptionAction({ drinkId, consumptionIndex: index }))}
-      />
     </View>
   );
 }
