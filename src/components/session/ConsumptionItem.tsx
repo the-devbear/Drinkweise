@@ -2,10 +2,12 @@ import { IntegerInput } from '@drinkweise/components/ui/IntegerInput';
 import { Text } from '@drinkweise/components/ui/Text';
 import { cn } from '@drinkweise/lib/cn';
 import { isSameDay } from '@drinkweise/lib/utils/date/is-same-day';
+import { now } from '@drinkweise/lib/utils/date/now';
 import { useAppDispatch } from '@drinkweise/store';
 import { updateConsumptionAction } from '@drinkweise/store/drink-session';
 import type { DrinkConsumptionModel } from '@drinkweise/store/drink-session/models/consumption.model';
 import { Ionicons } from '@expo/vector-icons';
+import { useCallback } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { TimePicker } from './TimePicker';
@@ -24,6 +26,19 @@ export function ConsumptionItem({
   index,
 }: ConsumptionItemProps) {
   const dispatch = useAppDispatch();
+  const updateConsumption = useCallback(
+    (updatedConsumption: Partial<DrinkConsumptionModel>) => {
+      dispatch(
+        updateConsumptionAction({
+          drinkId,
+          consumptionIndex: index,
+          updatedConsumption,
+        })
+      );
+    },
+    [dispatch, drinkId, index]
+  );
+
   return (
     <View
       className={cn('flex-row items-center py-2', {
@@ -41,15 +56,9 @@ export function ConsumptionItem({
           initialValue={consumption.volume}
           placeholder={drinkDefaultVolume.toString()}
           onEndEditing={(value) =>
-            dispatch(
-              updateConsumptionAction({
-                drinkId,
-                consumptionIndex: index,
-                updatedConsumption: {
-                  volume: value ?? 0,
-                },
-              })
-            )
+            updateConsumption({
+              volume: value ?? 0,
+            })
           }
         />
       </View>
@@ -60,15 +69,9 @@ export function ConsumptionItem({
             if (type !== 'set') {
               return;
             }
-            dispatch(
-              updateConsumptionAction({
-                drinkId,
-                consumptionIndex: index,
-                updatedConsumption: {
-                  startTime: timestamp,
-                },
-              })
-            );
+            updateConsumption({
+              startTime: timestamp,
+            });
           }}
         />
       </View>
@@ -93,15 +96,9 @@ export function ConsumptionItem({
                   return;
                 }
 
-                dispatch(
-                  updateConsumptionAction({
-                    drinkId,
-                    consumptionIndex: index,
-                    updatedConsumption: {
-                      endTime: timestamp,
-                    },
-                  })
-                );
+                updateConsumption({
+                  endTime: timestamp,
+                });
               }}
             />
           </View>
@@ -109,15 +106,9 @@ export function ConsumptionItem({
           <TouchableOpacity
             className='h-6 w-6 items-center justify-center rounded-md border border-primary'
             onPress={() => {
-              dispatch(
-                updateConsumptionAction({
-                  drinkId,
-                  consumptionIndex: index,
-                  updatedConsumption: {
-                    endTime: new Date().getTime(),
-                  },
-                })
-              );
+              updateConsumption({
+                endTime: now(),
+              });
             }}
           />
         )}
