@@ -17,6 +17,7 @@ function getInitialDrinkSessionState(): DrinkSessionState {
   }
 
   try {
+    // TODO: Check if the data is of the correct type
     return JSON.parse(drinkSessionState);
   } catch (e) {
     console.error(e);

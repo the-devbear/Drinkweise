@@ -19,6 +19,7 @@ function getInitialUserState(): UserState {
   }
 
   try {
+    // TODO: Check if the data is of the correct type
     return JSON.parse(userState);
   } catch (e) {
     console.error(e);
