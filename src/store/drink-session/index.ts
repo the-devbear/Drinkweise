@@ -1,3 +1,4 @@
+import { storage } from '@drinkweise/lib/storage/mmkv';
 import { now } from '@drinkweise/lib/utils/date/now';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
@@ -9,9 +10,23 @@ import {
   initialDrinkSessionState,
 } from './models/drink-session-state.model';
 
+function getInitialDrinkSessionState(): DrinkSessionState {
+  const drinkSessionState = storage.getString(drinkSessionSlice);
+  if (!drinkSessionState) {
+    return initialDrinkSessionState;
+  }
+
+  try {
+    return JSON.parse(drinkSessionState);
+  } catch (e) {
+    console.error(e);
+  }
+  return initialDrinkSessionState;
+}
+
 export const drinkSessionStateSlice = createSlice({
   name: drinkSessionSlice,
-  initialState: initialDrinkSessionState,
+  initialState: getInitialDrinkSessionState(),
   reducers: {
     startDrinkSession: () =>
       ({
