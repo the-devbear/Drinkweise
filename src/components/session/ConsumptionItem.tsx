@@ -109,8 +109,9 @@ export function ConsumptionItem({
               updateConsumption({
                 endTime: now(),
               });
-            }}
-          />
+            }}>
+            <Ionicons name='checkmark' className='text-lg leading-none text-primary' />
+          </TouchableOpacity>
         )}
       </View>
     </View>
