@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { Dimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
@@ -9,7 +10,6 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import * as Haptics from 'expo-haptics';
 
 interface DeleteSwipeableProps {
   children: React.ReactNode;
@@ -39,7 +39,7 @@ export function DeleteSwipeable({
     () => reachedDeleteThreshold.value,
     (isReached, previousIsReached) => {
       if (isReached !== previousIsReached && previousIsReached !== null) {
-        runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Warning);
+        runOnJS(Haptics.impactAsync)(Haptics.ImpactFeedbackStyle.Light);
       }
     }
   );
