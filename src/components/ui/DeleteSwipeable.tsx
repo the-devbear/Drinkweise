@@ -3,11 +3,13 @@ import { Dimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 
 interface DeleteSwipeableProps {
   children: React.ReactNode;
@@ -31,6 +33,15 @@ export function DeleteSwipeable({
   const swipeTranslateX = useSharedValue(0);
   const reachedDeleteThreshold = useDerivedValue(
     () => swipeTranslateX.value < -SCREEN_WIDTH * deleteThreshold
+  );
+
+  useAnimatedReaction(
+    () => reachedDeleteThreshold.value,
+    (isReached, previousIsReached) => {
+      if (isReached !== previousIsReached && previousIsReached !== null) {
+        runOnJS(Haptics.notificationAsync)(Haptics.NotificationFeedbackType.Warning);
+      }
+    }
   );
 
   const handleDelete = () => {
