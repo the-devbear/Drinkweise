@@ -9,7 +9,6 @@ cssInterop(DateTimePicker, {
 });
 
 export function TimePicker({
-  mode = 'time',
   value,
   onChange,
   className: _className,
@@ -20,7 +19,7 @@ export function TimePicker({
   return (
     <DateTimePicker
       className={cn('-ml-[10px]')}
-      mode={mode}
+      mode='time'
       value={value}
       onChange={onChange}
       {...props}
