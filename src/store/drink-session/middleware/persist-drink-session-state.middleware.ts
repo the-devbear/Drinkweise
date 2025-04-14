@@ -1,5 +1,5 @@
 import { storage } from '@drinkweise/lib/storage/mmkv';
-import { AppDispatch, RootState } from '@drinkweise/store';
+import type { AppDispatch, RootState } from '@drinkweise/store';
 import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 
