@@ -26,7 +26,7 @@ describe('IntegerInput Component', () => {
       expect(input).toHaveDisplayValue('-123');
     });
 
-    it('handels negative 0', async () => {
+    it('handles negative 0', async () => {
       const onValueChange = jest.fn();
       const { getByTestId } = render(
         <IntegerInput testID='integer-input' onValueChange={onValueChange} />
@@ -54,7 +54,7 @@ describe('IntegerInput Component', () => {
       expect(input).toHaveDisplayValue('');
     });
 
-    it('handles valid integer inpout', async () => {
+    it('handles valid integer input', async () => {
       const onValueChange = jest.fn();
       const { getByTestId } = render(
         <IntegerInput testID='integer-input' onValueChange={onValueChange} />
@@ -124,7 +124,7 @@ describe('IntegerInput Component', () => {
       expect(input).toHaveDisplayValue('1234567');
     });
 
-    it('handles when a stirng with some numbers is pasted', async () => {
+    it('handles when a string with some numbers is pasted', async () => {
       const onValueChange = jest.fn();
       const { getByTestId } = render(
         <IntegerInput testID='integer-input' onValueChange={onValueChange} />
