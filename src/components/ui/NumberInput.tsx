@@ -127,6 +127,11 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
           split.pop();
         }
 
+        // If the input only contains 0s, we need to set the value to 0
+        if (split[0] === '' && text !== '') {
+          split[0] = '0';
+        }
+
         const newValue = split.join(decimalSeparator);
 
         if (newValue === text) {

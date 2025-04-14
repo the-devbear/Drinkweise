@@ -16,6 +16,7 @@ const textInputVariants = cva('flex-row items-center w-full rounded-md px-3 py-2
     variant: {
       default: 'border border-input bg-card',
       card: 'border border-input bg-background',
+      none: 'border-0 bg-transparent',
     },
     size: {
       sm: 'h-9 text-sm',
@@ -47,6 +48,7 @@ const textVariants = cva('flex-1 ios:leading-[0px] text-foreground', {
     variant: {
       default: '',
       card: '',
+      none: '',
     },
     size: {
       sm: 'text-sm',

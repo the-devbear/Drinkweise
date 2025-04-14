@@ -73,6 +73,7 @@ export default ({ config }) => ({
       backgroundColor: '#FFFFFF',
     },
     package: buildTimeEnvironment.PACKAGE,
+    softwareKeyboardLayoutMode: 'pan',
   },
   owner: 'dev_bear',
   extra: {

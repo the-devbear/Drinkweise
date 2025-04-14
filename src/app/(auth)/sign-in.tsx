@@ -123,7 +123,7 @@ export default function SignInPage() {
         </View>
         <View className='flex-col items-center'>
           <Text>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => router.push('/sign-up')}>
+          <TouchableOpacity onPress={() => router.navigate('/sign-up')}>
             <Text className='text-primary'>Create Account</Text>
           </TouchableOpacity>
         </View>

@@ -1,10 +1,10 @@
-import type { Drink } from './drink.model';
+import type { DrinkModel } from './drink.model';
 
 export interface ActiveDrinkSessionModel {
   status: 'active';
   name: string;
   startTime: number;
-  drinks: Record<string, Drink>;
+  drinks: DrinkModel[];
 }
 
 export interface InactiveDrinkSessionModel {

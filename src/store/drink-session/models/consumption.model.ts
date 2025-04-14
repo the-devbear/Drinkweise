@@ -1,4 +1,4 @@
-export interface DrinkConsumption {
+export interface DrinkConsumptionModel {
   id: number;
   volume: number;
   startTime: number;
