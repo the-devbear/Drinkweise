@@ -2,13 +2,12 @@ import { DeleteSwipeable } from '@drinkweise/components/ui/DeleteSwipeable';
 import { IntegerInput } from '@drinkweise/components/ui/IntegerInput';
 import { Text } from '@drinkweise/components/ui/Text';
 import { cn } from '@drinkweise/lib/cn';
-import { isSameDay } from '@drinkweise/lib/utils/date/is-same-day';
 import { now } from '@drinkweise/lib/utils/date/now';
 import { useAppDispatch } from '@drinkweise/store';
 import { removeConsumptionAction, updateConsumptionAction } from '@drinkweise/store/drink-session';
 import type { DrinkConsumptionModel } from '@drinkweise/store/drink-session/models/consumption.model';
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { TimePicker } from './TimePicker';
@@ -40,6 +39,15 @@ export function ConsumptionItem({
     [dispatch, drinkId, index]
   );
 
+  const consumptionStartTimeDate = useMemo(
+    () => new Date(consumption.startTime),
+    [consumption.startTime]
+  );
+  const consumptionEndTimeDate = useMemo(
+    () => (consumption.endTime !== undefined ? new Date(consumption.endTime) : new Date()),
+    [consumption.endTime]
+  );
+
   return (
     <DeleteSwipeable
       onDelete={() => {
@@ -68,6 +76,18 @@ export function ConsumptionItem({
           />
         </View>
         <View className='flex-[2] items-center'>
+          <View>
+            <View className='absolute -right-1 -top-1 z-10'>
+              <Text
+                className={cn(
+                  'aspect-square self-center rounded-full bg-background p-[1px] text-center text-xs font-semibold text-primary',
+                  {
+                    'bg-card': index % 2 === 0,
+                  }
+                )}>
+                {consumptionStartTimeDate.getDate()}
+              </Text>
+            </View>
           <TimePicker
             value={new Date(consumption.startTime)}
             onChange={({ type, nativeEvent: { timestamp } }) => {
@@ -79,16 +99,22 @@ export function ConsumptionItem({
               });
             }}
           />
+          </View>
         </View>
         <View className='flex-[2] items-center'>
           {consumption.endTime ? (
             <View>
-              {!isSameDay(consumption.startTime, consumption.endTime) && (
-                <View className='absolute -top-1 right-0 z-10 flex-row items-center'>
-                  <Ionicons name='calendar-clear-outline' className='text-xs text-foreground' />
-                  <Text className='text-xs'>+1</Text>
+              <View className='absolute -right-1 -top-1 z-10'>
+                <Text
+                  className={cn(
+                    'aspect-square self-center rounded-full bg-background p-[1px] text-center text-xs font-semibold text-primary',
+                    {
+                      'bg-card': index % 2 === 0,
+                    }
+                  )}>
+                  {consumptionEndTimeDate.getDate()}
+                </Text>
                 </View>
-              )}
               <TimePicker
                 value={new Date(consumption.endTime)}
                 onChange={({ type, nativeEvent: { timestamp } }) => {
