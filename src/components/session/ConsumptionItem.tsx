@@ -6,6 +6,7 @@ import {
   calculateEndTimeForConsumption,
   calculateStartTimeForConsumption,
 } from '@drinkweise/lib/drink-session/calculate-timestamps-for-consumption';
+import { now } from '@drinkweise/lib/utils/date/now';
 import { useAppDispatch } from '@drinkweise/store';
 import { removeConsumptionAction, updateConsumptionAction } from '@drinkweise/store/drink-session';
 import type { DrinkConsumptionModel } from '@drinkweise/store/drink-session/models/consumption.model';
@@ -149,8 +150,12 @@ export function ConsumptionItem({
             <TouchableOpacity
               className='h-6 w-6 items-center justify-center rounded-md border border-primary'
               onPress={() => {
+                const currentTimestamp = now();
                 updateConsumption({
-                  endTime: consumption.startTime,
+                  endTime:
+                    currentTimestamp > consumption.startTime
+                      ? currentTimestamp
+                      : consumption.startTime,
                 });
               }}>
               <Ionicons name='checkmark' className='text-lg leading-none text-primary' />
