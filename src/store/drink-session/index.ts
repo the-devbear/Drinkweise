@@ -167,6 +167,22 @@ export const drinkSessionStateSlice = createSlice({
 
       consumption.endTime = currentTime > startTime ? currentTime : startTime;
     },
+    finishAllOpenConsumptions: (state) => {
+      if (state.status !== 'active') {
+        return;
+      }
+
+      state.drinks.forEach((drink) => {
+        drink.consumptions.forEach((consumption) => {
+          if (consumption.endTime === undefined) {
+            const currentTime = now();
+            const startTime = consumption.startTime;
+
+            consumption.endTime = currentTime > startTime ? currentTime : startTime;
+          }
+        });
+      });
+    },
   },
 
   selectors: {
@@ -185,5 +201,6 @@ export const {
   removeConsumption: removeConsumptionAction,
   updateConsumption: updateConsumptionAction,
   finishConsumption: finishConsumptionAction,
+  finishAllOpenConsumptions: finishAllOpenConsumptionsAction,
 } = drinkSessionStateSlice.actions;
 export const { isDrinkSessionActiveSelector, drinksSelector } = drinkSessionStateSlice.selectors;
