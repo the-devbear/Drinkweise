@@ -21,7 +21,7 @@ const textInputVariants = cva('flex-row items-center w-full rounded-md px-3 py-2
     size: {
       sm: 'h-9 text-sm',
       md: 'h-11 text-base',
-      lg: 'h-13 text-lg',
+      lg: 'h-12 text-lg',
     },
     error: {
       true: 'border-destructive',
