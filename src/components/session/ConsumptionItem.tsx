@@ -77,7 +77,7 @@ export function ConsumptionItem({
             placeholder={drinkDefaultVolume.toString()}
             onEndEditing={(value) =>
               updateConsumption({
-                volume: value ?? 0,
+                volume: value ?? drinkDefaultVolume,
               })
             }
           />
