@@ -1,3 +1,4 @@
+import { SessionDurationTicker } from '@drinkweise/components/session/complete/SessionDurationTicker';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
@@ -16,7 +17,7 @@ export default function CompleteDrinkSessionPage() {
       roundedNumberFormatter.format(
         calculateTotalGrammsOfAlcoholConsumed(drinkSession?.drinks ?? [])
       ),
-    [drinkSession]
+    [drinkSession?.drinks]
   );
 
   if (!drinkSession) {
@@ -34,9 +35,7 @@ export default function CompleteDrinkSessionPage() {
       <View className='flex-row items-center gap-5 pt-3'>
         <View className='flex-1 rounded-md bg-card px-2 py-1'>
           <Text className='text-center text-sm font-semibold'>Duration</Text>
-          <Text className='text-center text-sm' style={{ fontVariant: ['tabular-nums'] }}>
-            1:45h
-          </Text>
+          <SessionDurationTicker startTime={drinkSession.startTime} />
         </View>
         <View className='flex-1 rounded-md bg-card px-2 py-1'>
           <Text className='text-center text-sm font-semibold'>Total Alcohol</Text>
