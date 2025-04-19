@@ -1,9 +1,18 @@
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
+import { useAppSelector } from '@drinkweise/store';
+import { activeDrinkSessionSelector } from '@drinkweise/store/drink-session';
+import { Redirect } from 'expo-router';
 import { ScrollView, View } from 'react-native';
 
 export default function CompleteDrinkSessionPage() {
+  const drinkSession = useAppSelector(activeDrinkSessionSelector);
+
+  if (!drinkSession) {
+    return <Redirect href='/drinks/session' />;
+  }
+
   return (
     <ScrollView>
       <View className='px-4 py-2'>

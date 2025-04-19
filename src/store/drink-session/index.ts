@@ -186,9 +186,9 @@ export const drinkSessionStateSlice = createSlice({
   },
 
   selectors: {
-    isDrinkSessionActiveSelector: (state: DrinkSessionState): boolean => state.status === 'active',
-    drinksSelector: (state: DrinkSessionState) =>
-      state.status === 'active' ? state.drinks : undefined,
+    isDrinkSessionActiveSelector: (state): boolean => state.status === 'active',
+    drinksSelector: (state) => (state.status === 'active' ? state.drinks : undefined),
+    activeDrinkSessionSelector: (state) => (state.status === 'active' ? state : undefined),
   },
 });
 
@@ -203,4 +203,5 @@ export const {
   finishConsumption: finishConsumptionAction,
   finishAllOpenConsumptions: finishAllOpenConsumptionsAction,
 } = drinkSessionStateSlice.actions;
-export const { isDrinkSessionActiveSelector, drinksSelector } = drinkSessionStateSlice.selectors;
+export const { isDrinkSessionActiveSelector, drinksSelector, activeDrinkSessionSelector } =
+  drinkSessionStateSlice.selectors;
