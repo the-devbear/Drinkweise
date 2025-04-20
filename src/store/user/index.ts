@@ -84,6 +84,7 @@ export const userStateSlice = createSlice({
   selectors: {
     userSelector: (state) => state.user,
     userSessionSelector: (state) => state.session,
+    userWeightSelector: (state) => state.user?.weight,
   },
 });
 
@@ -91,4 +92,4 @@ export const {
   updateUserSession: updateUserSessionAction,
   supabaseSignOut: supabaseSignOutAction,
 } = userStateSlice.actions;
-export const { userSelector, userSessionSelector } = userStateSlice.selectors;
+export const { userSelector, userSessionSelector, userWeightSelector } = userStateSlice.selectors;
