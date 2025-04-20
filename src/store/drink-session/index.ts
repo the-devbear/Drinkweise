@@ -2,9 +2,10 @@ import { storage } from '@drinkweise/lib/storage/mmkv';
 import { now } from '@drinkweise/lib/utils/date/now';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { completeDrinkSessionAction } from './actions/complete-drink-session.action';
 import { drinkSessionSlice } from './drink-session.slice';
-import { AddDrinkModel } from './models/add-drink.model';
-import { DrinkConsumptionModel } from './models/consumption.model';
+import type { AddDrinkModel } from './models/add-drink.model';
+import type { DrinkConsumptionModel } from './models/consumption.model';
 import {
   type DrinkSessionState,
   initialDrinkSessionState,
@@ -197,7 +198,9 @@ export const drinkSessionStateSlice = createSlice({
       state.note = note;
     },
   },
-
+  extraReducers: (builder) => {
+    builder.addCase(completeDrinkSessionAction.fulfilled, () => initialDrinkSessionState);
+  },
   selectors: {
     isDrinkSessionActiveSelector: (state): boolean => state.status === 'active',
     drinksSelector: (state) => (state.status === 'active' ? state.drinks : undefined),

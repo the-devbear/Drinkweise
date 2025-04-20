@@ -6,8 +6,9 @@ import { calculateSoberTime } from '@drinkweise/lib/drink-session/calculate-sobe
 import { calculateTotalGrammsOfAlcoholConsumed } from '@drinkweise/lib/drink-session/calculate-total-gramms-of-alcohol-consumed';
 import { dateFormatterWithoutYear } from '@drinkweise/lib/utils/date/date-formatters';
 import { roundedNumberFormatter } from '@drinkweise/lib/utils/number/number-formatters';
-import { useAppSelector } from '@drinkweise/store';
+import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { activeDrinkSessionSelector } from '@drinkweise/store/drink-session';
+import { completeDrinkSessionAction } from '@drinkweise/store/drink-session/actions/complete-drink-session.action';
 import { userWeightSelector } from '@drinkweise/store/user';
 import { Redirect } from 'expo-router';
 import { useMemo } from 'react';
@@ -16,6 +17,7 @@ import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 export default function CompleteDrinkSessionPage() {
   const drinkSession = useAppSelector(activeDrinkSessionSelector);
   const userWeight = useAppSelector(userWeightSelector);
+  const dispatch = useAppDispatch();
   const totalAlcoholConsumed = useMemo(
     () => calculateTotalGrammsOfAlcoholConsumed(drinkSession?.drinks ?? []),
     [drinkSession?.drinks]
@@ -104,7 +106,12 @@ export default function CompleteDrinkSessionPage() {
           placeholder='How was your session? Leave a note here...'
         />
       </View>
-      <Button className='mx-3 mt-4'>
+      <Button
+        className='mx-3 mt-4'
+        onPress={() => {
+          // TODO: For now fire and forget
+          dispatch(completeDrinkSessionAction({ session: drinkSession }));
+        }}>
         <Text>Complete</Text>
       </Button>
     </ScrollView>
