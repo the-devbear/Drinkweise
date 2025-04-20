@@ -33,6 +33,7 @@ export const drinkSessionStateSlice = createSlice({
       ({
         status: 'active',
         name: '',
+        note: '',
         startTime: now(),
         drinks: [],
       }) satisfies DrinkSessionState,
@@ -183,6 +184,18 @@ export const drinkSessionStateSlice = createSlice({
         });
       });
     },
+    updateSessionName: (state, { payload: { name } }: PayloadAction<{ name: string }>) => {
+      if (state.status !== 'active') {
+        return;
+      }
+      state.name = name;
+    },
+    updateSessionNote: (state, { payload: { note } }: PayloadAction<{ note: string }>) => {
+      if (state.status !== 'active') {
+        return;
+      }
+      state.note = note;
+    },
   },
 
   selectors: {
@@ -202,6 +215,8 @@ export const {
   updateConsumption: updateConsumptionAction,
   finishConsumption: finishConsumptionAction,
   finishAllOpenConsumptions: finishAllOpenConsumptionsAction,
+  updateSessionName: updateSessionNameAction,
+  updateSessionNote: updateSessionNoteAction,
 } = drinkSessionStateSlice.actions;
 export const { isDrinkSessionActiveSelector, drinksSelector, activeDrinkSessionSelector } =
   drinkSessionStateSlice.selectors;
