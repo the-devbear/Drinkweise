@@ -11,7 +11,7 @@ import { activeDrinkSessionSelector } from '@drinkweise/store/drink-session';
 import { userWeightSelector } from '@drinkweise/store/user';
 import { Redirect } from 'expo-router';
 import { useMemo } from 'react';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, TouchableOpacity, View } from 'react-native';
 
 export default function CompleteDrinkSessionPage() {
   const drinkSession = useAppSelector(activeDrinkSessionSelector);
@@ -39,24 +39,61 @@ export default function CompleteDrinkSessionPage() {
           clearButtonMode='while-editing'
         />
         <View className='flex-row items-center gap-5 pt-3'>
-          <View className='flex-1 rounded-md bg-card px-2 py-1'>
+          <TouchableOpacity
+            className='flex-1 rounded-md bg-card px-2 py-1'
+            onPress={() => {
+              Alert.alert(
+                'Duration',
+                'This is the duration of your session. It shows how long you have been drinking.',
+                [
+                  {
+                    text: 'OK',
+                  },
+                ]
+              );
+            }}>
             <Text className='text-center text-sm font-semibold'>Duration</Text>
             <SessionDurationTicker startTime={drinkSession.startTime} />
-          </View>
-          <View className='flex-1 rounded-md bg-card px-2 py-1'>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className='flex-1 rounded-md bg-card px-2 py-1'
+            onPress={() => {
+              Alert.alert(
+                'Total Alcohol',
+                'This is the total amount of alcohol you have consumed during this session.',
+                [
+                  {
+                    text: 'OK',
+                  },
+                ]
+              );
+            }}>
             <Text className='text-center text-sm font-semibold'>Total Alcohol</Text>
             <Text className='text-center text-sm'>
               {roundedNumberFormatter.format(totalAlcoholConsumed)}g
             </Text>
-          </View>
-          <View className='flex-1 rounded-lg bg-card px-2 py-1'>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className='flex-1 rounded-lg bg-card px-2 py-1'
+            onPress={() => {
+              Alert.alert(
+                'Sober Time',
+                'This is the time when you will be sober again. It is calculated based on the amount of alcohol you have consumed and your weight.\n\n' +
+                  'The body eliminates alcohol at a rate of about 0.1g per kg of body weight per hour.',
+                [
+                  {
+                    text: 'OK',
+                  },
+                ]
+              );
+            }}>
             <Text className='text-center text-sm font-semibold'>Sober time</Text>
             <Text className='text-center text-sm'>
               {typeof soberTime === 'string'
                 ? soberTime
                 : dateFormatterWithoutYear.format(soberTime)}
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
         <TextInput
           label='Note:'
