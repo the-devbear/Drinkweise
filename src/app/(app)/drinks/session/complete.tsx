@@ -3,7 +3,7 @@ import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { calculateSoberTime } from '@drinkweise/lib/drink-session/calculate-sober-time';
-import { calculateTotalGrammsOfAlcoholConsumed } from '@drinkweise/lib/drink-session/calculate-total-gramms-of-alcohol-consumed';
+import { calculateTotalGramsOfAlcoholConsumed } from '@drinkweise/lib/drink-session/calculate-total-grams-of-alcohol-consumed';
 import { dateFormatterWithoutYear } from '@drinkweise/lib/utils/date/date-formatters';
 import { roundedNumberFormatter } from '@drinkweise/lib/utils/number/number-formatters';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
@@ -34,7 +34,7 @@ export default function CompleteDrinkSessionPage() {
   const userWeight = useAppSelector(userWeightSelector);
   const dispatch = useAppDispatch();
   const totalAlcoholConsumed = useMemo(
-    () => calculateTotalGrammsOfAlcoholConsumed(drinkSession?.drinks ?? []),
+    () => calculateTotalGramsOfAlcoholConsumed(drinkSession?.drinks ?? []),
     [drinkSession?.drinks]
   );
   const soberTime = useMemo(

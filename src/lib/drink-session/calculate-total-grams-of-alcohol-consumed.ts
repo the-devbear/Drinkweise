@@ -2,7 +2,7 @@ import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.mo
 
 const ALCOHOL_DENSITY = 0.8;
 
-export function calculateTotalGrammsOfAlcoholConsumed(drinks: DrinkModel[]): number {
+export function calculateTotalGramsOfAlcoholConsumed(drinks: DrinkModel[]): number {
   return drinks.reduce((previous, drink) => {
     return (
       (previous +
