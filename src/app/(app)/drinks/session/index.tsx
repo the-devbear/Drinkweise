@@ -2,6 +2,7 @@ import { DrinkSessionDrinkItem } from '@drinkweise/components/session/DrinkSessi
 import { DrinkSessionFooter } from '@drinkweise/components/session/DrinkSessionFooter';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
+import { SessionValidationErrors } from '@drinkweise/lib/drink-session/enums/session-validation-errors';
 import { validateSessionCompletion } from '@drinkweise/lib/drink-session/validate-session-completion';
 import { never } from '@drinkweise/lib/utils/never';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
@@ -35,7 +36,7 @@ export default function SessionPage() {
       const { error: sessionValidationError, drink } = sessionValidationResult;
 
       switch (sessionValidationError) {
-        case 'NO_DRINKS':
+        case SessionValidationErrors.NO_DRINKS:
           Alert.alert(
             'No drinks added',
             'Please add a drink to your session before proceeding.',
@@ -50,7 +51,7 @@ export default function SessionPage() {
             }
           );
           return;
-        case 'NO_CONSUMPTION':
+        case SessionValidationErrors.NO_CONSUMPTION:
           Alert.alert(
             `No consumptions for ${drink.name}`,
             'Please add at least one consumption to each drink or remove the drink before proceeding.',
@@ -76,7 +77,7 @@ export default function SessionPage() {
             ]
           );
           return;
-        case 'NOT_FINISHED_ALL_CONSUMPTIONS':
+        case SessionValidationErrors.NOT_FINISHED_ALL_CONSUMPTIONS:
           Alert.alert(
             `You have not finished all your drinks`,
             'Are you sure you want to finish up?\n\nAll uncompleted drinks will be completed with the current time.',
