@@ -147,8 +147,8 @@ export const drinkSessionStateSlice = createSlice({
     finishConsumption: (
       state,
       {
-        payload: { drinkId, conumptionIndex },
-      }: PayloadAction<{ drinkId: string; conumptionIndex: number }>
+        payload: { drinkId, consumptionIndex },
+      }: PayloadAction<{ drinkId: string; consumptionIndex: number }>
     ) => {
       if (state.status !== 'active') {
         return;
@@ -159,7 +159,7 @@ export const drinkSessionStateSlice = createSlice({
         return;
       }
 
-      const consumption = drink.consumptions[conumptionIndex];
+      const consumption = drink.consumptions[consumptionIndex];
       if (!consumption) {
         return;
       }

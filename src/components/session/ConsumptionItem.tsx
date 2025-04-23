@@ -153,7 +153,7 @@ export function ConsumptionItem({
             <TouchableOpacity
               className='h-6 w-6 items-center justify-center rounded-md border border-primary'
               onPress={() => {
-                dispatch(finishConsumptionAction({ drinkId, conumptionIndex: index }));
+                dispatch(finishConsumptionAction({ drinkId, consumptionIndex: index }));
               }}>
               <Ionicons name='checkmark' className='text-lg leading-none text-primary' />
             </TouchableOpacity>
