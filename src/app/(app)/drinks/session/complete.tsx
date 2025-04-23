@@ -28,7 +28,7 @@ export default function CompleteDrinkSessionPage() {
   );
 
   if (!drinkSession) {
-    return <Redirect href='/drinks/session' />;
+    return <Redirect href='/drinks' />;
   }
 
   return (
