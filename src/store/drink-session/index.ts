@@ -185,6 +185,27 @@ export const drinkSessionStateSlice = createSlice({
         });
       });
     },
+    updateSessionStartTimeToEarliestConsumption: (state) => {
+      if (state.status !== 'active') {
+        return;
+      }
+      const earliestStartTime = state.drinks.reduce((earliest, drink) => {
+        const earliestConsumptionTimestamp = drink.consumptions.reduce<number | undefined>(
+          (earliestTimestamp, consumption) =>
+            earliestTimestamp === undefined
+              ? consumption.startTime
+              : Math.min(earliestTimestamp, consumption.startTime),
+          undefined
+        );
+
+        if (!earliestConsumptionTimestamp) {
+          return earliest;
+        }
+
+        return Math.min(earliest, earliestConsumptionTimestamp);
+      }, state.startTime);
+      state.startTime = earliestStartTime;
+    },
     updateSessionName: (state, { payload: { name } }: PayloadAction<{ name: string }>) => {
       if (state.status !== 'active') {
         return;
@@ -216,6 +237,7 @@ export const {
   addConsumption: addConsumptionAction,
   removeConsumption: removeConsumptionAction,
   updateConsumption: updateConsumptionAction,
+  updateSessionStartTimeToEarliestConsumption: updateSessionStartTimeToEarliestConsumptionAction,
   finishConsumption: finishConsumptionAction,
   finishAllOpenConsumptions: finishAllOpenConsumptionsAction,
   updateSessionName: updateSessionNameAction,

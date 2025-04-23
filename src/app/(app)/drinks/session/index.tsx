@@ -11,6 +11,7 @@ import {
   drinksSelector,
   finishAllOpenConsumptionsAction,
   removeDrinkAction,
+  updateSessionStartTimeToEarliestConsumptionAction,
 } from '@drinkweise/store/drink-session';
 import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
 import { FlashList } from '@shopify/flash-list';
@@ -29,6 +30,7 @@ export default function SessionPage() {
       const sessionValidationResult = validateSessionCompletion(drinks);
 
       if (sessionValidationResult === null) {
+        dispatch(updateSessionStartTimeToEarliestConsumptionAction());
         router.navigate('/drinks/session/complete');
         return;
       }
