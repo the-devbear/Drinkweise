@@ -3,6 +3,7 @@ import type { DrinkModel } from './drink.model';
 export interface ActiveDrinkSessionModel {
   status: 'active';
   name: string;
+  note: string;
   startTime: number;
   drinks: DrinkModel[];
 }

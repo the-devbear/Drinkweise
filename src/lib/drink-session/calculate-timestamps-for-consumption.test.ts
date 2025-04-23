@@ -89,7 +89,7 @@ describe('lib', () => {
           });
         });
 
-        describe('updateEndTime', () => {
+        describe('calculateEndTimeForConsumption', () => {
           it('should overflow to the next day when the end time is before the start time', () => {
             const currentStartDate = new Date('2023-10-01T23:00:00Z');
             const currentEndDate = new Date('2023-10-01T23:30:00Z');

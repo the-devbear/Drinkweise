@@ -125,6 +125,7 @@ export type Database = {
           created_by: string | null
           default_volume: number
           id: string
+          name: string
           type: string
         }
         Insert: {
@@ -134,6 +135,7 @@ export type Database = {
           created_by?: string | null
           default_volume: number
           id?: string
+          name: string
           type: string
         }
         Update: {
@@ -143,6 +145,7 @@ export type Database = {
           created_by?: string | null
           default_volume?: number
           id?: string
+          name?: string
           type?: string
         }
         Relationships: [
@@ -196,7 +199,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      complete_drink_session: {
+        Args: {
+          name: string
+          start_time: string
+          end_time: string
+          consumptions: Json
+          note?: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       gender: "male" | "female" | "other"

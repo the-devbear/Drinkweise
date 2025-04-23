@@ -4,6 +4,7 @@ import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 
 import { cancelDrinkSessionAction } from '..';
+import { completeDrinkSessionAction } from '../actions/complete-drink-session.action';
 import { drinkSessionSlice } from '../drink-session.slice';
 
 export const persistDrinkSessionStateMiddleware = createListenerMiddleware();
@@ -21,7 +22,13 @@ export const persistDrinkSessionStateListener = startPersistDrinkSessionStateLis
 
     await listenerApi.delay(LISTENER_DELAY);
 
-    if (isAnyOf(signOutAction.fulfilled, cancelDrinkSessionAction)(action)) {
+    if (
+      isAnyOf(
+        signOutAction.fulfilled,
+        cancelDrinkSessionAction,
+        completeDrinkSessionAction.fulfilled
+      )(action)
+    ) {
       console.info('[DRINK] Deleting drink session state', action.type);
       storage.delete(drinkSessionSlice);
       return;

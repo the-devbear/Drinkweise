@@ -7,7 +7,11 @@ import {
   calculateStartTimeForConsumption,
 } from '@drinkweise/lib/drink-session/calculate-timestamps-for-consumption';
 import { useAppDispatch } from '@drinkweise/store';
-import { removeConsumptionAction, updateConsumptionAction } from '@drinkweise/store/drink-session';
+import {
+  finishConsumptionAction,
+  removeConsumptionAction,
+  updateConsumptionAction,
+} from '@drinkweise/store/drink-session';
 import type { DrinkConsumptionModel } from '@drinkweise/store/drink-session/models/consumption.model';
 import { Ionicons } from '@expo/vector-icons';
 import { useCallback, useMemo } from 'react';
@@ -73,7 +77,7 @@ export function ConsumptionItem({
             placeholder={drinkDefaultVolume.toString()}
             onEndEditing={(value) =>
               updateConsumption({
-                volume: value ?? 0,
+                volume: value ?? drinkDefaultVolume,
               })
             }
           />
@@ -149,9 +153,7 @@ export function ConsumptionItem({
             <TouchableOpacity
               className='h-6 w-6 items-center justify-center rounded-md border border-primary'
               onPress={() => {
-                updateConsumption({
-                  endTime: consumption.startTime,
-                });
+                dispatch(finishConsumptionAction({ drinkId, consumptionIndex: index }));
               }}>
               <Ionicons name='checkmark' className='text-lg leading-none text-primary' />
             </TouchableOpacity>

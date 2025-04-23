@@ -11,6 +11,13 @@ export default function SessionLayout() {
           presentation: 'modal',
         }}
       />
+      <Stack.Screen
+        name='complete'
+        options={{
+          headerTitle: 'Drink Up!',
+          headerBackButtonDisplayMode: 'minimal',
+        }}
+      />
     </Stack>
   );
 }
