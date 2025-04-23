@@ -98,6 +98,7 @@ export default function SessionPage() {
                 text: 'Finish all',
                 onPress: () => {
                   dispatch(finishAllOpenConsumptionsAction());
++                 dispatch(updateSessionStartTimeToEarliestConsumptionAction());
                   router.navigate('/drinks/session/complete');
                 },
               },
