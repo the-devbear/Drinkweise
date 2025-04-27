@@ -1,6 +1,7 @@
 import { fixupConfigRules } from '@eslint/compat';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
+import pluginQuery from '@tanstack/eslint-plugin-query';
 import reactCompiler from 'eslint-plugin-react-compiler';
 import testingLibrary from 'eslint-plugin-testing-library';
 import path from 'node:path';
@@ -76,4 +77,5 @@ export default [
     ...testingLibrary.configs.recommended,
   },
   reactCompiler.configs.recommended,
+  ...pluginQuery.configs['flat/recommended'],
 ];
