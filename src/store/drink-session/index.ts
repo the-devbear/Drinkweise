@@ -1,6 +1,6 @@
 import { storage } from '@drinkweise/lib/storage/mmkv';
 import { now } from '@drinkweise/lib/utils/date/now';
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
 
 import { completeDrinkSessionAction } from './actions/complete-drink-session.action';
 import { drinkSessionSlice } from './drink-session.slice';
@@ -10,6 +10,7 @@ import {
   type DrinkSessionState,
   initialDrinkSessionState,
 } from './models/drink-session-state.model';
+import { signOutAction } from '../user/actions/sign-out.action';
 
 function getInitialDrinkSessionState(): DrinkSessionState {
   const drinkSessionState = storage.getString(drinkSessionSlice);
@@ -220,7 +221,14 @@ export const drinkSessionStateSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(completeDrinkSessionAction.fulfilled, () => initialDrinkSessionState);
+    builder.addMatcher(
+      isAnyOf(
+        completeDrinkSessionAction.fulfilled,
+        signOutAction.fulfilled,
+        signOutAction.rejected
+      ),
+      () => initialDrinkSessionState
+    );
   },
   selectors: {
     isDrinkSessionActiveSelector: (state): boolean => state.status === 'active',
