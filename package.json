@@ -32,6 +32,7 @@
   "dependencies": {
     "@dev-plugins/react-native-mmkv": "~0.2.0",
     "@dev-plugins/react-navigation": "~0.2.0",
+    "@dev-plugins/react-query": "~0.2.0",
     "@expo/react-native-action-sheet": "^4.1.0",
     "@expo/vector-icons": "^14.0.0",
     "@gorhom/bottom-sheet": "^5.0.6",
@@ -48,7 +49,9 @@
     "@roninoss/icons": "^0.0.4",
     "@shopify/flash-list": "1.7.3",
     "@supabase/supabase-js": "^2.38.4",
+    "@tanstack/query-sync-storage-persister": "^5.74.6",
     "@tanstack/react-query": "^5.74.4",
+    "@tanstack/react-query-persist-client": "^5.74.6",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "expo": "~52.0.46",
