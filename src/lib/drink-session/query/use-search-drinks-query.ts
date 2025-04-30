@@ -1,6 +1,4 @@
-import { supabase } from '@drinkweise/lib/supabase';
-import { tryMapToEnum } from '@drinkweise/lib/utils/enum';
-import { DrinkTypeEnum } from '@drinkweise/store/drink-session/enums/drink-type.enum';
+import { drinksService } from '@drinkweise/api/drinks';
 import { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -12,39 +10,14 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
   const infiniteQuery = useInfiniteQuery({
     queryKey: [SEARCH_DRINKS_QUERY_KEY],
     initialPageParam: '',
-    queryFn: async ({ pageParam, signal }): Promise<AddDrinkModel[]> => {
-      // TODO: This is going to be extracted into a service
-      const query = supabase
-        .from('drinks')
-        .select('id, name, alcohol, default_volume, type, barcode')
-        .order('id', { ascending: true })
-        .abortSignal(signal)
-        .limit(10);
-
-      if (pageParam !== '') {
-        query.gt('id', pageParam);
-      }
-
-      const { data, error } = await query;
+    queryFn: async ({ pageParam }): Promise<AddDrinkModel[]> => {
+      const { value, error } = await drinksService.getPaginatedDrinks(pageParam);
 
       if (error) {
         throw new Error(error.message);
       }
 
-      if (!data) {
-        return [];
-      }
-
-      console.log('data', data);
-
-      return data.map((drink) => ({
-        id: drink.id,
-        name: drink.name,
-        alcohol: drink.alcohol,
-        defaultVolume: drink.default_volume,
-        type: tryMapToEnum(DrinkTypeEnum, drink.type) ?? DrinkTypeEnum.OTHER,
-        barcode: drink.barcode ?? undefined,
-      }));
+      return value;
     },
     getNextPageParam: (lastPage) => {
       if (lastPage.length === 0) {
@@ -77,33 +50,17 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
 
   const searchQuery = useQuery({
     queryKey: [SEARCH_DRINKS_QUERY_KEY, debouncedSearchString],
-    queryFn: async ({ signal }): Promise<AddDrinkModel[]> => {
-      // TODO: This is going to be extracted into a service
+    queryFn: async (): Promise<AddDrinkModel[]> => {
       if (!debouncedSearchString) {
         return [];
       }
-
-      const { data, error } = await supabase
-        .from('drinks')
-        .select('id, name, alcohol, default_volume, type')
-        .abortSignal(signal)
-        .ilike('name', `%${debouncedSearchString}%`);
+      const { value, error } = await drinksService.searchDrinks(debouncedSearchString);
 
       if (error) {
         throw new Error(error.message);
       }
 
-      if (!data) {
-        return [];
-      }
-
-      return data.map((drink) => ({
-        id: drink.id,
-        name: drink.name,
-        alcohol: drink.alcohol,
-        defaultVolume: drink.default_volume,
-        type: tryMapToEnum(DrinkTypeEnum, drink.type) ?? DrinkTypeEnum.OTHER,
-      }));
+      return value;
     },
     enabled: isSearchQueryActive,
   });
