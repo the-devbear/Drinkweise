@@ -1,8 +1,9 @@
-import { AddDrinkList } from '@drinkweise/components/session/add/AddDrinkList';
+import { AddDrinkListItem } from '@drinkweise/components/session/add/AddDrinkListItem';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useSearchDrinksQuery } from '@drinkweise/lib/drink-session/query/use-search-drinks-query';
 import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
 import { Ionicons } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -24,7 +25,15 @@ export default function AddDrinkPage() {
         placeholder='Search...'
         onChangeText={setSearch}
       />
-      <AddDrinkList data={drinks} />
+      <FlashList
+        data={drinks}
+        keyExtractor={(item) => item.id}
+        estimatedItemSize={84}
+        keyboardShouldPersistTaps='handled'
+        keyboardDismissMode='on-drag'
+        contentContainerStyle={{ paddingBottom: 50 }}
+        renderItem={({ item }) => <AddDrinkListItem drink={item} />}
+      />
     </View>
   );
 }
