@@ -28,7 +28,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
       return value;
     },
     getNextPageParam: (lastPage) => {
-      if (lastPage.length === 0) {
+      if (lastPage.length < drinksService.DEFAULT_PAGE_SIZE) {
         return undefined;
       }
       return lastPage.at(-1)!.id;
