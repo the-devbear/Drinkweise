@@ -4,5 +4,5 @@ import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-d
 export interface IDrinkService {
   DEFAULT_PAGE_SIZE: number;
   getPaginatedDrinks: (userId: string, cursor: string) => Result<AddDrinkModel[]>;
-  searchDrinks: (userId: string, search: string) => Result<AddDrinkModel[]>;
+  searchDrinksByName: (userId: string, search: string) => Result<AddDrinkModel[]>;
 }

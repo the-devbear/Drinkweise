@@ -63,7 +63,10 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
         return [];
       }
 
-      const { value, error } = await drinksService.searchDrinks(userId, debouncedSearchString);
+      const { value, error } = await drinksService.searchDrinksByName(
+        userId,
+        debouncedSearchString
+      );
 
       if (error) {
         throw new Error(error.message);

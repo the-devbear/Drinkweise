@@ -21,11 +21,8 @@ export class DrinksService implements IDrinkService {
     userId: string,
     cursor: string
   ): Result<AddDrinkModel[], PostgrestError> {
-    const query = this.supabase
-      .from('drinks')
-      .select('id, name, default_volume, alcohol, barcode, type')
+    const query = this.createDefaultQuery(userId)
       .order('id', { ascending: true })
-      .or(`created_by.is.null, created_by.eq.${userId}`)
       .limit(this.DEFAULT_PAGE_SIZE);
 
     if (cursor) {
@@ -45,8 +42,28 @@ export class DrinksService implements IDrinkService {
     return { value: data.map(this.mapDrink) };
   }
 
-  public async searchDrinks(userId: string, search: string): Result<AddDrinkModel[]> {
-    return { value: [] };
+  public async searchDrinksByName(
+    userId: string,
+    name: string
+  ): Result<AddDrinkModel[], PostgrestError> {
+    const { data, error } = await this.createDefaultQuery(userId).ilike('name', `%${name}%`);
+
+    if (error) {
+      return { error };
+    }
+
+    if (!data) {
+      return { value: [] };
+    }
+
+    return { value: data.map(this.mapDrink) };
+  }
+
+  private createDefaultQuery(userId: string) {
+    return this.supabase
+      .from('drinks')
+      .select('id, name, default_volume, alcohol, barcode, type')
+      .or(`created_by.is.null, created_by.eq.${userId}`);
   }
 
   private mapDrink(supabaseDrink: DrinkSelectResult): AddDrinkModel {
