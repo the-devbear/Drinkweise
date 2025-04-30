@@ -1,4 +1,7 @@
 import { storage } from '@drinkweise/lib/storage/mmkv';
+import { shouldSkipEmptyDataKey } from '@drinkweise/lib/utils/query/enums/meta-data-keys';
+import { isEmptyRule } from '@drinkweise/lib/utils/rules/is-empty.rule';
+import { defaultShouldDehydrateQuery, type DehydrateOptions } from '@tanstack/query-core';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 
 /**
@@ -17,3 +20,14 @@ export const persister = createSyncStoragePersister({
     removeItem: (key) => storage.delete(key),
   },
 });
+
+export const shouldDehydrateQuery: DehydrateOptions['shouldDehydrateQuery'] = (query) => {
+  const defaultDehydrate = defaultShouldDehydrateQuery(query);
+  const shouldSkipEmptyData = query.meta?.[shouldSkipEmptyDataKey];
+
+  if (shouldSkipEmptyData === true) {
+    return !isEmptyRule(query.state.data) && defaultDehydrate;
+  }
+
+  return defaultDehydrate;
+};

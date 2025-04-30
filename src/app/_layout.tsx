@@ -8,6 +8,7 @@ import { queryClient } from '@drinkweise/lib/utils/query/query-client';
 import {
   MAX_AGE_IN_MILLISECONDS,
   persister,
+  shouldDehydrateQuery,
 } from '@drinkweise/lib/utils/query/tanstack-query.config';
 import { AuthProvider } from '@drinkweise/providers/AuthProvider';
 import { rootStore } from '@drinkweise/store';
@@ -72,6 +73,9 @@ export default function RootLayout() {
           persistOptions={{
             persister,
             maxAge: MAX_AGE_IN_MILLISECONDS,
+            dehydrateOptions: {
+              shouldDehydrateQuery,
+            },
           }}>
           <ReduxProvider store={rootStore}>
             <BottomSheetModalProvider>

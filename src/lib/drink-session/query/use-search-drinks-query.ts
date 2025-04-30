@@ -1,5 +1,6 @@
 import { drinksService } from '@drinkweise/api/drinks';
 import { filterDrinksRule } from '@drinkweise/lib/drink-session/rules/filter-drinks.rule';
+import { shouldSkipEmptyDataKey } from '@drinkweise/lib/utils/query/enums/meta-data-keys';
 import { useAppSelector } from '@drinkweise/store';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { userSelector } from '@drinkweise/store/user';
@@ -54,9 +55,9 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
 
   const searchQuery = useQuery({
     queryKey: [SEARCH_DRINKS_QUERY_KEY, userId, debouncedSearchString],
-    queryFn: async (): Promise<AddDrinkModel[]> => {
+    queryFn: async (): Promise<AddDrinkModel[] | null> => {
       if (!debouncedSearchString) {
-        return [];
+        return null;
       }
 
       const { value, error } = await drinksService.searchDrinksByName(
@@ -71,6 +72,9 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
       return value;
     },
     enabled: isSearchQueryActive,
+    meta: {
+      [shouldSkipEmptyDataKey]: true,
+    },
   });
 
   return {
