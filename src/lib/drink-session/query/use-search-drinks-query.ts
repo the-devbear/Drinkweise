@@ -1,17 +1,25 @@
 import { drinksService } from '@drinkweise/api/drinks';
-import { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
+import { useAppSelector } from '@drinkweise/store';
+import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
+import { userSelector } from '@drinkweise/store/user';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export const SEARCH_DRINKS_QUERY_KEY = 'drinks' as const;
 
 export function useSearchDrinksQuery(searchString: string, debouncedSearchString: string) {
+  const userId = useAppSelector(userSelector)?.id;
+
+  if (!userId) {
+    throw new Error('User ID is required');
+  }
+
   // TODO: Rename this query?
   const infiniteQuery = useInfiniteQuery({
-    queryKey: [SEARCH_DRINKS_QUERY_KEY],
+    queryKey: [SEARCH_DRINKS_QUERY_KEY, userId],
     initialPageParam: '',
     queryFn: async ({ pageParam }): Promise<AddDrinkModel[]> => {
-      const { value, error } = await drinksService.getPaginatedDrinks(pageParam);
+      const { value, error } = await drinksService.getPaginatedDrinks(userId, pageParam);
 
       if (error) {
         throw new Error(error.message);
@@ -49,12 +57,13 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
   );
 
   const searchQuery = useQuery({
-    queryKey: [SEARCH_DRINKS_QUERY_KEY, debouncedSearchString],
+    queryKey: [SEARCH_DRINKS_QUERY_KEY, userId, debouncedSearchString],
     queryFn: async (): Promise<AddDrinkModel[]> => {
       if (!debouncedSearchString) {
         return [];
       }
-      const { value, error } = await drinksService.searchDrinks(debouncedSearchString);
+
+      const { value, error } = await drinksService.searchDrinks(userId, debouncedSearchString);
 
       if (error) {
         throw new Error(error.message);
