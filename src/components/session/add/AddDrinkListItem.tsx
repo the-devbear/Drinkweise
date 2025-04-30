@@ -48,18 +48,20 @@ export function AddDrinkListItem({ drink }: DrinkListProps) {
             <Avatar className='mr-3 h-16 w-16' alt=''>
               <DrinkAvatarFallback type={drink.type} />
             </Avatar>
-            <View>
-              <Text className='text-xl font-semibold'>{drink.name}</Text>
-              <Text className='text-gray-800 dark:text-gray-200'>{mappedDrinkType}</Text>
+            <View className='flex-1 flex-row'>
+              <View>
+                <Text className='text-xl font-semibold'>{drink.name}</Text>
+                <Text className='text-gray-800 dark:text-gray-200'>{mappedDrinkType}</Text>
+              </View>
             </View>
-          </View>
-          <View>
-            <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
-              {drink.alcohol}% alcohol
-            </Text>
-            <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
-              {drink.defaultVolume} ml
-            </Text>
+            <View>
+              <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
+                {drink.alcohol}% alcohol
+              </Text>
+              <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
+                {drink.defaultVolume} ml
+              </Text>
+            </View>
           </View>
         </View>
       </View>
