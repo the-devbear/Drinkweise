@@ -11,7 +11,7 @@ export default function AddDrinkPage() {
   const [search, setSearch] = useState('');
   const debounceSearch = useDebounce(search);
 
-  const { drinks, infiniteQuery } = useSearchDrinksQuery(search, debounceSearch);
+  const { drinks, infiniteDrinksQuery } = useSearchDrinksQuery(search, debounceSearch);
 
   return (
     <View className='flex-1'>
@@ -35,7 +35,7 @@ export default function AddDrinkPage() {
         renderItem={({ item }) => <AddDrinkListItem drink={item} />}
         onEndReached={() => {
           if (search.length === 0) {
-            infiniteQuery.fetchNextPage();
+            infiniteDrinksQuery.fetchNextPage();
           }
         }}
       />

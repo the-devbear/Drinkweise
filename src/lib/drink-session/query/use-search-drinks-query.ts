@@ -15,8 +15,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
     throw new Error('User ID is required');
   }
 
-  // TODO: Rename this query?
-  const infiniteQuery = useInfiniteQuery({
+  const infiniteDrinksQuery = useInfiniteQuery({
     queryKey: [SEARCH_DRINKS_QUERY_KEY, userId],
     initialPageParam: '',
     queryFn: async ({ pageParam }): Promise<AddDrinkModel[]> => {
@@ -37,18 +36,20 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
   });
 
   const filteredData = useMemo(() => {
-    const drinks = infiniteQuery.data?.pages.flat();
+    const drinks = infiniteDrinksQuery.data?.pages.flat();
     if (!drinks) {
       return [];
     }
 
     return filterDrinksRule(drinks, searchString);
-  }, [infiniteQuery.data?.pages, searchString]);
+  }, [infiniteDrinksQuery.data?.pages, searchString]);
 
   const isSearchQueryActive = useMemo(
     () =>
-      debouncedSearchString.length > 0 && filteredData.length === 0 && !infiniteQuery.isFetching,
-    [debouncedSearchString.length, filteredData.length, infiniteQuery.isFetching]
+      debouncedSearchString.length > 0 &&
+      filteredData.length === 0 &&
+      !infiniteDrinksQuery.isFetching,
+    [debouncedSearchString.length, filteredData.length, infiniteDrinksQuery.isFetching]
   );
 
   const searchQuery = useQuery({
@@ -75,7 +76,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
   return {
     drinks: filteredData.length > 0 ? filteredData : (searchQuery.data?.flat() ?? []),
     isSearchQueryActive,
-    infiniteQuery,
+    infiniteDrinksQuery,
     searchQuery,
   };
 }
