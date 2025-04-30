@@ -1,4 +1,5 @@
 import { drinksService } from '@drinkweise/api/drinks';
+import { filterDrinksRule } from '@drinkweise/lib/drink-session/rules/filter-drinks.rule';
 import { useAppSelector } from '@drinkweise/store';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { userSelector } from '@drinkweise/store/user';
@@ -41,13 +42,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
       return [];
     }
 
-    if (!searchString) {
-      return drinks;
-    }
-
-    // TODO: Create a rule for this
-    const lowerCaseSearchString = searchString.trim().toLowerCase();
-    return drinks.filter((drink) => drink.name.toLowerCase().includes(lowerCaseSearchString));
+    return filterDrinksRule(drinks, searchString);
   }, [infiniteQuery.data?.pages, searchString]);
 
   const isSearchQueryActive = useMemo(
