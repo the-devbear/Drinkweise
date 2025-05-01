@@ -13,6 +13,8 @@ export default function AddDrinkPage() {
 
   const { drinks, infiniteDrinksQuery } = useSearchDrinksQuery(search, debounceSearch);
 
+  // TODO: Display an error message when the query fails. (not sure where to put this)
+
   return (
     <View className='flex-1'>
       <TextInput
@@ -33,6 +35,21 @@ export default function AddDrinkPage() {
         keyboardDismissMode='on-drag'
         contentContainerStyle={{ paddingBottom: 50 }}
         renderItem={({ item }) => <AddDrinkListItem drink={item} />}
+        ListHeaderComponent={() => {
+          // TODO: Maybe add a loading state here
+          return null;
+        }}
+        ListFooterComponent={() => {
+          // TODO: Display loading state, when ifiniteDrinksQuery.isFetchingNextPage is true
+
+          // TODO: Display a message when there are no more pages to load
+          return null;
+        }}
+        ListEmptyComponent={() => {
+          // TODO: Display a message when there are no drinks found
+          //       only display when the search query is not active
+          return null;
+        }}
         onEndReached={() => {
           if (search.length === 0) {
             infiniteDrinksQuery.fetchNextPage();
