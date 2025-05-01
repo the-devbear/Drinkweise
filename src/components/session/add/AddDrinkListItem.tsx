@@ -5,7 +5,7 @@ import { useAppDispatch } from '@drinkweise/store';
 import { addDrinkAction } from '@drinkweise/store/drink-session';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { DrinkAvatarFallback } from './DrinkAvatarFallback';
@@ -14,7 +14,7 @@ interface DrinkListProps {
   drink: AddDrinkModel;
 }
 
-export function AddDrinkListItem({ drink }: DrinkListProps) {
+export const AddDrinkListItem = memo(function AddDrinkListItem({ drink }: DrinkListProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const mappedDrinkType = useMemo(() => {
@@ -67,4 +67,4 @@ export function AddDrinkListItem({ drink }: DrinkListProps) {
       </View>
     </TouchableOpacity>
   );
-}
+});
