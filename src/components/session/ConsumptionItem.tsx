@@ -14,7 +14,7 @@ import {
 } from '@drinkweise/store/drink-session';
 import type { DrinkConsumptionModel } from '@drinkweise/store/drink-session/models/consumption.model';
 import { Ionicons } from '@expo/vector-icons';
-import { useCallback, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { TimePicker } from './TimePicker';
@@ -26,7 +26,44 @@ interface ConsumptionItemProps {
   index: number;
 }
 
-export function ConsumptionItem({
+const TimePickerWithDate = memo(function TimePickerWithDate({
+  date,
+  isEven,
+  onChange,
+}: {
+  date: Date;
+  isEven: boolean;
+  onChange: (event: { type: string; nativeEvent: { timestamp: number } }) => void;
+}) {
+  return (
+    <View>
+      <View className='absolute -right-1 -top-1 z-10'>
+        <Text
+          className={cn(
+            'aspect-square self-center rounded-full bg-background p-[1px] text-center text-xs font-semibold text-primary',
+            {
+              'bg-card': isEven,
+            }
+          )}>
+          {date.getDate()}
+        </Text>
+      </View>
+      <TimePicker value={date} onChange={onChange} />
+    </View>
+  );
+});
+
+const FinishButton = memo(function FinishButton({ onPress }: { onPress: () => void }) {
+  return (
+    <TouchableOpacity
+      className='h-6 w-6 items-center justify-center rounded-md border border-primary'
+      onPress={onPress}>
+      <Ionicons name='checkmark' className='text-lg leading-none text-primary' />
+    </TouchableOpacity>
+  );
+});
+
+export const ConsumptionItem = memo(function ConsumptionItem({
   drinkId,
   drinkDefaultVolume,
   consumption,
@@ -46,6 +83,14 @@ export function ConsumptionItem({
     [dispatch, drinkId, index]
   );
 
+  const handleDelete = useCallback(() => {
+    dispatch(removeConsumptionAction({ drinkId, consumptionIndex: index }));
+  }, [dispatch, drinkId, index]);
+
+  const handleFinish = useCallback(() => {
+    dispatch(finishConsumptionAction({ drinkId, consumptionIndex: index }));
+  }, [dispatch, drinkId, index]);
+
   const consumptionStartTimeDate = useMemo(
     () => new Date(consumption.startTime),
     [consumption.startTime]
@@ -55,14 +100,73 @@ export function ConsumptionItem({
     [consumption.endTime]
   );
 
+  const handleStartTimeChange = useCallback(
+    ({
+      type,
+      nativeEvent: { timestamp },
+    }: {
+      type: string;
+      nativeEvent: { timestamp: number };
+    }) => {
+      if (type !== 'set') {
+        return;
+      }
+
+      const { startTime, endTime } = calculateStartTimeForConsumption(
+        timestamp,
+        consumption.startTime,
+        consumption.endTime
+      );
+
+      updateConsumption({
+        startTime,
+        endTime,
+      });
+    },
+    [consumption.startTime, consumption.endTime, updateConsumption]
+  );
+
+  const handleEndTimeChange = useCallback(
+    ({
+      type,
+      nativeEvent: { timestamp },
+    }: {
+      type: string;
+      nativeEvent: { timestamp: number };
+    }) => {
+      if (type !== 'set') {
+        return;
+      }
+
+      const endTime = calculateEndTimeForConsumption(
+        timestamp,
+        consumption.endTime!,
+        consumption.startTime
+      );
+
+      updateConsumption({
+        endTime,
+      });
+    },
+    [consumption.endTime, consumption.startTime, updateConsumption]
+  );
+
+  const handleVolumeChange = useCallback(
+    (value?: number) => {
+      updateConsumption({
+        volume: value ?? drinkDefaultVolume,
+      });
+    },
+    [drinkDefaultVolume, updateConsumption]
+  );
+
+  const isEven = index % 2 === 0;
+
   return (
-    <DeleteSwipeable
-      onDelete={() => {
-        dispatch(removeConsumptionAction({ drinkId, consumptionIndex: index }));
-      }}>
+    <DeleteSwipeable onDelete={handleDelete}>
       <View
         className={cn('flex-row items-center py-2', {
-          'bg-card': index % 2 === 0,
+          'bg-card': isEven,
         })}>
         <Text variant='title3' className='flex-1 text-center'>
           {index + 1}.
@@ -75,88 +179,25 @@ export function ConsumptionItem({
             inputClassName='text-center text-lg'
             initialValue={consumption.volume}
             placeholder={drinkDefaultVolume.toString()}
-            onEndEditing={(value) =>
-              updateConsumption({
-                volume: value ?? drinkDefaultVolume,
-              })
-            }
+            onEndEditing={handleVolumeChange}
           />
         </View>
         <View className='flex-[2] items-center'>
-          <View>
-            <View className='absolute -right-1 -top-1 z-10'>
-              <Text
-                className={cn(
-                  'aspect-square self-center rounded-full bg-background p-[1px] text-center text-xs font-semibold text-primary',
-                  {
-                    'bg-card': index % 2 === 0,
-                  }
-                )}>
-                {consumptionStartTimeDate.getDate()}
-              </Text>
-            </View>
-            <TimePicker
-              value={new Date(consumption.startTime)}
-              onChange={({ type, nativeEvent: { timestamp } }) => {
-                if (type !== 'set') {
-                  return;
-                }
-
-                const { startTime, endTime } = calculateStartTimeForConsumption(
-                  timestamp,
-                  consumption.startTime,
-                  consumption.endTime
-                );
-
-                updateConsumption({
-                  startTime,
-                  endTime,
-                });
-              }}
-            />
-          </View>
+          <TimePickerWithDate
+            date={consumptionStartTimeDate}
+            isEven={isEven}
+            onChange={handleStartTimeChange}
+          />
         </View>
         <View className='flex-[2] items-center'>
           {consumption.endTime ? (
-            <View>
-              <View className='absolute -right-1 -top-1 z-10'>
-                <Text
-                  className={cn(
-                    'aspect-square self-center rounded-full bg-background p-[1px] text-center text-xs font-semibold text-primary',
-                    {
-                      'bg-card': index % 2 === 0,
-                    }
-                  )}>
-                  {consumptionEndTimeDate.getDate()}
-                </Text>
-              </View>
-              <TimePicker
-                value={new Date(consumption.endTime)}
-                onChange={({ type, nativeEvent: { timestamp } }) => {
-                  if (type !== 'set') {
-                    return;
-                  }
-
-                  const endTime = calculateEndTimeForConsumption(
-                    timestamp,
-                    consumption.endTime!,
-                    consumption.startTime
-                  );
-
-                  updateConsumption({
-                    endTime,
-                  });
-                }}
-              />
-            </View>
+            <TimePickerWithDate
+              date={consumptionEndTimeDate}
+              isEven={isEven}
+              onChange={handleEndTimeChange}
+            />
           ) : (
-            <TouchableOpacity
-              className='h-6 w-6 items-center justify-center rounded-md border border-primary'
-              onPress={() => {
-                dispatch(finishConsumptionAction({ drinkId, consumptionIndex: index }));
-              }}>
-              <Ionicons name='checkmark' className='text-lg leading-none text-primary' />
-            </TouchableOpacity>
+            <FinishButton onPress={handleFinish} />
           )}
         </View>
       </View>
@@ -165,4 +206,4 @@ export function ConsumptionItem({
       )}
     </DeleteSwipeable>
   );
-}
+});
