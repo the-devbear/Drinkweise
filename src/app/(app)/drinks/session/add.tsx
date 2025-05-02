@@ -1,19 +1,32 @@
 import { AddDrinkListItem } from '@drinkweise/components/session/add/AddDrinkListItem';
+import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
+import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useSearchDrinksQuery } from '@drinkweise/lib/drink-session/query/use-search-drinks-query';
 import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 
 export default function AddDrinkPage() {
   const [search, setSearch] = useState('');
   const debounceSearch = useDebounce(search);
 
-  const { drinks, infiniteDrinksQuery } = useSearchDrinksQuery(search, debounceSearch);
+  const { drinks, infiniteDrinksQuery, searchQuery, isSearchQueryActive } = useSearchDrinksQuery(
+    search,
+    debounceSearch
+  );
 
-  // TODO: Display an error message when the query fails. (not sure where to put this)
+  const onRefresh = useCallback(() => {
+    if (search.length === 0) {
+      infiniteDrinksQuery.refetch();
+      return;
+    }
+    if (search.length > 0 && isSearchQueryActive) {
+      searchQuery.refetch();
+    }
+  }, [search, isSearchQueryActive, infiniteDrinksQuery, searchQuery]);
 
   return (
     <View className='flex-1'>
@@ -25,7 +38,9 @@ export default function AddDrinkPage() {
         leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
         variant='card'
         placeholder='Search...'
-        onChangeText={setSearch}
+        onChangeText={(value) => {
+          setSearch(value.trim());
+        }}
       />
       <FlashList
         data={drinks}
@@ -34,21 +49,48 @@ export default function AddDrinkPage() {
         keyboardShouldPersistTaps='handled'
         keyboardDismissMode='on-drag'
         contentContainerStyle={{ paddingBottom: 50 }}
+        onRefresh={onRefresh}
+        refreshing={infiniteDrinksQuery.isRefetching || searchQuery.isRefetching}
         renderItem={({ item }) => <AddDrinkListItem drink={item} />}
-        ListHeaderComponent={() => {
-          // TODO: Maybe add a loading state here
-          return null;
-        }}
         ListFooterComponent={() => {
-          // TODO: Display loading state, when ifiniteDrinksQuery.isFetchingNextPage is true
+          if (infiniteDrinksQuery.isFetchingNextPage) {
+            return <ActivityIndicator className='py-4' />;
+          }
 
-          // TODO: Display a message when there are no more pages to load
+          if (!infiniteDrinksQuery.hasNextPage && drinks.length > 0) {
+            return (
+              <View className='py-4'>
+                <Text variant='footnote' className='text-center text-muted'>
+                  No more drinks to load
+                </Text>
+              </View>
+            );
+          }
           return null;
         }}
         ListEmptyComponent={() => {
-          // TODO: Display a message when there are no drinks found
-          //       only display when the search query is not active
-          return null;
+          if (infiniteDrinksQuery.isPending) {
+            // TODO: Maybe add a skeleton here
+            return <ActivityIndicator size='large' className='py-4' />;
+          }
+
+          if ((isSearchQueryActive && searchQuery.isLoading) || search !== debounceSearch) {
+            return <ActivityIndicator size='large' className='py-4' />;
+          }
+
+          return (
+            <View className='flex-1 items-center justify-center py-10'>
+              <Ionicons name='beer-outline' className='text-5xl text-muted' />
+              <Text variant='title3' className='mt-2 text-center font-semibold'>
+                No drinks found
+              </Text>
+              <Text variant='subhead' color='tertiary' className='mt-1 text-center'>
+                {search.length > 0
+                  ? 'Try a different search term'
+                  : "Sorry we couldn't find any drinks"}
+              </Text>
+            </View>
+          );
         }}
         onEndReached={() => {
           if (search.length === 0) {
