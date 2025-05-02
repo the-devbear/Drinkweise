@@ -8,6 +8,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
 export const SEARCH_DRINKS_QUERY_KEY = 'drinks' as const;
+const STALE_TIME = 21_600_000; // 6 hours
 
 export function useSearchDrinksQuery(searchString: string, debouncedSearchString: string) {
   const userId = useAppSelector(userSelector)?.id;
@@ -34,25 +35,26 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
       }
       return lastPage.at(-1)!.id;
     },
-    staleTime: 21_600_000, // 6 hours
+    staleTime: STALE_TIME,
   });
 
   const filteredData = useMemo(() => {
-    const drinks = infiniteDrinksQuery.data?.pages.flat();
-    if (!drinks) {
-      return [];
+    const drinks = infiniteDrinksQuery.data?.pages.flat() ?? [];
+
+    if (!searchString || drinks.length === 0) {
+      return drinks;
     }
 
     return filterDrinksRule(drinks, searchString);
   }, [infiniteDrinksQuery.data?.pages, searchString]);
 
-  const isSearchQueryActive = useMemo(
-    () =>
-      debouncedSearchString.length > 0 &&
-      filteredData.length === 0 &&
-      !infiniteDrinksQuery.isFetching,
-    [debouncedSearchString.length, filteredData.length, infiniteDrinksQuery.isFetching]
-  );
+  const isSearchQueryActive = useMemo(() => {
+    if (debouncedSearchString.length === 0) {
+      return false;
+    }
+
+    return filteredData.length === 0 && !infiniteDrinksQuery.isFetching;
+  }, [debouncedSearchString, filteredData.length, infiniteDrinksQuery.isFetching]);
 
   const searchQuery = useQuery({
     queryKey: [SEARCH_DRINKS_QUERY_KEY, userId, debouncedSearchString],
@@ -76,11 +78,16 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
     meta: {
       [shouldSkipEmptyDataKey]: true,
     },
-    staleTime: 21_600_000, // 6 hours
+    staleTime: STALE_TIME,
   });
 
+  const drinks = useMemo(
+    () => (filteredData.length > 0 ? filteredData : (searchQuery.data ?? [])),
+    [filteredData, searchQuery.data]
+  );
+
   return {
-    drinks: filteredData.length > 0 ? filteredData : (searchQuery.data?.flat() ?? []),
+    drinks,
     isSearchQueryActive,
     infiniteDrinksQuery,
     searchQuery,
