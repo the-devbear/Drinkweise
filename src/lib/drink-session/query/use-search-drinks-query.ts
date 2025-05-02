@@ -34,6 +34,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
       }
       return lastPage.at(-1)!.id;
     },
+    staleTime: 21_600_000, // 6 hours
   });
 
   const filteredData = useMemo(() => {
@@ -75,6 +76,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
     meta: {
       [shouldSkipEmptyDataKey]: true,
     },
+    staleTime: 21_600_000, // 6 hours
   });
 
   return {
