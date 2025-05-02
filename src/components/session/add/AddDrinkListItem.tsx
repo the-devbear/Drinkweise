@@ -5,7 +5,7 @@ import { useAppDispatch } from '@drinkweise/store';
 import { addDrinkAction } from '@drinkweise/store/drink-session';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { DrinkAvatarFallback } from './DrinkAvatarFallback';
@@ -14,7 +14,7 @@ interface DrinkListProps {
   drink: AddDrinkModel;
 }
 
-export function AddDrinkListItem({ drink }: DrinkListProps) {
+export const AddDrinkListItem = memo(function AddDrinkListItem({ drink }: DrinkListProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const mappedDrinkType = useMemo(() => {
@@ -48,21 +48,23 @@ export function AddDrinkListItem({ drink }: DrinkListProps) {
             <Avatar className='mr-3 h-16 w-16' alt=''>
               <DrinkAvatarFallback type={drink.type} />
             </Avatar>
-            <View>
-              <Text className='text-xl font-semibold'>{drink.name}</Text>
-              <Text className='text-gray-800 dark:text-gray-200'>{mappedDrinkType}</Text>
+            <View className='flex-1 flex-row'>
+              <View>
+                <Text className='text-xl font-semibold'>{drink.name}</Text>
+                <Text className='text-gray-800 dark:text-gray-200'>{mappedDrinkType}</Text>
+              </View>
             </View>
-          </View>
-          <View>
-            <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
-              {drink.alcohol}% alcohol
-            </Text>
-            <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
-              {drink.defaultVolume} ml
-            </Text>
+            <View>
+              <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
+                {drink.alcohol}% alcohol
+              </Text>
+              <Text className='text-right text-lg text-gray-800 dark:text-gray-200'>
+                {drink.defaultVolume} ml
+              </Text>
+            </View>
           </View>
         </View>
       </View>
     </TouchableOpacity>
   );
-}
+});

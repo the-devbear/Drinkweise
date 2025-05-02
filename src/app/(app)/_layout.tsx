@@ -31,6 +31,7 @@ export default function TabBarLayout() {
         options={{
           title: 'Drinks',
           headerShown: false,
+          lazy: false,
           tabBarIcon: ({ color, size, focused }) => (
             <TabBarIcon name={focused ? 'beer' : 'beer-outline'} color={color} size={size} />
           ),

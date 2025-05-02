@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 
 export default function DrinksTabLayout() {
   return (
-    <Stack initialRouteName='index'>
+    <Stack initialRouteName='session'>
       <Stack.Screen
         name='index'
         options={{
