@@ -132,12 +132,17 @@ export default function AddDrinkPage() {
         onRefresh={onRefresh}
         refreshing={infiniteDrinksQuery.isRefetching || searchQuery.isRefetching}
         renderItem={({ item }) => <AddDrinkListItem drink={item} />}
-        scrollEnabled={!infiniteDrinksQuery.isFetching}
+        scrollEnabled={!infiniteDrinksQuery.isLoading}
         ListHeaderComponent={renderListHeader}
         ListFooterComponent={renderListFooter}
         ListEmptyComponent={renderListEmpty}
         onEndReached={() => {
-          if (search.length === 0 && !infiniteDrinksQuery.isError) {
+          if (
+            search.length === 0 &&
+            !infiniteDrinksQuery.isError &&
+            infiniteDrinksQuery.hasNextPage &&
+            !infiniteDrinksQuery.isFetchingNextPage
+          ) {
             infiniteDrinksQuery.fetchNextPage();
           }
         }}
