@@ -12,17 +12,23 @@ import {
   isDrinkSessionActiveSelector,
   startDrinkSessionAction,
 } from '@drinkweise/store/drink-session';
-import { Redirect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 
 export default function DrinksPage() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
 
-  if (isDrinkSessionActive) {
-    return <Redirect href='/drinks/session' />;
-  }
+  useFocusEffect(
+    useCallback(() => {
+      if (isDrinkSessionActive) {
+        router.dismissTo('/drinks/session');
+      }
+    }, [isDrinkSessionActive, router])
+  );
 
   return (
     <ScrollView className='p-3'>
