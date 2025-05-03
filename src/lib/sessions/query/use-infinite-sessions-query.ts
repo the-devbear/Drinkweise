@@ -8,7 +8,7 @@ export const SESSIONS_QUERY_KEY = 'sessions' as const;
 export function useInfiniteSessionsQuery() {
   const userId = useAppSelector(userIdSelector);
 
-  const infiniteSessionQuery = useInfiniteQuery({
+  return useInfiniteQuery({
     queryKey: [SESSIONS_QUERY_KEY, userId],
     initialPageParam: '',
     queryFn: async ({ pageParam }) => {
@@ -28,7 +28,7 @@ export function useInfiniteSessionsQuery() {
       return value;
     },
     getNextPageParam: (lastPage) => {
-      if (lastPage.length === 0) {
+      if (lastPage.length === 0 || lastPage.length < drinkSessionService.DEFAULT_PAGE_SIZE) {
         return undefined;
       }
       return lastPage[lastPage.length - 1]!.startTime;
@@ -37,6 +37,4 @@ export function useInfiniteSessionsQuery() {
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 60, // 1 hour
   });
-
-  return infiniteSessionQuery;
 }
