@@ -64,8 +64,8 @@ export class DrinkSessionService implements IDrinkSessionService {
       name: session.name,
       note: session.note,
       userName: session.users.username,
-      startTime: new Date(session.start_time),
-      endTime: new Date(session.end_time),
+      startTime: session.start_time,
+      endTime: session.end_time,
     }));
 
     return { value: drinkSessions };

@@ -3,6 +3,6 @@ export interface DrinkSessionResponse {
   name: string;
   note?: string | null;
   userName: string;
-  startTime: Date;
-  endTime: Date;
+  startTime: string;
+  endTime: string;
 }
