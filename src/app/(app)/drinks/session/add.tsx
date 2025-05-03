@@ -1,7 +1,7 @@
-import { AddDrinkError } from '@drinkweise/components/drink-session/add/AddDrinkError';
 import { AddDrinkListItem } from '@drinkweise/components/drink-session/add/AddDrinkListItem';
 import { AddDrinkSkeletonItem } from '@drinkweise/components/drink-session/add/AddDrinkSkeletonItem';
 import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
+import { ErrorDisplay } from '@drinkweise/components/ui/ErrorDisplay';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useSearchDrinksQuery } from '@drinkweise/lib/drink-session/query/use-search-drinks-query';
@@ -50,7 +50,7 @@ export default function AddDrinkPage() {
   const renderListFooter = useCallback(() => {
     if (infiniteDrinksQuery.isError && search.length === 0) {
       return (
-        <AddDrinkError
+        <ErrorDisplay
           message={infiniteDrinksQuery.error.message}
           onRetry={() => {
             infiniteDrinksQuery.fetchNextPage();
