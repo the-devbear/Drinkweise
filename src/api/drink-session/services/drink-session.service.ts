@@ -62,7 +62,7 @@ export class DrinkSessionService implements IDrinkSessionService {
     const drinkSessions = data.map((session) => ({
       id: session.id,
       name: session.name,
-      note: session.note,
+      note: session.note ?? undefined,
       userName: session.users.username,
       startTime: session.start_time,
       endTime: session.end_time,

@@ -17,7 +17,7 @@ import { TouchableOpacity, View } from 'react-native';
 interface SessionListItemProps {
   id: string;
   name: string;
-  note: string | null;
+  note?: string;
   userName: string;
   startTime: Date;
   endTime: Date;
