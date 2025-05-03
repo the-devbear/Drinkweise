@@ -1,6 +1,7 @@
 import { SessionListItem } from '@drinkweise/components/session/SessionListItem';
 import { Tables } from '@drinkweise/lib/types/generated/supabase.types';
-import { View, FlatList } from 'react-native';
+import { FlashList } from '@shopify/flash-list';
+import { View } from 'react-native';
 
 const FAKE_DATA: (Tables<'drink_sessions'> & { username: string })[] = [
   {
@@ -19,8 +20,8 @@ const FAKE_DATA: (Tables<'drink_sessions'> & { username: string })[] = [
     username: 'Jane Smith',
     name: 'Session 2',
     note: 'Note 2',
-    start_time: '2023-10-02T10:00:00Z',
-    end_time: '2023-10-02T12:00:00Z',
+    start_time: '2023-10-12T10:00:00Z',
+    end_time: '2023-10-12T12:00:00Z',
     created_at: '2023-10-02T09:00:00Z',
   },
   {
@@ -28,7 +29,7 @@ const FAKE_DATA: (Tables<'drink_sessions'> & { username: string })[] = [
     user_id: 'user_3',
     username: 'Alice Johnson',
     name: 'Session 3',
-    note: 'Note 3',
+    note: null,
     start_time: '2023-10-03T20:00:00Z',
     end_time: '2023-10-04T02:00:00Z',
     created_at: '2023-10-03T09:00:00Z',
@@ -37,10 +38,11 @@ const FAKE_DATA: (Tables<'drink_sessions'> & { username: string })[] = [
 
 export default function HomePage() {
   return (
-    <View className='flex-1 '>
-      <FlatList
+    <View className='flex-1 px-4'>
+      <FlashList
         data={FAKE_DATA}
-        className='p-4'
+        className='py-4'
+        estimatedItemSize={200}
         renderItem={({ item }) => (
           <SessionListItem
             id={item.id}

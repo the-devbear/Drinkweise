@@ -6,10 +6,12 @@ import {
   CardFooter,
 } from '@drinkweise/components/ui/Card';
 import { Text } from '@drinkweise/components/ui/Text';
+import { cn } from '@drinkweise/lib/cn';
+import { longDateFormatter } from '@drinkweise/lib/utils/date/date-formatters';
 import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 interface SessionListItemProps {
@@ -37,7 +39,12 @@ export const SessionListItem = memo(function SessionListItem({
     [router]
   );
 
-  const duration = endTime.getTime() - startTime.getTime();
+  const duration = useMemo(() => {
+    const diff = endTime.getTime() - startTime.getTime();
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    return `${hours}h ${minutes}m`;
+  }, [startTime, endTime]);
 
   return (
     <TouchableOpacity className='mb-4' activeOpacity={0.7} onPress={() => navigateToDetail(id)}>
@@ -46,20 +53,17 @@ export const SessionListItem = memo(function SessionListItem({
           <CardTitle className='text-xl'>{name}</CardTitle>
           <Ionicons name='chevron-forward-outline' size={20} className='text-muted' />
         </CardHeader>
-        <CardContent className='gap-1 pb-2'>
+        <CardContent
+          className={cn('gap-1', {
+            'pb-2': note,
+          })}>
           <View className='flex-row gap-3'>
             <Ionicons name='person-outline' size={24} className='text-foreground' />
             <Text variant='subhead'>{userName}</Text>
           </View>
           <View className='flex-row gap-3'>
             <Ionicons name='calendar-outline' size={24} className='text-foreground' />
-            <Text variant='callout'>
-              {startTime.toLocaleDateString('default', {
-                month: 'short',
-                day: '2-digit',
-                year: 'numeric',
-              })}
-            </Text>
+            <Text variant='callout'>{longDateFormatter.format(startTime)}</Text>
           </View>
           <View className='flex-row items-center gap-3'>
             <Ionicons name='time-outline' size={24} className='text-foreground' />
@@ -70,13 +74,13 @@ export const SessionListItem = memo(function SessionListItem({
             </Text>
             <View className='ml-2 rounded-full bg-purple-100 px-2 py-0.5'>
               <Text variant='subhead' className='text-xs text-purple-800'>
-                {Math.floor(duration / 3600000)}h {Math.floor((duration % 3600000) / 60000)}m
+                {duration}
               </Text>
             </View>
           </View>
         </CardContent>
         {note && (
-          <CardFooter className='mx-6 mt-2 items-start border-t border-border px-0 pt-2'>
+          <CardFooter className='mx-6 items-start border-t border-border px-0 pt-2'>
             <Text
               variant='subhead'
               color='tertiary'
