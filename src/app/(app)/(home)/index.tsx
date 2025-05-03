@@ -1,16 +1,6 @@
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@drinkweise/components/ui/Card';
-import { Text } from '@drinkweise/components/ui/Text';
+import { SessionListItem } from '@drinkweise/components/session/SessionListItem';
 import { Tables } from '@drinkweise/lib/types/generated/supabase.types';
-import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
-import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-import { View, FlatList, TouchableOpacity } from 'react-native';
+import { View, FlatList } from 'react-native';
 
 const FAKE_DATA: (Tables<'drink_sessions'> & { username: string })[] = [
   {
@@ -46,77 +36,21 @@ const FAKE_DATA: (Tables<'drink_sessions'> & { username: string })[] = [
 ];
 
 export default function HomePage() {
-  const router = useRouter();
-
-  const navigateToDetail = (sessionId: string) => {
-    router.push(`/(app)/(home)/session/${sessionId}`);
-  };
-
-  const renderDrinkSession = ({ item }: { item: (typeof FAKE_DATA)[number] }) => {
-    const startDate = new Date(item.start_time);
-    const endDate = new Date(item.end_time);
-    const duration = endDate.getTime() - startDate.getTime();
-    const sessionName = item.name || 'Unnamed Session';
-
-    return (
-      <TouchableOpacity
-        className='mb-4'
-        activeOpacity={0.7}
-        onPress={() => navigateToDetail(item.id)}>
-        <Card>
-          <CardHeader className='flex-row items-center justify-between pb-2'>
-            <CardTitle className='text-xl'>{sessionName}</CardTitle>
-            <Ionicons name='chevron-forward-outline' size={20} className='text-muted' />
-          </CardHeader>
-          <CardContent className='gap-1 pb-2'>
-            <View className='flex-row gap-3'>
-              <Ionicons name='person-outline' size={24} className='text-foreground' />
-              <Text variant='subhead'>{item.username}</Text>
-            </View>
-            <View className='flex-row gap-3'>
-              <Ionicons name='calendar-outline' size={24} className='text-foreground' />
-              <Text variant='callout'>
-                {startDate.toLocaleDateString('default', {
-                  month: 'short',
-                  day: '2-digit',
-                  year: 'numeric',
-                })}
-              </Text>
-            </View>
-            <View className='flex-row items-center gap-3'>
-              <Ionicons name='time-outline' size={24} className='text-foreground' />
-              <Text variant='callout'>
-                {shortTimeFormatter.format(startDate)}
-                {' - '}
-                {shortTimeFormatter.format(endDate)}
-              </Text>
-              <View className='ml-2 rounded-full bg-purple-100 px-2 py-0.5'>
-                <Text variant='subhead' className='text-xs text-purple-800'>
-                  {Math.floor(duration / 3600000)}h {Math.floor((duration % 3600000) / 60000)}m
-                </Text>
-              </View>
-            </View>
-          </CardContent>
-          <CardFooter className='mx-6 mt-2 items-start border-t border-border px-0 pt-2'>
-            <Text
-              variant='subhead'
-              color='tertiary'
-              style={{ wordWrap: 'break-word' }}
-              numberOfLines={2}>
-              {item.note ? item.note : 'No notes available'}
-            </Text>
-          </CardFooter>
-        </Card>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View className='flex-1 '>
       <FlatList
         data={FAKE_DATA}
         className='p-4'
-        renderItem={renderDrinkSession}
+        renderItem={({ item }) => (
+          <SessionListItem
+            id={item.id}
+            name={item.name}
+            userName={item.username}
+            startTime={new Date(item.start_time)}
+            endTime={new Date(item.end_time)}
+            note={item.note}
+          />
+        )}
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 20 }}
