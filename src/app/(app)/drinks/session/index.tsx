@@ -1,5 +1,5 @@
-import { DrinkSessionDrinkItem } from '@drinkweise/components/session/current/DrinkSessionDrinkItem';
-import { DrinkSessionFooter } from '@drinkweise/components/session/current/DrinkSessionFooter';
+import { DrinkSessionDrinkItem } from '@drinkweise/components/drink-session/DrinkSessionDrinkItem';
+import { DrinkSessionFooter } from '@drinkweise/components/drink-session/DrinkSessionFooter';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { SessionValidationErrors } from '@drinkweise/lib/drink-session/enums/session-validation-errors';

@@ -1,6 +1,6 @@
-import { AddDrinkError } from '@drinkweise/components/session/add/AddDrinkError';
-import { AddDrinkListItem } from '@drinkweise/components/session/add/AddDrinkListItem';
-import { AddDrinkSkeletonItem } from '@drinkweise/components/session/add/AddDrinkSkeletonItem';
+import { AddDrinkError } from '@drinkweise/components/drink-session/add/AddDrinkError';
+import { AddDrinkListItem } from '@drinkweise/components/drink-session/add/AddDrinkListItem';
+import { AddDrinkSkeletonItem } from '@drinkweise/components/drink-session/add/AddDrinkSkeletonItem';
 import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
