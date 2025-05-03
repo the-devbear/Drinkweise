@@ -3,7 +3,7 @@ import { Text } from '@drinkweise/components/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { View } from 'react-native';
 
-interface AddDrinkErrorProps {
+interface ErrorDisplayProps {
   message: string;
   icon?: keyof typeof Ionicons.glyphMap;
   onRetry?: () => void;
@@ -11,13 +11,13 @@ interface AddDrinkErrorProps {
   canRetry?: boolean;
 }
 
-export function AddDrinkError({
+export function ErrorDisplay({
   message,
   onRetry,
   canRetry,
   isRetrying,
   icon = 'sad-outline',
-}: AddDrinkErrorProps) {
+}: ErrorDisplayProps) {
   return (
     <View className='flex-1 items-center justify-center py-10'>
       <Ionicons name={icon} className='text-5xl text-muted' />
