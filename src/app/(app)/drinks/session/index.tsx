@@ -10,6 +10,7 @@ import {
   addConsumptionAction,
   drinksSelector,
   finishAllOpenConsumptionsAction,
+  isDrinkSessionActiveSelector,
   removeDrinkAction,
   updateSessionStartTimeToEarliestConsumptionAction,
 } from '@drinkweise/store/drink-session';
@@ -29,6 +30,7 @@ const HeaderRight = memo(function HeaderRight({ onComplete }: { onComplete: () =
 
 export default function SessionPage() {
   const router = useRouter();
+  const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
   const drinks = useAppSelector(drinksSelector);
   const dispatch = useAppDispatch();
 
@@ -115,7 +117,7 @@ export default function SessionPage() {
     []
   );
 
-  if (!drinks) {
+  if (!isDrinkSessionActive) {
     return <Redirect href='/drinks' />;
   }
 
