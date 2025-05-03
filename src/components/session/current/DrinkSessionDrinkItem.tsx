@@ -9,7 +9,7 @@ import { memo, useCallback } from 'react';
 import { View, TouchableOpacity, Alert } from 'react-native';
 
 import { ConsumptionItem } from './ConsumptionItem';
-import { DrinkAvatarFallback } from './add/DrinkAvatarFallback';
+import { DrinkAvatarFallback } from '../add/DrinkAvatarFallback';
 
 interface DrinkSessionDrinkItemProps {
   drink: DrinkModel;
