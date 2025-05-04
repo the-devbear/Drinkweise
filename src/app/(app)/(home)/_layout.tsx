@@ -9,6 +9,7 @@ export default function HomeTabLayout() {
           headerTitle: 'Home',
         }}
       />
+      <Stack.Screen name='session/[id]' options={{ headerTitle: 'Session' }} />
     </Stack>
   );
 }
