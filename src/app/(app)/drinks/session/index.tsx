@@ -133,6 +133,7 @@ export default function SessionPage() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlashList
           data={drinks}
+          estimatedItemSize={250}
           keyboardShouldPersistTaps='handled'
           keyboardDismissMode='on-drag'
           keyExtractor={keyExtractor}
