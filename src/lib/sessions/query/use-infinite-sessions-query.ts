@@ -1,9 +1,8 @@
 import { drinkSessionService } from '@drinkweise/api/drink-session';
+import { SESSIONS_QUERY_KEY } from '@drinkweise/lib/utils/query/keys';
 import { useAppSelector } from '@drinkweise/store';
 import { userIdSelector } from '@drinkweise/store/user';
 import { useInfiniteQuery } from '@tanstack/react-query';
-
-export const SESSIONS_QUERY_KEY = 'sessions' as const;
 
 export function useInfiniteSessionsQuery() {
   const userId = useAppSelector(userIdSelector);

@@ -1,8 +1,8 @@
 import { drinkSessionService } from '@drinkweise/api/drink-session';
 import type { CompleteDrinkSessionRequestModel } from '@drinkweise/api/drink-session/models/complete-drink-session-request.model';
-import { SESSIONS_QUERY_KEY } from '@drinkweise/lib/sessions/query/use-infinite-sessions-query';
 import type { SerializedPostgrestError } from '@drinkweise/lib/types/redux/errors';
 import { now } from '@drinkweise/lib/utils/date/now';
+import { SESSIONS_QUERY_KEY } from '@drinkweise/lib/utils/query/keys';
 import { queryClient } from '@drinkweise/lib/utils/query/query-client';
 import { serializePostgrestError } from '@drinkweise/lib/utils/redux/serialize-errors';
 import type { RootState } from '@drinkweise/store';
