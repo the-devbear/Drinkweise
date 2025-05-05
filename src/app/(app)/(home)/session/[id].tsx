@@ -9,37 +9,25 @@ import { ScrollView, TouchableOpacity, View } from 'react-native';
 
 export interface DrinkSession {
   id: string;
-  user_id: string;
   name: string;
   note: string | null;
   start_time: string; // ISO timestamp
   end_time: string; // ISO timestamp
-  created_at: string; // ISO timestamp
   users: User;
   consumptions: Consumption[];
 }
 
 export interface User {
-  id: string;
-  gender: 'male' | 'female' | string;
-  height: number;
-  weight: number;
   username: string;
-  created_at: string;
-  updated_at: string;
   profile_picture: string | null;
-  has_completed_onboarding: boolean;
 }
 
 export interface Consumption {
   id: number;
   drink: Drink;
   volume: number;
-  drink_id: string;
   end_time: string;
-  created_at: string;
   start_time: string;
-  drink_session_id: string;
 }
 
 export interface Drink {
@@ -48,8 +36,6 @@ export interface Drink {
   type: string;
   alcohol: number;
   barcode: string | null;
-  created_at: string;
-  created_by: string | null;
   default_volume: number;
 }
 
