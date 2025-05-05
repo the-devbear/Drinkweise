@@ -1,3 +1,5 @@
+import { calculateSessionDuration } from '@drinkweise/lib/drink-session/calculate-session-duration';
+import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/ui/Avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@drinkweise/ui/Card';
 import { Text } from '@drinkweise/ui/Text';
@@ -252,6 +254,7 @@ export default function SessionDetailPage() {
       .sort((a, b) => a.start_time.localeCompare(b.start_time))
       .reduce(
         (acc, drink) => {
+          // TODO: probably check if hours and minute are the same
           if (!acc[drink.start_time]) {
             acc[drink.start_time] = [];
           }
@@ -261,7 +264,9 @@ export default function SessionDetailPage() {
         {} as Record<string, Consumption[]>
       )
   ).map(([time, value]) => ({ time, drinks: value }));
+
   return (
+    // TODO: Check if flashlist is better
     <ScrollView className='flex-col gap-4' contentContainerClassName='gap-4 pb-20'>
       <View className='gap-4 bg-card p-4 pt-8'>
         <View className='flex-row items-start justify-between'>
@@ -284,7 +289,9 @@ export default function SessionDetailPage() {
                 }}
               />
               <AvatarFallback>
-                <Text className='text-sm font-medium text-gray-800 dark:text-gray-300'>DB</Text>
+                <Text className='text-sm font-medium text-gray-800 dark:text-gray-300'>
+                  {session.users.username.slice(0, 2).toUpperCase()}
+                </Text>
               </AvatarFallback>
             </Avatar>
             <Text className='space-x-2 truncate text-sm font-semibold text-gray-600 dark:text-gray-300'>
@@ -315,30 +322,22 @@ export default function SessionDetailPage() {
               <View className='items-center'>
                 <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>Start</Text>
                 <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {new Date(session.start_time).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {shortTimeFormatter.format(new Date(session.start_time))}
                 </Text>
               </View>
               <View className='items-center'>
                 <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>End</Text>
                 <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {new Date(session.end_time).toLocaleTimeString([], {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
+                  {shortTimeFormatter.format(new Date(session.end_time))}
                 </Text>
               </View>
               <View className='items-center'>
                 <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>Duration</Text>
                 <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {Math.floor(
-                    (new Date(session.end_time).getTime() -
-                      new Date(session.start_time).getTime()) /
-                      60000
+                  {calculateSessionDuration(
+                    new Date(session.start_time).getTime(),
+                    new Date(session.end_time).getTime()
                   )}
-                  {' min'}
                 </Text>
               </View>
             </View>
@@ -352,6 +351,7 @@ export default function SessionDetailPage() {
                   <Text className='text-sm text-gray-600 dark:text-gray-300'>Total Volume</Text>
                 </View>
                 <Text className='mt-1 text-lg font-bold text-gray-900 dark:text-white'>
+                  {/* TODO: Extract */}
                   {session.consumptions.reduce((acc, curr) => acc + curr.volume, 0)} ml
                 </Text>
               </View>
@@ -364,6 +364,7 @@ export default function SessionDetailPage() {
                   <Text className='text-sm text-gray-600 dark:text-gray-300'>Total Alcohol</Text>
                 </View>
                 <Text className='mt-1 text-lg font-bold text-gray-900 dark:text-white'>
+                  {/* TODO: use correct calculation */}
                   {session.consumptions.reduce((acc, curr) => acc + curr.volume * 0.05, 0)}g
                 </Text>
               </View>
@@ -379,12 +380,13 @@ export default function SessionDetailPage() {
         </CardHeader>
         <CardContent>
           {timelineData.map((timePoint) => (
+            // TODO: extract to component
             <View key={timePoint.time} className='mb-0'>
               <View className='ml-6 border-l-2 border-blue-200/60 pl-4 dark:border-blue-500/30'>
                 <View className='mb-1 flex-row'>
                   <View className='absolute -left-6 h-4 w-4 rounded-full bg-blue-500 dark:bg-blue-500' />
                   <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                    {new Date(timePoint.time).toLocaleTimeString([], {
+                    {new Date(timePoint.time).toLocaleTimeString('default', {
                       hour: '2-digit',
                       minute: '2-digit',
                     })}
@@ -396,6 +398,7 @@ export default function SessionDetailPage() {
                     className='mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800'>
                     <View className=' flex-row items-center justify-between'>
                       <View className='flex-1 flex-row items-center'>
+                        {/* TODO: Icons for all types  */}
                         <Ionicons
                           name={consumption.drink.type === 'beer' ? 'beer-outline' : 'wine-outline'}
                           className='mr-2 text-[28px] text-amber-500 dark:text-amber-400'
