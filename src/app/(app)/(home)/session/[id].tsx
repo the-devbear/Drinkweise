@@ -1,9 +1,13 @@
+import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
 import { calculateSessionDuration } from '@drinkweise/lib/drink-session/calculate-session-duration';
+import { supabase } from '@drinkweise/lib/supabase';
 import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
+import { delay } from '@drinkweise/lib/utils/delay';
 import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/ui/Avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@drinkweise/ui/Card';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
+import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
 
@@ -31,7 +35,6 @@ export interface Consumption {
 }
 
 export interface Drink {
-  id: string;
   name: string;
   type: string;
   alcohol: number;
@@ -41,199 +44,53 @@ export interface Drink {
 
 export default function SessionDetailPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const session: DrinkSession = JSON.parse(`{
-  "id": "${id}",
-  "user_id": "a51a6eb1-6734-46f8-a062-9d4320b564e7",
-  "name": "For testing ",
-  "note": "This is my super awesome Note, since it was such a nice evening. We should defenitly do that again!!",
-  "start_time": "2025-05-03T16:10:00+00:00",
-  "end_time": "2025-05-04T01:11:00+00:00",
-  "created_at": "2025-05-03T16:11:29.613194+00:00",
-  "users": {
-    "id": "a51a6eb1-6734-46f8-a062-9d4320b564e7",
-    "gender": "male",
-    "height": 187,
-    "weight": 60,
-    "username": "devbear",
-    "created_at": "2025-04-27T13:08:45.276416+00:00",
-    "updated_at": "2025-04-27T13:09:20.927+00:00",
-    "profile_picture": null,
-    "has_completed_onboarding": true
-  },
-  "consumptions": [
-    {
-      "id": 109,
-      "drink": {
-        "id": "0388b209-6e1d-4443-a1f2-2e9592839567",
-        "name": "Heineken",
-        "type": "beer",
-        "alcohol": 5,
-        "barcode": null,
-        "created_at": "2025-04-20T09:19:37.041446+00:00",
-        "created_by": "a51a6eb1-6734-46f8-a062-9d4320b564e7",
-        "default_volume": 330
-      },
-      "volume": 330,
-      "drink_id": "0388b209-6e1d-4443-a1f2-2e9592839567",
-      "end_time": "2025-05-03T16:10:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:10:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
+
+  const { data: session } = useQuery({
+    queryKey: ['drink-session', id],
+    queryFn: async ({ signal }) => {
+      await delay(3);
+      const { data, error } = await supabase
+        .from('drink_sessions')
+        .select(
+          `
+            id, 
+            name,
+            note,
+            start_time,
+            end_time,
+            users:users(id, username, profile_picture),
+            consumptions:consumptions(
+              id,
+              volume,
+              start_time,
+              end_time,
+              drink:drinks(
+                name,
+                alcohol,
+                type,
+                barcode,
+                default_volume
+              )
+            )
+          `
+        )
+        .eq('id', id)
+        .order('start_time', { referencedTable: 'consumptions', ascending: false })
+        .abortSignal(signal)
+        .single();
+
+      if (error) throw error;
+      if (!data) {
+        throw new Error('No session found');
+      }
+
+      return data;
     },
-    {
-      "id": 110,
-      "drink": {
-        "id": "0388b209-6e1d-4443-a1f2-2e9592839567",
-        "name": "Heineken",
-        "type": "beer",
-        "alcohol": 5,
-        "barcode": null,
-        "created_at": "2025-04-20T09:19:37.041446+00:00",
-        "created_by": "a51a6eb1-6734-46f8-a062-9d4320b564e7",
-        "default_volume": 330
-      },
-      "volume": 330,
-      "drink_id": "0388b209-6e1d-4443-a1f2-2e9592839567",
-      "end_time": "2025-05-03T16:10:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:10:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 113,
-      "drink": {
-        "id": "b4c5d6e7-f8a9-0123-4567-d6e7f8a90123",
-        "name": "Kronenbourg 1664",
-        "type": "beer",
-        "alcohol": 5.4,
-        "barcode": "5000213020228",
-        "created_at": "2025-04-20T10:11:30.345678+00:00",
-        "created_by": null,
-        "default_volume": 500
-      },
-      "volume": 500,
-      "drink_id": "b4c5d6e7-f8a9-0123-4567-d6e7f8a90123",
-      "end_time": "2025-05-03T16:11:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:11:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 114,
-      "drink": {
-        "id": "b4c5d6e7-f8a9-0123-4567-d6e7f8a90123",
-        "name": "Kronenbourg 1664",
-        "type": "beer",
-        "alcohol": 5.4,
-        "barcode": "5000213020228",
-        "created_at": "2025-04-20T10:11:30.345678+00:00",
-        "created_by": null,
-        "default_volume": 500
-      },
-      "volume": 500,
-      "drink_id": "b4c5d6e7-f8a9-0123-4567-d6e7f8a90123",
-      "end_time": "2025-05-03T16:11:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:11:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 115,
-      "drink": {
-        "id": "c3d4e5f6-a7b8-9012-c3d4-e5f6a7b89012",
-        "name": "Peroni",
-        "type": "beer",
-        "alcohol": 4.5,
-        "barcode": "8000123456789",
-        "created_at": "2025-04-20T09:27:05.789012+00:00",
-        "created_by": null,
-        "default_volume": 330
-      },
-      "volume": 330,
-      "drink_id": "c3d4e5f6-a7b8-9012-c3d4-e5f6a7b89012",
-      "end_time": "2025-05-03T16:11:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:11:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 116,
-      "drink": {
-        "id": "c3d4e5f6-a7b8-9012-c3d4-e5f6a7b89012",
-        "name": "Peroni",
-        "type": "beer",
-        "alcohol": 4.5,
-        "barcode": "8000123456789",
-        "created_at": "2025-04-20T09:27:05.789012+00:00",
-        "created_by": null,
-        "default_volume": 330
-      },
-      "volume": 330,
-      "drink_id": "c3d4e5f6-a7b8-9012-c3d4-e5f6a7b89012",
-      "end_time": "2025-05-03T16:11:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:11:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 108,
-      "drink": {
-        "id": "0388b209-6e1d-4443-a1f2-2e9592839567",
-        "name": "Heineken",
-        "type": "beer",
-        "alcohol": 5,
-        "barcode": null,
-        "created_at": "2025-04-20T09:19:37.041446+00:00",
-        "created_by": "a51a6eb1-6734-46f8-a062-9d4320b564e7",
-        "default_volume": 330
-      },
-      "volume": 500,
-      "drink_id": "0388b209-6e1d-4443-a1f2-2e9592839567",
-      "end_time": "2025-05-03T16:10:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:10:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 111,
-      "drink": {
-        "id": "a7b8c9d0-e1f2-3456-7890-c9d0e1f23456",
-        "name": "Coke Zero",
-        "type": "soft drink",
-        "alcohol": 0,
-        "barcode": "5449000131805",
-        "created_at": "2025-04-20T10:03:55.123456+00:00",
-        "created_by": null,
-        "default_volume": 330
-      },
-      "volume": 200,
-      "drink_id": "a7b8c9d0-e1f2-3456-7890-c9d0e1f23456",
-      "end_time": "2025-05-03T16:11:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-04T01:11:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    },
-    {
-      "id": 112,
-      "drink": {
-        "id": "a7b8c9d0-e1f2-3456-7890-c9d0e1f23456",
-        "name": "Coke Zero",
-        "type": "soft drink",
-        "alcohol": 0,
-        "barcode": "5449000131805",
-        "created_at": "2025-04-20T10:03:55.123456+00:00",
-        "created_by": null,
-        "default_volume": 330
-      },
-      "volume": 250,
-      "drink_id": "a7b8c9d0-e1f2-3456-7890-c9d0e1f23456",
-      "end_time": "2025-05-03T16:11:00+00:00",
-      "created_at": "2025-05-03T16:11:29.613194+00:00",
-      "start_time": "2025-05-03T16:11:00+00:00",
-      "drink_session_id": "129f7e33-e9d1-4efb-ba37-ff01fbc63891"
-    }
-  ]
-}`);
+  });
+
+  if (!session) {
+    return <ActivityIndicator size='large' className='pt-8' />;
+  }
 
   const timelineData = Object.entries(
     session.consumptions
