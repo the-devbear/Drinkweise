@@ -4,6 +4,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 
 import type { IDrinkSessionService } from '../interfaces/drink-session.service-api';
 import type { CompleteDrinkSessionRequestModel } from '../models/complete-drink-session-request.model';
+import type { DrinkSessionResponse } from '../models/drink-session.response';
 import type { PaginatedDrinkSessionResponse } from '../models/paginated-drink-session.response';
 
 export class DrinkSessionService implements IDrinkSessionService {
@@ -69,5 +70,73 @@ export class DrinkSessionService implements IDrinkSessionService {
     }));
 
     return { value: drinkSessions };
+  }
+
+  public async getDrinkSessionById(
+    drinkSessionId: string,
+    abortSignal: AbortSignal
+  ): Result<DrinkSessionResponse> {
+    const { data, error } = await this.supabase
+      .from('drink_sessions')
+      .select(
+        `
+          id,
+          name,
+          note,
+          start_time,
+          end_time,
+          user:users (
+            username,
+            profile_picture
+          ),
+          consumptions (
+            id,
+            volume,
+            start_time,
+            end_time,
+            drink:drinks (
+              name,
+              alcohol,
+              type
+            )
+          )
+      `
+      )
+      .eq('id', drinkSessionId)
+      .abortSignal(abortSignal)
+      .single();
+
+    if (error) {
+      return { error };
+    }
+
+    if (!data) {
+      return { error: new Error('Drink session not found') };
+    }
+
+    const mappedData: DrinkSessionResponse = {
+      id: data.id,
+      name: data.name,
+      note: data.note ?? undefined,
+      user: {
+        userName: data.user.username,
+        profilePictureUrl: data.user.profile_picture ?? undefined,
+      },
+      startTime: data.start_time,
+      endTime: data.end_time,
+      consumptions: data.consumptions.map((consumption) => ({
+        id: consumption.id,
+        name: consumption.drink.name,
+        type: consumption.drink.type,
+        alcohol: consumption.drink.alcohol,
+        volume: consumption.volume,
+        startTime: consumption.start_time,
+        endTime: consumption.end_time,
+      })),
+    };
+
+    return {
+      value: mappedData,
+    };
   }
 }
