@@ -4,7 +4,7 @@ import type { PostgrestError } from '@supabase/supabase-js';
 
 import type { IDrinkSessionService } from '../interfaces/drink-session.service-api';
 import type { CompleteDrinkSessionRequestModel } from '../models/complete-drink-session-request.model';
-import type { DrinkSessionResponse } from '../models/drink-session.response';
+import type { PaginatedDrinkSessionResponse } from '../models/paginated-drink-session.response';
 
 export class DrinkSessionService implements IDrinkSessionService {
   public readonly DEFAULT_PAGE_SIZE = 20;
@@ -38,7 +38,7 @@ export class DrinkSessionService implements IDrinkSessionService {
   public async getPaginatedDrinkSessionsByUserId(
     userId: string,
     cursor: string
-  ): Result<DrinkSessionResponse[], PostgrestError> {
+  ): Result<PaginatedDrinkSessionResponse[], PostgrestError> {
     let query = this.supabase
       .from('drink_sessions')
       .select('id, user_id, name, note, start_time, end_time, users(username)')
