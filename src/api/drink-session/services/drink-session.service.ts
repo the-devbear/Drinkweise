@@ -1,3 +1,4 @@
+import { NoDrinkSessionFoundError } from '@drinkweise/api/drink-session/errors/no-drink-session-found.error';
 import type { Result } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
 import type { PostgrestError } from '@supabase/supabase-js';
@@ -75,7 +76,7 @@ export class DrinkSessionService implements IDrinkSessionService {
   public async getDrinkSessionById(
     drinkSessionId: string,
     abortSignal: AbortSignal
-  ): Result<DrinkSessionResponse> {
+  ): Result<DrinkSessionResponse, PostgrestError | NoDrinkSessionFoundError> {
     const { data, error } = await this.supabase
       .from('drink_sessions')
       .select(
@@ -111,7 +112,7 @@ export class DrinkSessionService implements IDrinkSessionService {
     }
 
     if (!data) {
-      return { error: new Error('Drink session not found') };
+      return { error: NoDrinkSessionFoundError.fromId(drinkSessionId) };
     }
 
     const mappedData: DrinkSessionResponse = {
