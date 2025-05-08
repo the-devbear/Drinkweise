@@ -1,115 +1,52 @@
-import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
 import { calculateSessionDuration } from '@drinkweise/lib/drink-session/calculate-session-duration';
-import { supabase } from '@drinkweise/lib/supabase';
+import { useSessionByIdQuery } from '@drinkweise/lib/sessions/query/use-session-by-id-query';
 import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
-import { delay } from '@drinkweise/lib/utils/delay';
+import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/ui/Avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@drinkweise/ui/Card';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
-import { useQuery } from '@tanstack/react-query';
 import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, TouchableOpacity, View } from 'react-native';
-
-export interface DrinkSession {
-  id: string;
-  name: string;
-  note: string | null;
-  start_time: string; // ISO timestamp
-  end_time: string; // ISO timestamp
-  users: User;
-  consumptions: Consumption[];
-}
-
-export interface User {
-  username: string;
-  profile_picture: string | null;
-}
-
-export interface Consumption {
-  id: number;
-  drink: Drink;
-  volume: number;
-  end_time: string;
-  start_time: string;
-}
-
-export interface Drink {
-  name: string;
-  type: string;
-  alcohol: number;
-  barcode: string | null;
-  default_volume: number;
-}
 
 export default function SessionDetailPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
 
-  const { data: session } = useQuery({
-    queryKey: ['drink-session', id],
-    queryFn: async ({ signal }) => {
-      await delay(3);
-      const { data, error } = await supabase
-        .from('drink_sessions')
-        .select(
-          `
-            id, 
-            name,
-            note,
-            start_time,
-            end_time,
-            users:users(id, username, profile_picture),
-            consumptions:consumptions(
-              id,
-              volume,
-              start_time,
-              end_time,
-              drink:drinks(
-                name,
-                alcohol,
-                type,
-                barcode,
-                default_volume
-              )
-            )
-          `
-        )
-        .eq('id', id)
-        .order('start_time', { referencedTable: 'consumptions', ascending: false })
-        .abortSignal(signal)
-        .single();
+  const { data: session, error, isLoading, isError } = useSessionByIdQuery(id);
 
-      if (error) throw error;
-      if (!data) {
-        throw new Error('No session found');
-      }
-
-      return data;
-    },
-  });
-
-  if (!session) {
+  if (isLoading) {
     return <ActivityIndicator size='large' className='pt-8' />;
   }
 
+  if (isError || !session) {
+    return (
+      <View className='flex-1 items-center justify-center'>
+        <Text className='text-lg font-semibold text-gray-900 dark:text-white'>
+          {error?.message ?? 'Sorry there was an mistake'}
+        </Text>
+      </View>
+    );
+  }
+
   const timelineData = Object.entries(
-    session.consumptions
-      .sort((a, b) => a.start_time.localeCompare(b.start_time))
-      .reduce(
-        (acc, drink) => {
-          // TODO: probably check if hours and minute are the same
-          if (!acc[drink.start_time]) {
-            acc[drink.start_time] = [];
-          }
-          acc[drink.start_time]?.push(drink);
-          return acc;
-        },
-        {} as Record<string, Consumption[]>
-      )
+    session.consumptions.reduce(
+      (acc, drink) => {
+        // TODO: probably check if hours and minute are the same
+        if (!acc[drink.startTime]) {
+          acc[drink.startTime] = [];
+        }
+        acc[drink.startTime]?.push(drink);
+        return acc;
+      },
+
+      {} as Record<
+        string,
+        NonNullable<ReturnType<typeof useSessionByIdQuery>['data']>['consumptions']
+      >
+    )
   ).map(([time, value]) => ({ time, drinks: value }));
 
   return (
-    // TODO: Check if flashlist is better
     <ScrollView className='flex-col gap-4' contentContainerClassName='gap-4 pb-20'>
       <View className='gap-4 bg-card p-4 pt-8'>
         <View className='flex-row items-start justify-between'>
@@ -120,7 +57,7 @@ export default function SessionDetailPage() {
             <View className='mt-1 flex-row items-center gap-2'>
               <Ionicons name='calendar-outline' size={20} color='gray' />
               <Text className='text-gray-700 dark:text-gray-300'>
-                {new Date(session.start_time).toLocaleDateString()}
+                {new Date(session.startTime).toLocaleDateString()}
               </Text>
             </View>
           </View>
@@ -128,17 +65,17 @@ export default function SessionDetailPage() {
             <Avatar alt='User Avatar'>
               <AvatarImage
                 source={{
-                  uri: session.users.profile_picture ?? undefined,
+                  uri: session.user.profilePictureUrl ?? undefined,
                 }}
               />
               <AvatarFallback>
                 <Text className='text-sm font-medium text-gray-800 dark:text-gray-300'>
-                  {session.users.username.slice(0, 2).toUpperCase()}
+                  {session.user.userName.slice(0, 2).toUpperCase()}
                 </Text>
               </AvatarFallback>
             </Avatar>
             <Text className='space-x-2 truncate text-sm font-semibold text-gray-600 dark:text-gray-300'>
-              {session.users.username}
+              {session.user.userName}
             </Text>
           </TouchableOpacity>
         </View>
@@ -165,21 +102,21 @@ export default function SessionDetailPage() {
               <View className='items-center'>
                 <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>Start</Text>
                 <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {shortTimeFormatter.format(new Date(session.start_time))}
+                  {shortTimeFormatter.format(new Date(session.startTime))}
                 </Text>
               </View>
               <View className='items-center'>
                 <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>End</Text>
                 <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {shortTimeFormatter.format(new Date(session.end_time))}
+                  {shortTimeFormatter.format(new Date(session.endTime))}
                 </Text>
               </View>
               <View className='items-center'>
                 <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>Duration</Text>
                 <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
                   {calculateSessionDuration(
-                    new Date(session.start_time).getTime(),
-                    new Date(session.end_time).getTime()
+                    new Date(session.startTime).getTime(),
+                    new Date(session.endTime).getTime()
                   )}
                 </Text>
               </View>
@@ -243,12 +180,12 @@ export default function SessionDetailPage() {
                       <View className='flex-1 flex-row items-center'>
                         {/* TODO: Icons for all types  */}
                         <Ionicons
-                          name={consumption.drink.type === 'beer' ? 'beer-outline' : 'wine-outline'}
+                          name={consumption.type === 'beer' ? 'beer-outline' : 'wine-outline'}
                           className='mr-2 text-[28px] text-amber-500 dark:text-amber-400'
                         />
                         <View className='flex-1'>
                           <Text className='font-medium text-gray-900 dark:text-white'>
-                            {consumption.drink.name}
+                            {consumption.name}
                           </Text>
                           <Text className='text-xs text-gray-500 dark:text-gray-400'>
                             {consumption.volume} ml
@@ -256,7 +193,7 @@ export default function SessionDetailPage() {
                         </View>
                       </View>
                       <Text className='text-sm font-medium text-gray-700 dark:text-gray-300'>
-                        {consumption.drink.alcohol} %
+                        {consumption.alcohol} %
                       </Text>
                     </View>
                   </View>
