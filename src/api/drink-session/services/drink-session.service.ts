@@ -104,6 +104,7 @@ export class DrinkSessionService implements IDrinkSessionService {
       `
       )
       .eq('id', drinkSessionId)
+      .order('start_time', { ascending: true, referencedTable: 'consumptions' })
       .abortSignal(abortSignal)
       .single();
 
