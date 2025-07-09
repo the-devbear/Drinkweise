@@ -52,7 +52,7 @@ export class DrinkSessionService implements IDrinkSessionService {
       query = query.lt('start_time', cursor);
     }
 
-    const { data, error } = await query.limit(10);
+    const { data, error } = await query;
 
     if (error) {
       return { error };
