@@ -1,7 +1,6 @@
 import { SessionHeader } from '@drinkweise/components/session/SessionHeader';
-import { calculateSessionDuration } from '@drinkweise/lib/drink-session/calculate-session-duration';
+import { SessionSummaryCard } from '@drinkweise/components/session/SessionSummaryCard';
 import { useSessionByIdQuery } from '@drinkweise/lib/sessions/query/use-session-by-id-query';
-import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Card, CardContent, CardHeader, CardTitle } from '@drinkweise/ui/Card';
 import { Text } from '@drinkweise/ui/Text';
@@ -57,66 +56,12 @@ export default function SessionDetailPage() {
         onUserProfilePress={() => {}}
       />
 
-      <Card className='mx-4'>
-        <CardHeader>
-          <CardTitle className='font-bold text-gray-600 dark:text-gray-300'>Summary</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <View className='flex'>
-            <View className='flex-row justify-around'>
-              <View className='items-center'>
-                <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>Start</Text>
-                <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {shortTimeFormatter.format(new Date(session.startTime))}
-                </Text>
-              </View>
-              <View className='items-center'>
-                <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>End</Text>
-                <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {shortTimeFormatter.format(new Date(session.endTime))}
-                </Text>
-              </View>
-              <View className='items-center'>
-                <Text className='text-xs uppercase text-gray-500 dark:text-gray-400'>Duration</Text>
-                <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-                  {calculateSessionDuration(
-                    new Date(session.startTime).getTime(),
-                    new Date(session.endTime).getTime()
-                  )}
-                </Text>
-              </View>
-            </View>
-            <View className='mt-3 flex-row gap-3'>
-              <View className='flex-1 rounded-lg bg-blue-50 p-3 dark:bg-blue-950/50'>
-                <View className='flex-row items-center'>
-                  <Ionicons
-                    name='water-outline'
-                    className='mr-2 text-[20px] text-blue-600 dark:text-blue-400'
-                  />
-                  <Text className='text-sm text-gray-600 dark:text-gray-300'>Total Volume</Text>
-                </View>
-                <Text className='mt-1 text-lg font-bold text-gray-900 dark:text-white'>
-                  {/* TODO: Extract */}
-                  {session.consumptions.reduce((acc, curr) => acc + curr.volume, 0)} ml
-                </Text>
-              </View>
-              <View className='flex-1 rounded-lg bg-blue-50 p-3 dark:bg-blue-950/50'>
-                <View className='flex-row items-center'>
-                  <Ionicons
-                    name='wine-outline'
-                    className='mr-2 text-[20px] text-blue-600 dark:text-blue-400'
-                  />
-                  <Text className='text-sm text-gray-600 dark:text-gray-300'>Total Alcohol</Text>
-                </View>
-                <Text className='mt-1 text-lg font-bold text-gray-900 dark:text-white'>
-                  {/* TODO: use correct calculation */}
-                  {session.consumptions.reduce((acc, curr) => acc + curr.volume * 0.05, 0)}g
-                </Text>
-              </View>
-            </View>
-          </View>
-        </CardContent>
-      </Card>
+      <SessionSummaryCard
+        sessionStartTime={new Date(session.startTime)}
+        sessionEndTime={new Date(session.endTime)}
+        consumptions={session.consumptions}
+      />
+
       <Card className='mx-4'>
         <CardHeader>
           <CardTitle className='font-bold text-gray-600 dark:text-gray-300'>
