@@ -1,13 +1,13 @@
+import { SessionHeader } from '@drinkweise/components/session/SessionHeader';
 import { calculateSessionDuration } from '@drinkweise/lib/drink-session/calculate-session-duration';
 import { useSessionByIdQuery } from '@drinkweise/lib/sessions/query/use-session-by-id-query';
 import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
-import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/ui/Avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@drinkweise/ui/Card';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useLocalSearchParams } from 'expo-router';
-import { ScrollView, TouchableOpacity, View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 export default function SessionDetailPage() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -47,51 +47,16 @@ export default function SessionDetailPage() {
   ).map(([time, value]) => ({ time, drinks: value }));
 
   return (
-    <ScrollView className='flex-col gap-4' contentContainerClassName='gap-4 pb-20'>
-      <View className='gap-4 bg-card p-4 pt-8'>
-        <View className='flex-row items-start justify-between'>
-          <View className='flex-1'>
-            <Text className='mr-2 flex-1 text-2xl font-bold text-gray-900 dark:text-white'>
-              {session.name}
-            </Text>
-            <View className='mt-1 flex-row items-center gap-2'>
-              <Ionicons name='calendar-outline' size={20} color='gray' />
-              <Text className='text-gray-700 dark:text-gray-300'>
-                {new Date(session.startTime).toLocaleDateString()}
-              </Text>
-            </View>
-          </View>
-          <TouchableOpacity className='flex-row items-center gap-2'>
-            <Avatar alt='User Avatar'>
-              <AvatarImage
-                source={{
-                  uri: session.user.profilePictureUrl ?? undefined,
-                }}
-              />
-              <AvatarFallback>
-                <Text className='text-sm font-medium text-gray-800 dark:text-gray-300'>
-                  {session.user.userName.slice(0, 2).toUpperCase()}
-                </Text>
-              </AvatarFallback>
-            </Avatar>
-            <Text className='space-x-2 truncate text-sm font-semibold text-gray-600 dark:text-gray-300'>
-              {session.user.userName}
-            </Text>
-          </TouchableOpacity>
-        </View>
-        {session.note && (
-          <View className='rounded-lg bg-gray-50 p-3 dark:bg-gray-800'>
-            <View className='mb-1 flex-row items-center'>
-              <Ionicons
-                className='mr-1 text-[16px] text-gray-600 dark:text-gray-300'
-                name='book-outline'
-              />
-              <Text className='text-base font-semibold text-gray-600 dark:text-gray-300'>Note</Text>
-            </View>
-            <Text className='text-sm text-gray-700 dark:text-gray-300'>{session.note}</Text>
-          </View>
-        )}
-      </View>
+    <ScrollView className='flex-col gap-4' contentContainerClassName='gap-3 pb-20'>
+      <SessionHeader
+        name={session.name}
+        note={session.note}
+        userName={session.user.userName}
+        startTime={new Date(session.startTime)}
+        userProfilePictureUrl={session.user.profilePictureUrl}
+        onUserProfilePress={() => {}}
+      />
+
       <Card className='mx-4'>
         <CardHeader>
           <CardTitle className='font-bold text-gray-600 dark:text-gray-300'>Summary</CardTitle>
@@ -162,7 +127,7 @@ export default function SessionDetailPage() {
           {timelineData.map((timePoint) => (
             // TODO: extract to component
             <View key={timePoint.time} className='mb-0'>
-              <View className='ml-6 border-l-2 border-blue-200/60 pl-4 dark:border-blue-500/30'>
+              <View className='ml-2 border-l-2 border-blue-200/60 pl-4 dark:border-blue-500/30'>
                 <View className='mb-1 flex-row'>
                   <View className='absolute -left-6 h-4 w-4 rounded-full bg-blue-500 dark:bg-blue-500' />
                   <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
