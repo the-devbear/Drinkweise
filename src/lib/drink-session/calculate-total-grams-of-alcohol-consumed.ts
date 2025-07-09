@@ -1,6 +1,5 @@
+import { calculateGramsOfAlcohol } from '@drinkweise/lib/utils/calculations/calculate-grams-of-alcohol';
 import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
-
-const ALCOHOL_DENSITY = 0.8;
 
 export function calculateTotalGramsOfAlcoholConsumed(drinks: DrinkModel[]): number {
   return drinks.reduce((previous, drink) => {
@@ -11,6 +10,6 @@ export function calculateTotalGramsOfAlcoholConsumed(drinks: DrinkModel[]): numb
       return previousVolume + consumption.volume;
     }, 0);
 
-    return previous + totalDrinkVolume * (drink.alcohol / 100) * ALCOHOL_DENSITY;
+    return previous + calculateGramsOfAlcohol(totalDrinkVolume, drink.alcohol);
   }, 0);
 }
