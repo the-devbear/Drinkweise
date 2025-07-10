@@ -24,7 +24,7 @@ export const SessionHeader = memo(function SessionHeader({
 }: SessionHeaderProps) {
   return (
     <View className='gap-4 bg-card p-4'>
-      <View className='flex-row items-start justify-between'>
+      <View className='flex-row items-center justify-between'>
         <View className='flex-1'>
           <Text className='mr-2 flex-1 text-2xl font-bold text-gray-900 dark:text-white'>
             {name}
@@ -36,7 +36,7 @@ export const SessionHeader = memo(function SessionHeader({
             </Text>
           </View>
         </View>
-        <TouchableOpacity className='flex-col items-end gap-1' onPress={onUserProfilePress}>
+        <TouchableOpacity onPress={onUserProfilePress}>
           <Avatar alt='User Avatar'>
             <AvatarImage
               source={{
@@ -49,9 +49,6 @@ export const SessionHeader = memo(function SessionHeader({
               </Text>
             </AvatarFallback>
           </Avatar>
-          <Text className='space-x-2 truncate text-sm font-semibold text-gray-600 dark:text-gray-300'>
-            {userName}
-          </Text>
         </TouchableOpacity>
       </View>
       {note && (
