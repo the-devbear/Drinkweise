@@ -1,3 +1,4 @@
+import { DrinkAvatarFallback } from '@drinkweise/components/shared/DrinkAvatarFallback';
 import { Avatar } from '@drinkweise/components/ui/Avatar';
 import { Text } from '@drinkweise/components/ui/Text';
 import { never } from '@drinkweise/lib/utils/never';
@@ -7,8 +8,6 @@ import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-d
 import { useRouter } from 'expo-router';
 import { useMemo, memo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-
-import { DrinkAvatarFallback } from './DrinkAvatarFallback';
 
 interface DrinkListProps {
   drink: AddDrinkModel;
