@@ -1,6 +1,10 @@
+import { DrinkAvatarFallback } from '@drinkweise/components/shared/DrinkAvatarFallback';
+import { buildTimelineDataFromSession } from '@drinkweise/lib/sessions/build-timeline-data-from-session';
+import { ConsumptionsTimelinePointModel } from '@drinkweise/lib/sessions/models/consumptions-timeline-point.model';
+import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
+import { Avatar } from '@drinkweise/ui/Avatar';
 import { Card, CardContent, CardHeader, CardTitle } from '@drinkweise/ui/Card';
 import { Text } from '@drinkweise/ui/Text';
-import { Ionicons } from '@expo/vector-icons';
 import { View } from 'react-native';
 
 interface SessionTimelineCardProps {
@@ -16,28 +20,7 @@ interface SessionTimelineCardProps {
 }
 
 export function SessionTimelineCard({ sessionConsumptions }: SessionTimelineCardProps) {
-  const timelineData = Object.entries(
-    sessionConsumptions.reduce(
-      (acc, drink) => {
-        // Group drinks by their start time
-        if (!acc[drink.startTime]) {
-          acc[drink.startTime] = [];
-        }
-        acc[drink.startTime]?.push({
-          id: drink.id,
-          type: drink.type,
-          name: drink.name,
-          volume: drink.volume,
-          alcohol: drink.alcohol,
-        });
-        return acc;
-      },
-      {} as Record<
-        string,
-        { id: number; type: string; name: string; volume: number; alcohol: number }[]
-      >
-    )
-  ).map(([time, drinks]) => ({ time, drinks }));
+  const timelineData = buildTimelineDataFromSession(sessionConsumptions);
   return (
     <Card className='mx-4'>
       <CardHeader>
@@ -54,37 +37,27 @@ export function SessionTimelineCard({ sessionConsumptions }: SessionTimelineCard
   );
 }
 
-interface Drink {
-  id: number;
-  name: string;
-  type: string;
-  volume: number; // in ml
-  alcohol: number; // in percentage
-}
-
-function TimelinePoint({ time, drinks }: { time: string; drinks: Drink[] }) {
+function TimelinePoint({ time, drinks }: ConsumptionsTimelinePointModel) {
   return (
-    // TODO: extract to component
-    <View key={time} className='mb-0'>
+    <View>
       <View className='ml-2 border-l-2 border-blue-200/60 pl-4 dark:border-blue-500/30'>
         <View className='mb-1 flex-row'>
           <View className='absolute -left-6 h-4 w-4 rounded-full bg-blue-500 dark:bg-blue-500' />
           <Text className='text-sm font-semibold text-gray-700 dark:text-gray-200'>
-            {new Date(time).toLocaleTimeString('default', {
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
+            {shortTimeFormatter.format(time)}
           </Text>
         </View>
         {drinks.map((consumption) => (
           <View key={consumption.id} className='mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800'>
             <View className=' flex-row items-center justify-between'>
               <View className='flex-1 flex-row items-center'>
-                {/* TODO: Icons for all types  */}
-                <Ionicons
-                  name={consumption.type === 'beer' ? 'beer-outline' : 'wine-outline'}
-                  className='mr-2 text-[28px] text-amber-500 dark:text-amber-400'
-                />
+                <Avatar className='mr-2' alt=''>
+                  <DrinkAvatarFallback
+                    type={consumption.type}
+                    emojiClassName='text-3xl'
+                    className='bg-transparent'
+                  />
+                </Avatar>
                 <View className='flex-1'>
                   <Text className='font-medium text-gray-900 dark:text-white'>
                     {consumption.name}
