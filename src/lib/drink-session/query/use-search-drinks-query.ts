@@ -1,17 +1,17 @@
 import { drinksService } from '@drinkweise/api/drinks';
 import { filterDrinksRule } from '@drinkweise/lib/drink-session/rules/filter-drinks.rule';
 import { shouldSkipEmptyDataKey } from '@drinkweise/lib/utils/query/enums/meta-data-keys';
+import { SEARCH_DRINKS_QUERY_KEY } from '@drinkweise/lib/utils/query/keys';
 import { useAppSelector } from '@drinkweise/store';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
-import { userSelector } from '@drinkweise/store/user';
+import { userIdSelector } from '@drinkweise/store/user';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-export const SEARCH_DRINKS_QUERY_KEY = 'drinks' as const;
 const STALE_TIME = 21_600_000; // 6 hours
 
 export function useSearchDrinksQuery(searchString: string, debouncedSearchString: string) {
-  const userId = useAppSelector(userSelector)?.id;
+  const userId = useAppSelector(userIdSelector);
 
   if (!userId) {
     throw new Error('User ID is required');

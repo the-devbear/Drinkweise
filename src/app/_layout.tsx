@@ -25,6 +25,7 @@ import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Provider as ReduxProvider } from 'react-redux';
+import '@drinkweise/components/css-interopts';
 
 SplashScreen.preventAutoHideAsync();
 

@@ -1,14 +1,17 @@
 import { AvatarFallback } from '@drinkweise/components/ui/Avatar';
 import { Text } from '@drinkweise/components/ui/Text';
+import { cn } from '@drinkweise/lib/cn';
 import { never } from '@drinkweise/lib/utils/never';
 import type { DrinkType } from '@drinkweise/store/drink-session/enums/drink-type.enum';
 import { useMemo } from 'react';
 
 interface DrinkAvatarFallbackProps {
+  className?: string;
+  emojiClassName?: string;
   type: DrinkType;
 }
 
-export function DrinkAvatarFallback({ type }: DrinkAvatarFallbackProps) {
+export function DrinkAvatarFallback({ type, className, emojiClassName }: DrinkAvatarFallbackProps) {
   const { backgroundColor, emoji } = useMemo((): {
     backgroundColor: string;
     emoji: string;
@@ -30,8 +33,8 @@ export function DrinkAvatarFallback({ type }: DrinkAvatarFallbackProps) {
   }, [type]);
 
   return (
-    <AvatarFallback className={backgroundColor}>
-      <Text className='text-4xl'>{emoji}</Text>
+    <AvatarFallback className={cn(backgroundColor, className)}>
+      <Text className={cn('text-4xl', emojiClassName)}>{emoji}</Text>
     </AvatarFallback>
   );
 }

@@ -1,5 +1,5 @@
-import { DrinkSessionDrinkItem } from '@drinkweise/components/session/DrinkSessionDrinkItem';
-import { DrinkSessionFooter } from '@drinkweise/components/session/DrinkSessionFooter';
+import { DrinkSessionDrinkItem } from '@drinkweise/components/drink-session/DrinkSessionDrinkItem';
+import { DrinkSessionFooter } from '@drinkweise/components/drink-session/DrinkSessionFooter';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { SessionValidationErrors } from '@drinkweise/lib/drink-session/enums/session-validation-errors';
@@ -10,6 +10,7 @@ import {
   addConsumptionAction,
   drinksSelector,
   finishAllOpenConsumptionsAction,
+  isDrinkSessionActiveSelector,
   removeDrinkAction,
   updateSessionStartTimeToEarliestConsumptionAction,
 } from '@drinkweise/store/drink-session';
@@ -29,6 +30,7 @@ const HeaderRight = memo(function HeaderRight({ onComplete }: { onComplete: () =
 
 export default function SessionPage() {
   const router = useRouter();
+  const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
   const drinks = useAppSelector(drinksSelector);
   const dispatch = useAppDispatch();
 
@@ -115,7 +117,7 @@ export default function SessionPage() {
     []
   );
 
-  if (!drinks) {
+  if (!isDrinkSessionActive) {
     return <Redirect href='/drinks' />;
   }
 
@@ -131,6 +133,7 @@ export default function SessionPage() {
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlashList
           data={drinks}
+          estimatedItemSize={250}
           keyboardShouldPersistTaps='handled'
           keyboardDismissMode='on-drag'
           keyExtractor={keyExtractor}

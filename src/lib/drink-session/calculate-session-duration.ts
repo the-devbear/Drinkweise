@@ -11,8 +11,8 @@ const HOUR_IN_MILLISECONDS = 3_600_000;
  */
 const DAY_IN_MILLISECONDS = 86_400_000;
 
-export function calculateSessionDuration(startTime: number): string {
-  const currentTime = Date.now();
+export function calculateSessionDuration(startTime: number, endTime?: number): string {
+  const currentTime = endTime ?? Date.now();
   const difference = currentTime - startTime;
 
   if (difference < HOUR_IN_MILLISECONDS) {

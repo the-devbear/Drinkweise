@@ -1,4 +1,4 @@
-import { SessionDurationTicker } from '@drinkweise/components/session/complete/SessionDurationTicker';
+import { SessionDurationTicker } from '@drinkweise/components/drink-session/complete/SessionDurationTicker';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';

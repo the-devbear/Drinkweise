@@ -1,3 +1,4 @@
+import { DrinkAvatarFallback } from '@drinkweise/components/shared/DrinkAvatarFallback';
 import { Avatar } from '@drinkweise/components/ui/Avatar';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
@@ -9,7 +10,6 @@ import { memo, useCallback } from 'react';
 import { View, TouchableOpacity, Alert } from 'react-native';
 
 import { ConsumptionItem } from './ConsumptionItem';
-import { DrinkAvatarFallback } from './add/DrinkAvatarFallback';
 
 interface DrinkSessionDrinkItemProps {
   drink: DrinkModel;

@@ -4,3 +4,9 @@ export const dateFormatterWithoutYear = new Intl.DateTimeFormat('default', {
   hour: '2-digit',
   minute: '2-digit',
 });
+
+export const longDateFormatter = new Intl.DateTimeFormat('default', {
+  day: 'numeric',
+  month: 'long',
+  year: 'numeric',
+});
