@@ -5,7 +5,7 @@ import type { DrinkSessionResponse } from '../models/drink-session.response';
 import type { PaginatedDrinkSessionResponse } from '../models/paginated-drink-session.response';
 
 export interface IDrinkSessionService {
-  DEFAULT_PAGE_SIZE: number;
+  readonly DEFAULT_PAGE_SIZE: number;
   completeDrinkSession: (drinkSession: CompleteDrinkSessionRequestModel) => Result<true>;
   getPaginatedDrinkSessionsByUserId: (
     userId: string,

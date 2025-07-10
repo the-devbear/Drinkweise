@@ -27,7 +27,7 @@ export default function SessionDetailPage() {
   if (isError || !session) {
     return (
       <ErrorDisplay
-        message={error?.message ?? 'Sorry there was an mistake'}
+        message={error?.message ?? 'Sorry there was an error loading the session.'}
         isRetrying={isFetching}
         onRetry={refetch}
         canRetry={errorUpdateCount < 3}

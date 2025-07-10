@@ -1,11 +1,11 @@
 import { AddDrinkListItem } from '@drinkweise/components/drink-session/add/AddDrinkListItem';
 import { AddDrinkSkeletonItem } from '@drinkweise/components/drink-session/add/AddDrinkSkeletonItem';
-import { ActivityIndicator } from '@drinkweise/components/ui/ActivityIndicator';
 import { ErrorDisplay } from '@drinkweise/components/ui/ErrorDisplay';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useSearchDrinksQuery } from '@drinkweise/lib/drink-session/query/use-search-drinks-query';
 import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
+import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useCallback, useState } from 'react';

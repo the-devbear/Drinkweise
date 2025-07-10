@@ -81,11 +81,7 @@ export const SessionListItem = memo(function SessionListItem({
         </CardContent>
         {note && (
           <CardFooter className='mx-6 items-start border-t border-border px-0 pt-2'>
-            <Text
-              variant='subhead'
-              color='tertiary'
-              style={{ wordWrap: 'break-word' }}
-              numberOfLines={2}>
+            <Text variant='subhead' color='tertiary' numberOfLines={2}>
               {note}
             </Text>
           </CardFooter>
