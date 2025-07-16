@@ -74,22 +74,23 @@ export default function AddDrinkPage() {
       return <ActivityIndicator className='py-4' />;
     }
 
-    if (!infiniteDrinksQuery.hasNextPage && drinks.length > 0) {
-      return (
-        <View className='py-4'>
-          <Text variant='footnote' className='text-center text-muted'>
-            No more drinks to load
-          </Text>
-          <Button
-            variant='secondary'
-            className='mx-4 my-4'
-            onPress={() => navigateToCreateDrinkPage(search.trim())}>
-            <Text>Create your own</Text>
-          </Button>
-        </View>
-      );
+    if (drinks.length === 0 && search.length > 0) {
+      return null;
     }
-    return null;
+
+    return (
+      <View className='py-4'>
+        <Text variant='footnote' className='text-center text-muted'>
+          Didn't find what you were looking for?
+        </Text>
+        <Button
+          variant='tonal'
+          className='mx-4 my-4'
+          onPress={() => navigateToCreateDrinkPage(search.trim())}>
+          <Text>Create your own</Text>
+        </Button>
+      </View>
+    );
   }, [infiniteDrinksQuery, search, drinks.length, navigateToCreateDrinkPage]);
 
   const renderListEmpty = useCallback(() => {
@@ -112,7 +113,7 @@ export default function AddDrinkPage() {
           {search.length > 0 ? 'Try a different search term' : "Sorry we couldn't find any drinks"}
         </Text>
         <Button
-          variant='secondary'
+          variant='tonal'
           size='sm'
           className='mx-4 my-2'
           onPress={() => {
@@ -143,9 +144,8 @@ export default function AddDrinkPage() {
         leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
         variant='card'
         placeholder='Search...'
-        onChangeText={(value) => {
-          setSearch(value.trim());
-        }}
+        onChangeText={setSearch}
+        onBlur={() => setSearch(search.trim())}
       />
       <FlashList
         data={drinks}
