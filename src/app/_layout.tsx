@@ -24,6 +24,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@drinkweise/components/css-interopts';
 
@@ -69,31 +70,33 @@ export default function RootLayout() {
         style={isDarkColorScheme ? 'light' : 'dark'}
       />
       <GestureHandlerRootView style={{ flex: 1 }}>
-        <PersistQueryClientProvider
-          client={queryClient}
-          persistOptions={{
-            persister,
-            maxAge: MAX_AGE_IN_MILLISECONDS,
-            dehydrateOptions: {
-              shouldDehydrateQuery,
-            },
-          }}>
-          <ReduxProvider store={rootStore}>
-            <BottomSheetModalProvider>
-              <ActionSheetProvider>
-                <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
-                  <AuthProvider>
-                    <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
-                      <Stack.Screen name='(auth)' />
-                      <Stack.Screen name='(app)' />
-                      <Stack.Screen name='onboarding' />
-                    </Stack>
-                  </AuthProvider>
-                </NavThemeProvider>
-              </ActionSheetProvider>
-            </BottomSheetModalProvider>
-          </ReduxProvider>
-        </PersistQueryClientProvider>
+        <KeyboardProvider>
+          <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{
+              persister,
+              maxAge: MAX_AGE_IN_MILLISECONDS,
+              dehydrateOptions: {
+                shouldDehydrateQuery,
+              },
+            }}>
+            <ReduxProvider store={rootStore}>
+              <BottomSheetModalProvider>
+                <ActionSheetProvider>
+                  <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
+                    <AuthProvider>
+                      <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
+                        <Stack.Screen name='(auth)' />
+                        <Stack.Screen name='(app)' />
+                        <Stack.Screen name='onboarding' />
+                      </Stack>
+                    </AuthProvider>
+                  </NavThemeProvider>
+                </ActionSheetProvider>
+              </BottomSheetModalProvider>
+            </ReduxProvider>
+          </PersistQueryClientProvider>
+        </KeyboardProvider>
       </GestureHandlerRootView>
     </>
   );
