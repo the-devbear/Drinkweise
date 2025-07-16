@@ -1,7 +1,7 @@
 import { DrinkAvatarFallback } from '@drinkweise/components/shared/DrinkAvatarFallback';
 import { Avatar } from '@drinkweise/components/ui/Avatar';
 import { Text } from '@drinkweise/components/ui/Text';
-import { never } from '@drinkweise/lib/utils/never';
+import { mapDrinkTypeToName } from '@drinkweise/lib/shared/map-drink-type-to-name';
 import { useAppDispatch } from '@drinkweise/store';
 import { addDrinkAction } from '@drinkweise/store/drink-session';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
@@ -16,22 +16,7 @@ interface DrinkListProps {
 export const AddDrinkListItem = memo(function AddDrinkListItem({ drink }: DrinkListProps) {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const mappedDrinkType = useMemo(() => {
-    switch (drink.type) {
-      case 'beer':
-        return 'Beer';
-      case 'spirit':
-        return 'Spirit';
-      case 'red-wine':
-        return 'Red Wine';
-      case 'white-wine':
-        return 'White Wine';
-      case 'other':
-        return 'Other';
-      default:
-        never(drink.type);
-    }
-  }, [drink.type]);
+  const mappedDrinkType = useMemo(() => mapDrinkTypeToName(drink.type), [drink.type]);
 
   return (
     <TouchableOpacity
