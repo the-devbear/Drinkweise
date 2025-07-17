@@ -1,6 +1,6 @@
 {
   "name": "drinkweise",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "expo-router/entry",
   "scripts": {
     "install:immutable": "yarn install --immutable",
