@@ -59,6 +59,26 @@ export class DrinksService implements IDrinkService {
     return { value: data.map(this.mapDrink) };
   }
 
+  public async createDrink(
+    userId: string,
+    drink: Omit<AddDrinkModel, 'id'>
+  ): Result<void, PostgrestError> {
+    const { error } = await this.supabase.from('drinks').insert({
+      name: drink.name,
+      type: drink.type,
+      alcohol: drink.alcohol,
+      default_volume: drink.defaultVolume,
+      barcode: drink.barcode ?? null,
+      created_by: userId,
+    });
+
+    if (error) {
+      return { error };
+    }
+
+    return { value: undefined };
+  }
+
   private createDefaultQuery(userId: string) {
     return this.supabase
       .from('drinks')

@@ -1,5 +1,9 @@
+import { drinksService } from '@drinkweise/api/drinks';
 import { mapDrinkTypeToName } from '@drinkweise/lib/shared/map-drink-type-to-name';
+import { SEARCH_DRINKS_QUERY_KEY } from '@drinkweise/lib/utils/query/keys';
+import { useAppSelector } from '@drinkweise/store';
 import { DrinkTypeEnum } from '@drinkweise/store/drink-session/enums/drink-type.enum';
+import { userIdSelector } from '@drinkweise/store/user';
 import { BottomSheetPicker } from '@drinkweise/ui/BottomSheetPicker';
 import { Button } from '@drinkweise/ui/Button';
 import { IntegerInput } from '@drinkweise/ui/IntegerInput';
@@ -9,8 +13,9 @@ import { TextInput } from '@drinkweise/ui/TextInput';
 import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQueryClient } from '@tanstack/react-query';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Alert, Linking, View } from 'react-native';
@@ -47,6 +52,9 @@ const createDrinkSchema = z.object({
 
 export default function CreateDrinkPage() {
   const { name } = useLocalSearchParams<{ name?: string }>();
+  const userId = useAppSelector(userIdSelector);
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const [permission, requestPermission] = useCameraPermissions();
   const drinkTypeValues = useMemo(
     () =>
@@ -62,6 +70,7 @@ export default function CreateDrinkPage() {
     handleSubmit,
     setFocus,
     setValue,
+    setError,
     formState: { isSubmitting },
   } = useForm({
     defaultValues: {
@@ -73,10 +82,41 @@ export default function CreateDrinkPage() {
 
   const handleCreateDrink = useMemo(
     () =>
-      handleSubmit((data) => {
-        console.log('Creating drink with data:', data);
+      handleSubmit(async (data) => {
+        if (!userId) {
+          Alert.alert('Error', 'User ID is not available. Please log in again.');
+          return;
+        }
+
+        const { error } = await drinksService.createDrink(userId, {
+          name: data.name,
+          type: data.type,
+          alcohol: data.alcohol,
+          defaultVolume: data.volume,
+          barcode: data.barcode,
+        });
+
+        if (error) {
+          console.error('Failed to create drink:', error);
+          if (error.code === '23505' && error.message.includes('drinks_barcode_key')) {
+            setError('barcode', {
+              type: 'value',
+              message: 'A drink with this barcode already exists.',
+            });
+            return;
+          }
+          Alert.alert('Error', 'Failed to create drink. Please try again.');
+
+          return;
+        }
+
+        queryClient.removeQueries({
+          predicate: ({ queryKey }) => queryKey[0] === SEARCH_DRINKS_QUERY_KEY,
+        });
+
+        router.back();
       }),
-    [handleSubmit]
+    [handleSubmit, userId, queryClient, router, setError]
   );
 
   useEffect(() => {
