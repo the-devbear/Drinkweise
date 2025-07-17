@@ -6,14 +6,23 @@ import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useSearchDrinksQuery } from '@drinkweise/lib/drink-session/query/use-search-drinks-query';
 import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
+import { Button } from '@drinkweise/ui/Button';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
+import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { View } from 'react-native';
 
 export default function AddDrinkPage() {
   const [search, setSearch] = useState('');
   const debounceSearch = useDebounce(search);
+  const router = useRouter();
+  const navigateToCreateDrinkPage = useCallback(
+    (search: string) => {
+      router.push(`/drinks/session/add/create?name=${search}`);
+    },
+    [router]
+  );
 
   const { drinks, infiniteDrinksQuery, searchQuery, isSearchQueryActive } = useSearchDrinksQuery(
     search,
@@ -65,17 +74,24 @@ export default function AddDrinkPage() {
       return <ActivityIndicator className='py-4' />;
     }
 
-    if (!infiniteDrinksQuery.hasNextPage && drinks.length > 0) {
-      return (
-        <View className='py-4'>
-          <Text variant='footnote' className='text-center text-muted'>
-            No more drinks to load
-          </Text>
-        </View>
-      );
+    if (drinks.length === 0 && search.length > 0) {
+      return null;
     }
-    return null;
-  }, [drinks.length, infiniteDrinksQuery, search.length]);
+
+    return (
+      <View className='py-4'>
+        <Text variant='footnote' className='text-center text-muted'>
+          Didn't find what you were looking for?
+        </Text>
+        <Button
+          variant='tonal'
+          className='mx-4 my-4'
+          onPress={() => navigateToCreateDrinkPage(search.trim())}>
+          <Text>Create your own</Text>
+        </Button>
+      </View>
+    );
+  }, [infiniteDrinksQuery, search, drinks.length, navigateToCreateDrinkPage]);
 
   const renderListEmpty = useCallback(() => {
     if (infiniteDrinksQuery.isError || searchQuery.isError) {
@@ -96,9 +112,19 @@ export default function AddDrinkPage() {
         <Text variant='subhead' color='tertiary' className='mt-1 text-center'>
           {search.length > 0 ? 'Try a different search term' : "Sorry we couldn't find any drinks"}
         </Text>
+        <Button
+          variant='tonal'
+          size='sm'
+          className='mx-4 my-2'
+          onPress={() => {
+            navigateToCreateDrinkPage(search.trim());
+          }}>
+          <Text>Or create your own</Text>
+        </Button>
       </View>
     );
   }, [
+    navigateToCreateDrinkPage,
     debounceSearch,
     infiniteDrinksQuery.isError,
     infiniteDrinksQuery.isFetching,
@@ -118,9 +144,8 @@ export default function AddDrinkPage() {
         leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
         variant='card'
         placeholder='Search...'
-        onChangeText={(value) => {
-          setSearch(value.trim());
-        }}
+        onChangeText={setSearch}
+        onBlur={() => setSearch(search.trim())}
       />
       <FlashList
         data={drinks}

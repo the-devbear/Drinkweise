@@ -7,7 +7,7 @@ export default function SessionLayout() {
       <Stack.Screen
         name='add'
         options={{
-          headerTitle: 'Add new Drink',
+          headerShown: false,
           presentation: 'modal',
         }}
       />

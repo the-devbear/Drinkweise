@@ -43,6 +43,12 @@ export default ({ config }) => ({
         imageWidth: 200,
       },
     ],
+    [
+      'expo-camera',
+      {
+        cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera, so you can scan barcodes.',
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
