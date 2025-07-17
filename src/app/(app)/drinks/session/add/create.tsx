@@ -6,12 +6,14 @@ import { IntegerInput } from '@drinkweise/ui/IntegerInput';
 import { NumberInput } from '@drinkweise/ui/NumberInput';
 import { Text } from '@drinkweise/ui/Text';
 import { TextInput } from '@drinkweise/ui/TextInput';
+import { Ionicons } from '@expo/vector-icons';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useLocalSearchParams } from 'expo-router';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { View } from 'react-native';
+import { Alert, Linking, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
 import { z } from 'zod';
 
@@ -45,6 +47,7 @@ const createDrinkSchema = z.object({
 
 export default function CreateDrinkPage() {
   const { name } = useLocalSearchParams<{ name?: string }>();
+  const [permission, requestPermission] = useCameraPermissions();
   const drinkTypeValues = useMemo(
     () =>
       Object.values(DrinkTypeEnum).map((type) => ({
@@ -53,11 +56,12 @@ export default function CreateDrinkPage() {
       })),
     []
   );
+
   const {
     control,
     handleSubmit,
     setFocus,
-
+    setValue,
     formState: { isSubmitting },
   } = useForm({
     defaultValues: {
@@ -74,6 +78,53 @@ export default function CreateDrinkPage() {
       }),
     [handleSubmit]
   );
+
+  useEffect(() => {
+    const subscription = CameraView.onModernBarcodeScanned(async (event) => {
+      setValue('barcode', event.data);
+      CameraView.dismissScanner();
+    });
+    return () => {
+      subscription.remove();
+    };
+  }, [setValue]);
+
+  const openBarcodeScanner = useCallback(async () => {
+    if (!permission) {
+      return;
+    }
+
+    if (permission.granted) {
+      await CameraView.launchScanner({
+        barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e'],
+        isPinchToZoomEnabled: true,
+        isGuidanceEnabled: true,
+        isHighlightingEnabled: true,
+      });
+      return;
+    }
+
+    if (permission.canAskAgain) {
+      requestPermission();
+    } else {
+      Alert.alert(
+        'Camera Permission Required',
+        'To scan a barcode, please enable camera permissions in your device settings.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+          },
+          {
+            text: 'Open Settings',
+            onPress: () => {
+              Linking.openSettings();
+            },
+          },
+        ]
+      );
+    }
+  }, [permission, requestPermission]);
 
   return (
     <BottomSheetModalProvider>
@@ -166,6 +217,15 @@ export default function CreateDrinkPage() {
                 autoCorrect={false}
                 spellCheck={false}
                 clearButtonMode={value ? 'while-editing' : 'never'}
+                rightIcon={
+                  CameraView.isModernBarcodeScannerAvailable ? (
+                    <Ionicons
+                      onPress={openBarcodeScanner}
+                      className='text-2xl leading-none text-foreground'
+                      name='barcode-outline'
+                    />
+                  ) : null
+                }
                 onChangeText={onChange}
                 onBlur={onBlur}
                 errorMessage={error?.message}
