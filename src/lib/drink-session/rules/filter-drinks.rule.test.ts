@@ -1,7 +1,7 @@
 import { DrinkTypeEnum } from '@drinkweise/store/drink-session/enums/drink-type.enum';
 import type { AddDrinkModel } from '@drinkweise/store/drink-session/models/add-drink.model';
 
-import { filterDrinksRule } from '../filter-drinks.rule';
+import { filterDrinksRule } from './filter-drinks.rule';
 
 describe('filterDrinksRule', () => {
   const mockDrinks: AddDrinkModel[] = [
