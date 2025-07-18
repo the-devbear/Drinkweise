@@ -1,5 +1,6 @@
 import { drinksService } from '@drinkweise/api/drinks';
 import { filterDrinksRule } from '@drinkweise/lib/drink-session/rules/filter-drinks.rule';
+import { isValidBarcode } from '@drinkweise/lib/utils/barcode/is-valid-barcode';
 import { shouldSkipEmptyDataKey } from '@drinkweise/lib/utils/query/enums/meta-data-keys';
 import { SEARCH_DRINKS_QUERY_KEY } from '@drinkweise/lib/utils/query/keys';
 import { useAppSelector } from '@drinkweise/store';
@@ -63,6 +64,21 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
         return null;
       }
 
+      // Check if the search string is a valid barcode
+      if (isValidBarcode(debouncedSearchString)) {
+        const { value, error } = await drinksService.searchDrinksByBarcode(
+          userId,
+          debouncedSearchString
+        );
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        return value;
+      }
+
+      // Otherwise search by name
       const { value, error } = await drinksService.searchDrinksByName(
         userId,
         debouncedSearchString

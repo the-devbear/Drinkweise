@@ -59,6 +59,23 @@ export class DrinksService implements IDrinkService {
     return { value: data.map(this.mapDrink) };
   }
 
+  public async searchDrinksByBarcode(
+    userId: string,
+    barcode: string
+  ): Result<AddDrinkModel[], PostgrestError> {
+    const { data, error } = await this.createDefaultQuery(userId).eq('barcode', barcode);
+
+    if (error) {
+      return { error };
+    }
+
+    if (!data) {
+      return { value: [] };
+    }
+
+    return { value: data.map(this.mapDrink) };
+  }
+
   public async createDrink(
     userId: string,
     drink: Omit<AddDrinkModel, 'id'>

@@ -1,9 +1,11 @@
 import { AddDrinkListItem } from '@drinkweise/components/drink-session/add/AddDrinkListItem';
 import { AddDrinkSkeletonItem } from '@drinkweise/components/drink-session/add/AddDrinkSkeletonItem';
+import { BarcodeScannerModal } from '@drinkweise/components/drink-session/add/BarcodeScannerModal';
 import { ErrorDisplay } from '@drinkweise/components/ui/ErrorDisplay';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
 import { useSearchDrinksQuery } from '@drinkweise/lib/drink-session/query/use-search-drinks-query';
+import { isValidBarcode } from '@drinkweise/lib/utils/barcode/is-valid-barcode';
 import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Button } from '@drinkweise/ui/Button';
@@ -11,14 +13,20 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 export default function AddDrinkPage() {
   const [search, setSearch] = useState('');
+  const [isBarcodeScannerVisible, setBarcodeScannerVisible] = useState(false);
   const debounceSearch = useDebounce(search);
   const router = useRouter();
   const navigateToCreateDrinkPage = useCallback(
     (search: string) => {
+      if (isValidBarcode(search)) {
+        router.push(`/drinks/session/add/create?barcode=${search}`);
+        return;
+      }
+
       router.push(`/drinks/session/add/create?name=${search}`);
     },
     [router]
@@ -38,6 +46,11 @@ export default function AddDrinkPage() {
       searchQuery.refetch();
     }
   }, [search, isSearchQueryActive, infiniteDrinksQuery, searchQuery]);
+
+  const handleBarcodeScanned = (data: string) => {
+    setSearch(data);
+    setBarcodeScannerVisible(false);
+  };
 
   const renderListHeader = useCallback(() => {
     if (searchQuery.isError && search.length > 0) {
@@ -142,8 +155,13 @@ export default function AddDrinkPage() {
         value={search}
         className='bg-card px-4 py-2'
         leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
+        rightIcon={
+          <TouchableOpacity onPress={() => setBarcodeScannerVisible(true)}>
+            <Ionicons name='barcode-outline' className='text-2xl leading-none text-foreground' />
+          </TouchableOpacity>
+        }
         variant='card'
-        placeholder='Search...'
+        placeholder='Search by name or scan barcode...'
         onChangeText={setSearch}
         onBlur={() => setSearch(search.trim())}
       />
@@ -171,6 +189,11 @@ export default function AddDrinkPage() {
             infiniteDrinksQuery.fetchNextPage();
           }
         }}
+      />
+      <BarcodeScannerModal
+        isVisible={isBarcodeScannerVisible}
+        onClose={() => setBarcodeScannerVisible(false)}
+        onBarcodeScanned={handleBarcodeScanned}
       />
     </View>
   );

@@ -53,7 +53,7 @@ export default function HomePage() {
       );
     }
 
-    if (!isLoading) {
+    if (isLoading) {
       return null;
     }
 
@@ -105,7 +105,7 @@ export default function HomePage() {
         />
       );
     }
-    if (!hasNextPage && !!data && data?.pageParams.length >= 1) {
+    if (!hasNextPage && !!data && data?.pageParams.length > 1) {
       return (
         <Text variant='footnote' className='py-4 text-center text-muted'>
           No more sessions to load

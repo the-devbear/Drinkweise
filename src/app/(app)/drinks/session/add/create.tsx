@@ -51,7 +51,7 @@ const createDrinkSchema = z.object({
 });
 
 export default function CreateDrinkPage() {
-  const { name } = useLocalSearchParams<{ name?: string }>();
+  const { name, barcode } = useLocalSearchParams<{ name?: string; barcode?: string }>();
   const userId = useAppSelector(userIdSelector);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -75,6 +75,7 @@ export default function CreateDrinkPage() {
   } = useForm({
     defaultValues: {
       name,
+      barcode,
     },
     resolver: zodResolver(createDrinkSchema),
     shouldFocusError: false,
