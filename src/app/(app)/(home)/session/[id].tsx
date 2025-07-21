@@ -4,10 +4,11 @@ import { SessionTimelineCard } from '@drinkweise/components/session/SessionTimel
 import { ErrorDisplay } from '@drinkweise/components/ui/ErrorDisplay';
 import { useSessionByIdQuery } from '@drinkweise/lib/sessions/query/use-session-by-id-query';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
 
 export default function SessionDetailPage() {
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
 
   const {
@@ -46,7 +47,10 @@ export default function SessionDetailPage() {
         userName={session.user.userName}
         startTime={sessionStartTime}
         userProfilePictureUrl={session.user.profilePictureUrl}
-        onUserProfilePress={() => {}}
+        onUserProfilePress={() => {
+          // TOOD: We navigate to profile page for now since we don't have implemented followers yet
+          router.navigate('/profile');
+        }}
       />
 
       <SessionSummaryCard
