@@ -1,9 +1,11 @@
+import { ProfileHeader } from '@drinkweise/components/profile/ProfileHeader';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { userSelector } from '@drinkweise/store/user';
 import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
 import { Button } from '@drinkweise/ui/Button';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
+import { FlashList } from '@shopify/flash-list';
 import { Stack } from 'expo-router';
 import { TouchableOpacity, View } from 'react-native';
 
@@ -28,7 +30,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <View>
+    <>
       <Stack.Screen
         options={{
           headerTitle: user.username ?? 'Profile',
@@ -53,10 +55,24 @@ export default function ProfilePage() {
           ),
         }}
       />
-
-      <Button variant='destructive' className='m-4' onPress={() => dispatch(signOutAction())}>
-        <Text>Sign Out</Text>
-      </Button>
-    </View>
+      <FlashList
+        className='flex-1 pb-16'
+        data={['Session 1', 'Session 2', 'Session 3']}
+        ListHeaderComponent={
+          <ProfileHeader
+            username={user.username}
+            profilePicture={user.profilePicture}
+            sessionCount={3} // TODO: Replace with actual session count
+            weight={user.weight}
+            height={user.height}
+          />
+        }
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item}</Text>
+          </View>
+        )}
+      />
+    </>
   );
 }
