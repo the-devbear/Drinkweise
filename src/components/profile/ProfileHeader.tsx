@@ -1,8 +1,6 @@
-import { getUserInitials } from '@drinkweise/lib/utils/get-user-initials';
+import { UserAvatar } from '@drinkweise/components/shared/UserAvatar';
 import { roundedNumberFormatter } from '@drinkweise/lib/utils/number/number-formatters';
-import { Avatar, AvatarImage, AvatarFallback } from '@drinkweise/ui/Avatar';
 import { Text } from '@drinkweise/ui/Text';
-import { useMemo } from 'react';
 import { View } from 'react-native';
 
 interface ProfileHeaderProps {
@@ -20,19 +18,11 @@ export function ProfileHeader({
   weight,
   height,
 }: ProfileHeaderProps) {
-  const userInitials = useMemo(() => getUserInitials(username), [username]);
   const formattedWeight = roundedNumberFormatter.format(weight);
 
   return (
     <View className='flex-row items-center p-4'>
-      <Avatar alt={username} className='mr-6 h-16 w-16'>
-        <AvatarImage source={{ uri: profilePicture }} />
-        <AvatarFallback className='bg-primary'>
-          <Text variant='title1' className='font-semibold text-white'>
-            {userInitials}
-          </Text>
-        </AvatarFallback>
-      </Avatar>
+      <UserAvatar className='mr-6' username={username} avatarUrl={profilePicture} />
       <View className='flex-1 justify-between'>
         <Text className='pb-1 text-xl font-bold'>{username}</Text>
         <View className='flex-row justify-between'>

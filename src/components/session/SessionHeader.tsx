@@ -1,6 +1,5 @@
+import { UserAvatar } from '@drinkweise/components/shared/UserAvatar';
 import { longDateFormatter } from '@drinkweise/lib/utils/date/date-formatters';
-import { getUserInitials } from '@drinkweise/lib/utils/get-user-initials';
-import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/ui/Avatar';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { memo } from 'react';
@@ -38,18 +37,13 @@ export const SessionHeader = memo(function SessionHeader({
           </View>
         </View>
         <TouchableOpacity onPress={onUserProfilePress}>
-          <Avatar alt='User Avatar'>
-            <AvatarImage
-              source={{
-                uri: userProfilePictureUrl ?? undefined,
-              }}
-            />
-            <AvatarFallback>
-              <Text className='text-sm font-medium text-gray-800 dark:text-gray-300'>
-                {getUserInitials(userName)}
-              </Text>
-            </AvatarFallback>
-          </Avatar>
+          <UserAvatar
+            className='mr-6 h-10 w-10'
+            fallbackClassName='bg-muted'
+            userInitialsClassName='text-sm font-medium text-gray-800 dark:text-gray-300'
+            username={userName}
+            avatarUrl={userProfilePictureUrl}
+          />
         </TouchableOpacity>
       </View>
       {note && (
