@@ -40,7 +40,7 @@ export function ProfileHeader({
             <Text variant='heading' className='font-bold'>
               {sessionCount}
             </Text>
-            <Text variant='caption1' className='text-muted'>
+            <Text variant='caption1' className='text-muted-foreground'>
               Sessions
             </Text>
           </View>
@@ -48,7 +48,7 @@ export function ProfileHeader({
             <Text variant='heading' className='font-bold'>
               {formattedWeight}
             </Text>
-            <Text variant='caption1' className='text-muted'>
+            <Text variant='caption1' className='text-muted-foreground'>
               Weight (kg)
             </Text>
           </View>
@@ -56,7 +56,7 @@ export function ProfileHeader({
             <Text variant='heading' className='font-bold'>
               {height}
             </Text>
-            <Text variant='caption1' className='text-muted'>
+            <Text variant='caption1' className='text-muted-foreground'>
               Height (cm)
             </Text>
           </View>
