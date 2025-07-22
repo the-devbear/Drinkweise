@@ -12,13 +12,14 @@ import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { Icon } from '@roninoss/icons';
 import { FlashList } from '@shopify/flash-list';
-import { router, Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import { useCallback } from 'react';
-import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Share, TouchableOpacity, View } from 'react-native';
 
 export default function ProfilePage() {
   const user = useAppSelector(userSelector);
   const dispatch = useAppDispatch();
+  const router = useRouter();
   const { colors } = useColorScheme();
 
   const {
@@ -30,11 +31,11 @@ export default function ProfilePage() {
     fetchNextPage,
     isFetchingNextPage,
     error,
-    refetch,
+    refetch: refetchSessions,
     isFetchNextPageError,
   } = useInfiniteSessionsQuery();
 
-  const { data: sessionCount } = useSessionCountQuery();
+  const { data: sessionCount, refetch: refetchSessionCount } = useSessionCountQuery();
 
   const renderListEmpty = useCallback(() => {
     if (isError) {
@@ -43,7 +44,8 @@ export default function ProfilePage() {
           message={error.message}
           isRetrying={isFetchingNextPage}
           onRetry={() => {
-            refetch();
+            refetchSessions();
+            refetchSessionCount();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -86,7 +88,9 @@ export default function ProfilePage() {
     isError,
     isFetchingNextPage,
     isLoading,
-    refetch,
+    refetchSessions,
+    refetchSessionCount,
+    router,
   ]);
 
   const renderListFooter = useCallback(() => {
@@ -100,7 +104,8 @@ export default function ProfilePage() {
           message={error.message}
           isRetrying={isFetchingNextPage}
           onRetry={() => {
-            refetch();
+            refetchSessions();
+            refetchSessionCount();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -123,7 +128,8 @@ export default function ProfilePage() {
     hasNextPage,
     isFetchNextPageError,
     isFetchingNextPage,
-    refetch,
+    refetchSessions,
+    refetchSessionCount,
   ]);
 
   if (!user) {
@@ -148,23 +154,36 @@ export default function ProfilePage() {
         options={{
           headerTitle: user.username ?? 'Profile',
           headerTitleStyle: { fontSize: 20 },
+          headerLeft: () => (
+            <TouchableOpacity onPress={() => router.navigate('/profile/settings/profile')}>
+              <Text className='text-sm font-medium'>Edit Profile</Text>
+            </TouchableOpacity>
+          ),
           headerRight: () => (
             <View className='flex-row items-center gap-6'>
-              <TouchableOpacity onPress={async () => {}}>
+              <TouchableOpacity
+                onPress={async () => {
+                  try {
+                    await Share.share({
+                      // TODO: This URL is going to be changed when we deploy the app
+                      url: 'https://sipcious.vercel.app/',
+                    });
+                  } catch (error) {
+                    console.error('Error sharing:', error);
+                  }
+                }}>
                 <Ionicons name='share-outline' className='text-2xl leading-none text-foreground' />
               </TouchableOpacity>
-              <TouchableOpacity onPress={async () => {}}>
+              <TouchableOpacity
+                onPress={() => {
+                  router.navigate('/profile/settings');
+                }}>
                 <Ionicons
                   name='settings-outline'
                   className='text-2xl leading-none text-foreground'
                 />
               </TouchableOpacity>
             </View>
-          ),
-          headerLeft: () => (
-            <TouchableOpacity onPress={() => {}}>
-              <Text className='text-sm font-medium'>Edit Profile</Text>
-            </TouchableOpacity>
           ),
         }}
       />
@@ -173,7 +192,10 @@ export default function ProfilePage() {
         data={data?.pages.flat() ?? []}
         estimatedItemSize={200}
         refreshing={isLoading}
-        onRefresh={refetch}
+        onRefresh={() => {
+          refetchSessions();
+          refetchSessionCount();
+        }}
         ListHeaderComponent={
           <View>
             <ProfileHeader
