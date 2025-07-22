@@ -27,8 +27,8 @@ export function ProfileHeader({
     <View className='flex-row items-center p-4'>
       <Avatar alt={username} className='mr-6 h-16 w-16'>
         <AvatarImage source={{ uri: profilePicture }} />
-        <AvatarFallback>
-          <Text variant='title1' className='font-semibold'>
+        <AvatarFallback className='bg-primary'>
+          <Text variant='title1' className='font-semibold text-white'>
             {userInitials}
           </Text>
         </AvatarFallback>
@@ -65,3 +65,5 @@ export function ProfileHeader({
     </View>
   );
 }
+
+ProfileHeader.itemSize = 200;
