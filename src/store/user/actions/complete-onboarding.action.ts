@@ -1,24 +1,14 @@
 import { userService } from '@drinkweise/api/user';
+import type { UserDetailsFormData } from '@drinkweise/lib/forms/shared/user-details.schema';
 import type { RootState } from '@drinkweise/store';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import type { PostgrestError } from '@supabase/supabase-js';
 
-import type { Gender } from '../enums/gender';
 import { userSlice } from '../user.slice';
 
 export const completeOnboardingAction = createAsyncThunk<
-  {
-    username: string;
-    height: number;
-    weight: number;
-    gender?: Gender;
-  },
-  {
-    username: string;
-    height: number;
-    weight: number;
-    gender?: Gender;
-  },
+  UserDetailsFormData,
+  UserDetailsFormData,
   {
     rejectValue: PostgrestError | { message: string };
     state: RootState;
