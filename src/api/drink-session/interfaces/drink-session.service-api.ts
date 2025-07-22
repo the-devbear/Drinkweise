@@ -15,4 +15,5 @@ export interface IDrinkSessionService {
     drinkSessionId: string,
     abortSignal: AbortSignal
   ) => Result<DrinkSessionResponse>;
+  getSessionCountByUserId: (userId: string) => Result<number>;
 }

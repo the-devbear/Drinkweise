@@ -1,6 +1,7 @@
 import { ProfileHeader } from '@drinkweise/components/profile/ProfileHeader';
 import { SessionListItem } from '@drinkweise/components/session/SessionListItem';
 import { useInfiniteSessionsQuery } from '@drinkweise/lib/sessions/query/use-infinite-sessions-query';
+import { useSessionCountQuery } from '@drinkweise/lib/sessions/query/use-session-count-query';
 import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { userSelector } from '@drinkweise/store/user';
@@ -32,6 +33,8 @@ export default function ProfilePage() {
     refetch,
     isFetchNextPageError,
   } = useInfiniteSessionsQuery();
+
+  const { data: sessionCount } = useSessionCountQuery();
 
   const renderListEmpty = useCallback(() => {
     if (isError) {
@@ -168,7 +171,7 @@ export default function ProfilePage() {
       <FlashList
         className='flex-1 pb-16'
         data={data?.pages.flat() ?? []}
-        estimatedItemSize={ProfileHeader.itemSize}
+        estimatedItemSize={200}
         refreshing={isLoading}
         onRefresh={refetch}
         ListHeaderComponent={
@@ -176,7 +179,7 @@ export default function ProfilePage() {
             <ProfileHeader
               username={user.username}
               profilePicture={user.profilePicture}
-              sessionCount={3} // TODO: Replace with actual session count
+              sessionCount={sessionCount ?? 0}
               weight={user.weight}
               height={user.height}
             />
