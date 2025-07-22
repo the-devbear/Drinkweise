@@ -17,6 +17,7 @@ export const completeDrinkSessionAction = createAsyncThunk<
 >(
   `${drinkSessionSlice}/completeDrinkSession`,
   async ({ name, note }, { rejectWithValue, getState }) => {
+    const userId = getState().user?.user?.id;
     const session = getState().drinkSession;
 
     if (session.status !== 'active') {
@@ -47,7 +48,7 @@ export const completeDrinkSessionAction = createAsyncThunk<
     }
 
     queryClient.invalidateQueries({
-      queryKey: [SESSIONS_QUERY_KEY],
+      queryKey: userId ? [SESSIONS_QUERY_KEY, userId] : [SESSIONS_QUERY_KEY],
     });
   }
 );
