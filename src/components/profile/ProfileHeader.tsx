@@ -65,5 +65,3 @@ export function ProfileHeader({
     </View>
   );
 }
-
-ProfileHeader.itemSize = 200;

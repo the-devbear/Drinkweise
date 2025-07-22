@@ -1,17 +1,127 @@
 import { ProfileHeader } from '@drinkweise/components/profile/ProfileHeader';
+import { SessionListItem } from '@drinkweise/components/session/SessionListItem';
+import { useInfiniteSessionsQuery } from '@drinkweise/lib/sessions/query/use-infinite-sessions-query';
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { userSelector } from '@drinkweise/store/user';
 import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
 import { Button } from '@drinkweise/ui/Button';
+import { ErrorDisplay } from '@drinkweise/ui/ErrorDisplay';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
+import { Icon } from '@roninoss/icons';
 import { FlashList } from '@shopify/flash-list';
-import { Stack } from 'expo-router';
-import { TouchableOpacity, View } from 'react-native';
+import { router, Stack } from 'expo-router';
+import { useCallback } from 'react';
+import { ActivityIndicator, TouchableOpacity, View } from 'react-native';
 
 export default function ProfilePage() {
   const user = useAppSelector(userSelector);
   const dispatch = useAppDispatch();
+  const { colors } = useColorScheme();
+
+  const {
+    data,
+    isLoading,
+    isError,
+    errorUpdateCount,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+    error,
+    refetch,
+    isFetchNextPageError,
+  } = useInfiniteSessionsQuery();
+
+  const renderListEmpty = useCallback(() => {
+    if (isError) {
+      return (
+        <ErrorDisplay
+          message={error.message}
+          isRetrying={isFetchingNextPage}
+          onRetry={() => {
+            refetch();
+          }}
+          canRetry={errorUpdateCount < 2}
+        />
+      );
+    }
+
+    if (isLoading) {
+      return (
+        <View className='flex-1 items-center justify-center py-10'>
+          <ActivityIndicator size='large' />
+        </View>
+      );
+    }
+
+    return (
+      <View className='flex-1 items-center justify-center py-10'>
+        <Icon name='chart-timeline-variant' size={48} color={colors.primary} />
+        <Text variant='title3' className='my-2 text-center font-semibold'>
+          No drink sessions yet
+        </Text>
+        <Text className='text-center'>Start tracking your drinks by creating a new session.</Text>
+        <Button
+          variant='primary'
+          className='mt-4'
+          onPress={() => {
+            router.navigate('/(app)/drinks');
+          }}>
+          <Text>Create Session</Text>
+        </Button>
+        <Text variant='caption2' className='mt-5 text-center text-muted'>
+          Tracking your alcohol consumption is for informational purposes only. Please drink
+          responsibly.
+        </Text>
+      </View>
+    );
+  }, [
+    colors.primary,
+    error?.message,
+    errorUpdateCount,
+    isError,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  ]);
+
+  const renderListFooter = useCallback(() => {
+    if (isFetchingNextPage) {
+      return <ActivityIndicator className='py-4' />;
+    }
+
+    if (isFetchNextPageError) {
+      return (
+        <ErrorDisplay
+          message={error.message}
+          isRetrying={isFetchingNextPage}
+          onRetry={() => {
+            refetch();
+          }}
+          canRetry={errorUpdateCount < 2}
+        />
+      );
+    }
+
+    const hasLoadedSessions = (data?.pages.flat().length ?? 0) > 0;
+    if (!hasNextPage && !!data && hasLoadedSessions) {
+      return (
+        <Text variant='footnote' className='py-4 text-center text-muted'>
+          No more sessions to load
+        </Text>
+      );
+    }
+    return null;
+  }, [
+    data,
+    error?.message,
+    errorUpdateCount,
+    hasNextPage,
+    isFetchNextPageError,
+    isFetchingNextPage,
+    refetch,
+  ]);
 
   if (!user) {
     return (
@@ -57,21 +167,47 @@ export default function ProfilePage() {
       />
       <FlashList
         className='flex-1 pb-16'
-        data={['Session 1', 'Session 2', 'Session 3']}
+        data={data?.pages.flat() ?? []}
+        estimatedItemSize={ProfileHeader.itemSize}
+        refreshing={isLoading}
+        onRefresh={refetch}
         ListHeaderComponent={
-          <ProfileHeader
-            username={user.username}
-            profilePicture={user.profilePicture}
-            sessionCount={3} // TODO: Replace with actual session count
-            weight={user.weight}
-            height={user.height}
-          />
-        }
-        renderItem={({ item }) => (
           <View>
-            <Text>{item}</Text>
+            <ProfileHeader
+              username={user.username}
+              profilePicture={user.profilePicture}
+              sessionCount={3} // TODO: Replace with actual session count
+              weight={user.weight}
+              height={user.height}
+            />
+            <View className='px-4 pt-2'>
+              <Text variant='title3' className='mb-4 font-semibold'>
+                Sessions
+              </Text>
+            </View>
           </View>
+        }
+        keyExtractor={(item) => item.id}
+        renderItem={({ item: session }) => (
+          <SessionListItem
+            className='px-4'
+            id={session.id}
+            name={session.name}
+            userName={session.userName}
+            startTime={new Date(session.startTime)}
+            endTime={new Date(session.endTime)}
+            note={session.note}
+          />
         )}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        ListEmptyComponent={renderListEmpty}
+        ListFooterComponent={renderListFooter}
+        onEndReached={() => {
+          if (hasNextPage && !isFetchNextPageError && !isFetchingNextPage) {
+            fetchNextPage();
+          }
+        }}
       />
     </>
   );

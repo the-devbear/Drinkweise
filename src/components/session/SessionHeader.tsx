@@ -1,4 +1,5 @@
 import { longDateFormatter } from '@drinkweise/lib/utils/date/date-formatters';
+import { getUserInitials } from '@drinkweise/lib/utils/get-user-initials';
 import { Avatar, AvatarFallback, AvatarImage } from '@drinkweise/ui/Avatar';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
@@ -45,7 +46,7 @@ export const SessionHeader = memo(function SessionHeader({
             />
             <AvatarFallback>
               <Text className='text-sm font-medium text-gray-800 dark:text-gray-300'>
-                {userName.slice(0, 2).toUpperCase()}
+                {getUserInitials(userName)}
               </Text>
             </AvatarFallback>
           </Avatar>
