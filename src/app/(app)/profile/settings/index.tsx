@@ -6,7 +6,7 @@ import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
-import { ScrollView, View } from 'react-native';
+import { Alert, ScrollView, View } from 'react-native';
 
 export default function ProfileSettingsPage() {
   const router = useRouter();
@@ -37,7 +37,26 @@ export default function ProfileSettingsPage() {
       </View>
 
       <View className='px-6 pb-6'>
-        <Button variant='destructive' onPress={() => dispatch(signOutAction())}>
+        <Button
+          variant='destructive'
+          onPress={() => {
+            Alert.alert(
+              'Sign Out',
+              'Are you sure you want to sign out?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel',
+                },
+                {
+                  text: 'Sign Out',
+                  onPress: () => dispatch(signOutAction()),
+                  style: 'destructive',
+                },
+              ],
+              { cancelable: true }
+            );
+          }}>
           <Ionicons name='log-out-outline' className='mr-2 text-xl text-white' />
           <Text className='text-white'>Sign Out</Text>
         </Button>

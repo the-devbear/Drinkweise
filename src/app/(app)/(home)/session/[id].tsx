@@ -48,7 +48,7 @@ export default function SessionDetailPage() {
         startTime={sessionStartTime}
         userProfilePictureUrl={session.user.profilePictureUrl}
         onUserProfilePress={() => {
-          // TOOD: We navigate to profile page for now since we don't have implemented followers yet
+          // TODO: We navigate to profile page for now since we don't have implemented followers yet
           router.navigate('/profile');
         }}
       />

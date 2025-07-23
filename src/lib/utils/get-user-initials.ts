@@ -1,5 +1,8 @@
 export function getUserInitials(username: string): string {
-  const names = username.split(' ');
+  const names = username
+    .trim()
+    .split(' ')
+    .filter((name) => name.length > 0);
 
   if (names.length === 1) {
     return username.slice(0, 2).toUpperCase();

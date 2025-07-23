@@ -50,7 +50,7 @@ export class UserService implements IUserService {
       return { error };
     }
 
-    if (!data) {
+    if (!data || data.length === 0) {
       return { error: UserProfileNotUpdated.fromEmpty() };
     }
   }
