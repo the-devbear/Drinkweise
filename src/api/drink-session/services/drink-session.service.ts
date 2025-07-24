@@ -141,4 +141,17 @@ export class DrinkSessionService implements IDrinkSessionService {
       value: mappedData,
     };
   }
+
+  public async getSessionCountByUserId(userId: string): Result<number, PostgrestError> {
+    const { count, error } = await this.supabase
+      .from('drink_sessions')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    if (error) {
+      return { error };
+    }
+
+    return { value: count ?? 0 };
+  }
 }

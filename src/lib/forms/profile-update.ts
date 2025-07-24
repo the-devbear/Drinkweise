@@ -5,21 +5,14 @@ import { useForm } from 'react-hook-form';
 
 import { userDetailsSchema, type UserDetailsFormData } from './shared/user-details.schema';
 
-export const ONBOARDING_STEPS = {
-  WELCOME: 0,
-  DETAILS: 1,
-  COMPLETE: 2,
-} as const;
-export type OnboardingStep = keyof typeof ONBOARDING_STEPS;
+export const profileUpdateSchema = userDetailsSchema;
+export type ProfileUpdateFormData = UserDetailsFormData;
 
-export const onboardingSchema = userDetailsSchema;
-export type OnboardingFormData = UserDetailsFormData;
-
-export function useOnboardingForm() {
+export function useProfileUpdateForm() {
   const user = useAppSelector(userSelector);
   return useForm({
     defaultValues: {
-      username: user?.username.includes('@') ? '' : (user?.username ?? ''),
+      username: user?.username ?? '',
       height: user?.height === -1 ? undefined : user?.height,
       weight: user?.weight === -1 ? undefined : user?.weight,
       gender: user?.gender,
@@ -27,8 +20,8 @@ export function useOnboardingForm() {
     shouldFocusError: false,
     mode: 'onChange',
     reValidateMode: 'onChange',
-    resolver: zodResolver(onboardingSchema),
+    resolver: zodResolver(profileUpdateSchema),
   });
 }
 
-export type OnboardingFormControl = ReturnType<typeof useOnboardingForm>['control'];
+export type ProfileUpdateFormControl = ReturnType<typeof useProfileUpdateForm>['control'];

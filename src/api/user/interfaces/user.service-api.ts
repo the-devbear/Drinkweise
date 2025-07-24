@@ -7,4 +7,8 @@ export interface IUserService {
     userId: string,
     userDetails: UserDetailsRequestModel
   ): Promise<Failure | undefined>;
+  updateProfile(
+    userId: string,
+    userDetails: Partial<UserDetailsRequestModel>
+  ): Promise<Failure | undefined>;
 }
