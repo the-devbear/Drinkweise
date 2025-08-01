@@ -63,12 +63,3 @@ applyTo: **/*.ts,**/*.tsx,src/api/**/*,src/lib/supabase.ts,supabase/**/*
 - Use transactions for multi-step operations
 - Follow proper naming conventions for functions and tables
 
----
-
----
-
-- Follow proper naming conventions for functions and tables
-
----
-
----

@@ -68,10 +68,3 @@ applyTo: **/*.ts,**/*.tsx
 - Consistent error handling patterns
 - Modular state management
 
-## Common Patterns
-
-- Feature-based component organization
-- Service layer for API interactions
-- Type-safe database operations
-- Consistent error handling patterns
-- Modular state management

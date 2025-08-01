@@ -85,11 +85,3 @@ Configured in [tsconfig.json](mdc:tsconfig.json):
 - Consistent error handling across the application
 - Modular state management with Redux Toolkit slices
 
-- Consistent error handling across the application
-- Modular state management with Redux Toolkit slices
-
-- Consistent error handling across the application
-- Modular state management with Redux Toolkit slices
-
-- Consistent error handling across the application
-- Modular state management with Redux Toolkit slices

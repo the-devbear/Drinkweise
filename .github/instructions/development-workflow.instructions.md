@@ -95,11 +95,3 @@ From [package.json](mdc:package.json):
 - Consistent error handling
 - Modular state management
 
-- Consistent error handling
-- Modular state management
-
-- Consistent error handling
-- Modular state management
-
-- Consistent error handling
-- Modular state management
