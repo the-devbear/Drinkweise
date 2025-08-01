@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 0
 
       - name: Code Review GPT
-        uses: mattzcarey/shippie@v0.18.0
+        uses: mattzcarey/shippie@v0.19.0
         with:
           GITHUB_TOKEN: ${{ github.token }}
           OPENAI_API_KEY: ${{ github.token }}
