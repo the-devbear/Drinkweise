@@ -19,6 +19,7 @@ jobs:
         uses: mattzcarey/shippie@v0.18.0
         with:
           GITHUB_TOKEN: ${{ github.token }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY: ${{ github.token }}
           MODEL_STRING: 'openai:gpt-4.1-mini'
           REVIEW_LANGUAGE: 'English'
+          BASE_URL: 'https://models.github.ai/inference'
