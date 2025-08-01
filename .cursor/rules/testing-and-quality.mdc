@@ -1,0 +1,76 @@
+---
+description: Rules for testing and quality assurance in the project.
+globs: **/*.test.ts,**/*.test.tsx,**/*.spec.ts,**/*.spec.tsx,**/__tests__/**
+alwaysApply: false
+---
+
+# Testing and Quality Assurance
+
+## Testing Framework
+
+- Jest configuration in [package.json](mdc:package.json)
+- React Native Testing Library for component testing
+- Test files located in `__tests__/` directories
+- Example test: [src/components/ui/**tests**/IntegerInput.test.tsx](mdc:src/components/ui/__tests__/IntegerInput.test.tsx)
+
+## Test Organization
+
+- Unit tests alongside components in `__tests__/` folders
+- Integration tests for critical user flows
+- Test utilities in [src/lib/utils/](mdc:src/lib/utils/)
+- Mock data and fixtures for consistent testing
+
+## Testing Patterns
+
+- Test component behavior, not implementation
+- Use proper test IDs for element selection
+- Mock external dependencies (API calls, navigation)
+- Test error states and edge cases
+- Use descriptive test names
+
+## Code Quality Tools
+
+- ESLint for code linting (see [eslint.config.mjs](mdc:eslint.config.mjs))
+- Prettier for code formatting
+- TypeScript for type checking
+- Run quality checks with:
+  - `yarn lint`: Lint and format check
+  - `yarn format`: Auto-fix linting and formatting
+  - `yarn type:check`: TypeScript type checking
+
+## Performance Monitoring
+
+- Use React Query DevTools for data fetching monitoring
+- Monitor bundle size and performance
+- Use React Native Performance Monitor
+- Profile app performance on real devices
+
+## Error Tracking
+
+- Implement proper error boundaries
+- Use expo-error-reporter for production error tracking
+- Log errors with appropriate context
+- Monitor crash reports and user feedback
+
+## Accessibility Testing
+
+- Test with screen readers
+- Ensure proper ARIA labels
+- Test with different font sizes
+- Verify color contrast ratios
+- Test keyboard navigation
+
+## Continuous Integration
+
+- Automated testing in CI/CD pipeline
+- Type checking in build process
+- Linting and formatting checks
+- Security audits with `yarn audit:ci`
+
+- Security audits with `yarn audit:ci`
+
+- Type checking in build process
+- Linting and formatting checks
+- Security audits with `yarn audit:ci`
+
+- Security audits with `yarn audit:ci`

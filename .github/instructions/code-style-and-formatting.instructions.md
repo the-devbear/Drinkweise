@@ -1,0 +1,61 @@
+---
+description: Code Style and Formatting
+applyTo: *.tsx,*.ts
+---
+
+# Code Style and Formatting Standards
+
+## ESLint Configuration
+
+- Follow the configuration in [eslint.config.mjs](mdc:eslint.config.mjs)
+- Uses `universe/native` preset for React Native
+- Includes TypeScript-specific rules
+- Includes React Query and Testing Library plugins
+
+## Prettier Configuration
+
+- Follow the configuration in [prettier.config.js](mdc:prettier.config.js)
+- Uses `prettier-plugin-tailwindcss` for class sorting
+- Run formatting with: `yarn format`
+
+## Naming Conventions
+
+- **Files**: kebab-case (e.g., `feature-name.service.ts`)
+- **Directories**: kebab-case (e.g., `feature-name/`)
+- **Components**: PascalCase (e.g., `FeatureNameItem.tsx`)
+- **Functions**: camelCase (e.g., `calculateSessionDuration`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `MAX_AGE_IN_MILLISECONDS`)
+- **Types/Interfaces**: PascalCase (e.g., `FeatureNameModel`)
+
+## Import Organization
+
+- Use absolute imports with path aliases from [tsconfig.json](mdc:tsconfig.json)
+- Group imports: external libraries, internal modules, relative imports
+- Use named exports over default exports for components
+
+## Function Declarations
+
+- Use the `function` keyword for pure functions
+- Use arrow functions for component definitions
+- Use descriptive names with auxiliary verbs (e.g., `isLoading`, `hasError`)
+
+## TypeScript Best Practices
+
+- Use interfaces for object shapes
+- Avoid enums; use const objects instead
+- Use proper type annotations for function parameters and return types
+- Use utility types like `Partial<T>`, `Pick<T>`, `Omit<T>`
+
+## Error Handling
+
+- Use early returns for error conditions
+- Avoid deeply nested if statements
+- Use proper error boundaries for React components
+- Handle errors at the beginning of functions
+
+## Comments and Documentation
+
+- Use JSDoc for complex functions
+- Add inline comments for complex business logic
+- Document API interfaces and data models
+- Use descriptive variable names to reduce need for comments

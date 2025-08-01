@@ -1,0 +1,75 @@
+---
+description: Supabase and Database Development Rules
+globs: **/*.ts,**/*.tsx,src/api/**/*,src/lib/supabase.ts,supabase/**/*
+alwaysApply: false
+---
+
+# Supabase and Database Development
+
+## Supabase Configuration
+
+- Client configuration in [src/lib/supabase.ts](mdc:src/lib/supabase.ts)
+- Uses MMKV storage for auth persistence
+- Environment variables configured in [env.js](mdc:env.js)
+
+## Database Schema
+
+- Migrations stored in [supabase/migrations/](mdc:supabase/migrations/)
+- Seed data in [supabase/seeds/](mdc:supabase/seeds/)
+- Configuration in [supabase/config.toml](mdc:supabase/config.toml)
+
+## API Service Pattern
+
+- Services organized in [src/api/](mdc:src/api/)
+- Each domain has its own service (user, drinks, drink-session)
+- Follow the pattern: interfaces, models, services, errors
+
+## Type Safety
+
+- Generate types with: `yarn supabase:gen:types`
+- Types stored in [src/lib/types/generated/supabase.types.ts](mdc:src/lib/types/generated/supabase.types.ts)
+- Use typed Supabase client for all database operations
+
+## Authentication
+
+- Use Supabase Auth for user management
+- Implement proper session handling
+- Use Row Level Security (RLS) policies
+- Handle auth state in [src/providers/AuthProvider.tsx](mdc:src/providers/AuthProvider.tsx)
+
+## Data Fetching
+
+- Use React Query for server state management
+- Implement proper caching strategies
+- Handle loading and error states
+- Use optimistic updates where appropriate
+
+## Real-time Features
+
+- Leverage Supabase Realtime for live updates
+- Subscribe to database changes
+- Handle connection state properly
+
+## Error Handling
+
+- Create custom error classes in [src/api/\*/errors/](mdc:src/api/)
+- Handle network errors gracefully
+- Implement proper retry logic
+- Use proper error boundaries
+
+## Database Operations
+
+- Use RPC functions for complex operations
+- Implement proper validation with Zod
+- Use transactions for multi-step operations
+- Follow proper naming conventions for functions and tables
+
+---
+
+---
+
+- Follow proper naming conventions for functions and tables
+
+---
+
+---
