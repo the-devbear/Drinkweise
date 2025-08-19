@@ -17,10 +17,10 @@ export type Database = {
     Functions: {
       graphql: {
         Args: {
+          extensions?: Json
           operationName?: string
           query?: string
           variables?: Json
-          extensions?: Json
         }
         Returns: Json
       }
@@ -201,11 +201,11 @@ export type Database = {
     Functions: {
       complete_drink_session: {
         Args: {
-          name: string
-          start_time: string
-          end_time: string
           consumptions: Json
+          end_time: string
+          name: string
           note?: string
+          start_time: string
         }
         Returns: string
       }
