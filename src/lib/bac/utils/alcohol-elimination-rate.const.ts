@@ -1,0 +1,1 @@
+export const ALCOHOL_ELIMINATION_RATE_PER_HOUR = 0.15;
