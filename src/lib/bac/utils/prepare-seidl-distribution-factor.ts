@@ -14,10 +14,11 @@ const DISTRIBUTION_FACTORS: Record<
     weightFactor: -0.00297,
     heightFactor: 0.005,
   },
+  // Average of Male and Female
   [Genders.OTHER]: {
-    base: 0.3,
-    weightFactor: -0.003,
-    heightFactor: 0.004,
+    base: 0.29464,
+    weightFactor: -0.0038955,
+    heightFactor: 0.004816,
   },
 };
 
