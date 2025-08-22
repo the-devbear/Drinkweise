@@ -1,13 +1,17 @@
 import { DrinkSessionDrinkItem } from '@drinkweise/components/drink-session/DrinkSessionDrinkItem';
 import { DrinkSessionFooter } from '@drinkweise/components/drink-session/DrinkSessionFooter';
+import { BACLineChart } from '@drinkweise/components/shared/BACLineChart';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
+import { generateDataPointsForBACGraph } from '@drinkweise/lib/bac/generate-data-points-for-bac-graph';
+import { prepareDrinksForBACCalculation } from '@drinkweise/lib/bac/utils/prepare-drinks-for-bac-calculation';
 import { SessionValidationErrors } from '@drinkweise/lib/drink-session/enums/session-validation-errors';
 import { validateSessionCompletion } from '@drinkweise/lib/drink-session/validate-session-completion';
 import { never } from '@drinkweise/lib/utils/never';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import {
   addConsumptionAction,
+  drinkSessionStartTimeSelector,
   drinksSelector,
   finishAllOpenConsumptionsAction,
   isDrinkSessionActiveSelector,
@@ -15,9 +19,10 @@ import {
   updateSessionStartTimeToEarliestConsumptionAction,
 } from '@drinkweise/store/drink-session';
 import type { DrinkModel } from '@drinkweise/store/drink-session/models/drink.model';
+import { userSelector } from '@drinkweise/store/user';
 import { FlashList } from '@shopify/flash-list';
 import { Redirect, Stack, useRouter } from 'expo-router';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 
 const HeaderRight = memo(function HeaderRight({ onComplete }: { onComplete: () => void }) {
@@ -32,6 +37,8 @@ export default function SessionPage() {
   const router = useRouter();
   const isDrinkSessionActive = useAppSelector(isDrinkSessionActiveSelector);
   const drinks = useAppSelector(drinksSelector);
+  const startTime = useAppSelector(drinkSessionStartTimeSelector);
+  const user = useAppSelector(userSelector);
   const dispatch = useAppDispatch();
 
   const handleCompleteSession = useCallback(() => {
@@ -111,6 +118,17 @@ export default function SessionPage() {
     }
   }, [dispatch, drinks, router]);
 
+  const bacDataPoints = useMemo(() => {
+    if (!drinks || !startTime || !user) return [];
+    return generateDataPointsForBACGraph({
+      startTime,
+      consumptions: prepareDrinksForBACCalculation(drinks),
+      gender: user.gender,
+      weight: user.weight,
+      height: user.height,
+    });
+  }, [startTime, drinks, user]);
+
   const keyExtractor = useCallback((item: DrinkModel) => item.id, []);
   const renderItem = useCallback(
     ({ item }: { item: DrinkModel }) => <DrinkSessionDrinkItem drink={item} />,
@@ -134,6 +152,7 @@ export default function SessionPage() {
         <FlashList
           data={drinks}
           estimatedItemSize={250}
+          ListHeaderComponent={<BACLineChart className='pt-4' bacDataPoints={bacDataPoints} />}
           keyboardShouldPersistTaps='handled'
           keyboardDismissMode='on-drag'
           keyExtractor={keyExtractor}
