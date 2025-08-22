@@ -239,6 +239,8 @@ export const drinkSessionStateSlice = createSlice({
     isDrinkSessionActiveSelector: (state): boolean => state.status === 'active',
     drinksSelector: (state) => (state.status === 'active' ? state.drinks : undefined),
     activeDrinkSessionSelector: (state) => (state.status === 'active' ? state : undefined),
+    drinkSessionStartTimeSelector: (state) =>
+      state.status === 'active' ? state.startTime : undefined,
   },
 });
 
@@ -256,5 +258,9 @@ export const {
   updateSessionName: updateSessionNameAction,
   updateSessionNote: updateSessionNoteAction,
 } = drinkSessionStateSlice.actions;
-export const { isDrinkSessionActiveSelector, drinksSelector, activeDrinkSessionSelector } =
-  drinkSessionStateSlice.selectors;
+export const {
+  isDrinkSessionActiveSelector,
+  drinksSelector,
+  activeDrinkSessionSelector,
+  drinkSessionStartTimeSelector,
+} = drinkSessionStateSlice.selectors;
