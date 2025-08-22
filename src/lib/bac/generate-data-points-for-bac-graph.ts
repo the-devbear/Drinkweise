@@ -21,7 +21,7 @@ export function generateDataPointsForBACGraph({
     return [];
   }
   const dataPoints: BACDataPoint[] = [];
-  const distributionFactor = prepareSeidlDistributionFactor(gender, weight, height);
+  const distributionFactor = prepareSeidlDistributionFactor(weight, height, gender);
 
   const newStartTime = roundToNearestMinutes(startTime, {
     nearestTo: 30,
