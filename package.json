@@ -94,6 +94,7 @@
     "react-redux": "^9.2.0",
     "redux-devtools-expo-dev-plugin": "^1.0.0",
     "tailwind-merge": "^2.2.1",
+    "victory-native": "^41.19.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {
