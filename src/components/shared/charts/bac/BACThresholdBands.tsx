@@ -1,16 +1,10 @@
 import { Line as SKLine, RoundedRect, vec } from '@shopify/react-native-skia';
 import React from 'react';
-
-interface ChartBoundsLike {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
-}
+import type { ChartBounds, Scale } from 'victory-native';
 
 interface BACThresholdBandsProps {
-  chartBounds: ChartBoundsLike;
-  yScale: (value: number) => number;
+  chartBounds: ChartBounds;
+  yScale: Scale;
   highRiskThreshold?: number;
   warningThreshold?: number;
 }

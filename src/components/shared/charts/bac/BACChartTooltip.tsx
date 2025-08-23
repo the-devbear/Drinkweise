@@ -9,18 +9,14 @@ import {
 import { useMemo } from 'react';
 import { Platform } from 'react-native';
 import { SharedValue, useDerivedValue } from 'react-native-reanimated';
+import type { ChartBounds } from 'victory-native';
 
 interface BACChartTooltipProps {
   xPosition: SharedValue<number>;
   yPosition: SharedValue<number>;
   activeBACLevel: SharedValue<number>;
   activeTime: SharedValue<number>;
-  chartBounds: {
-    top: number;
-    bottom: number;
-    left: number;
-    right: number;
-  };
+  chartBounds: ChartBounds;
   textColor: string;
   lineColor: string;
   indicatorColor: string;
