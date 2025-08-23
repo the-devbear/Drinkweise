@@ -9,6 +9,7 @@ import { Platform, View } from 'react-native';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
 
 import { BACChartTooltip } from './BACChartTooltip';
+import { BACThresholdBands } from './BACThresholdBands';
 
 interface BACLineChartProps {
   className?: string;
@@ -65,11 +66,12 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
             font,
           },
         ]}>
-        {({ points, chartBounds }) => (
+        {({ points, chartBounds, yScale }) => (
           <>
+            <BACThresholdBands chartBounds={chartBounds} yScale={yScale} />
             <Line
               points={points.bloodAlcoholContent}
-              color={colors.primary}
+              color={colors.foreground}
               opacity={0.7}
               strokeWidth={2}
               animate={{ type: 'timing' }}
