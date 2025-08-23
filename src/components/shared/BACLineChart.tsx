@@ -1,11 +1,12 @@
 import type { BACDataPoint } from '@drinkweise/lib/bac/models/bac-data-point.model';
 import { cn } from '@drinkweise/lib/cn';
+import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
-import { matchFont } from '@shopify/react-native-skia';
+import { Circle, DashPathEffect, matchFont } from '@shopify/react-native-skia';
 import { Platform, View } from 'react-native';
-import { CartesianChart, Line } from 'victory-native';
+import { CartesianChart, Line, useChartPressState } from 'victory-native';
 
 interface BACLineChartProps {
   className?: string;
@@ -13,6 +14,8 @@ interface BACLineChartProps {
 }
 
 export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
+  const { state, isActive } = useChartPressState({ x: 0, y: { bloodAlcoholContent: 0 } });
+  const { colors } = useColorScheme();
   const font = matchFont({
     fontFamily: Platform.select({ ios: 'Helvetica Neue', default: 'serif' }),
   });
@@ -37,9 +40,39 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
         data={bacDataPoints}
         xKey='time'
         yKeys={['bloodAlcoholContent']}
-        xAxis={{ font, formatXLabel: (value) => shortTimeFormatter.format(value) }}
-        yAxis={[{ font }]}>
-        {({ points }) => <Line points={points.bloodAlcoholContent} />}
+        padding={{ left: 10 }}
+        domainPadding={{ left: 20, bottom: 5, top: 10, right: 10 }}
+        chartPressState={state}
+        xAxis={{
+          labelColor: colors.foreground,
+          font,
+          lineWidth: 0,
+          formatXLabel: (value) => shortTimeFormatter.format(value),
+        }}
+        yAxis={[
+          {
+            labelColor: colors.foreground,
+            lineColor: colors.grey,
+            formatYLabel: (value) => `${value.toFixed(2)} ‰`,
+            linePathEffect: <DashPathEffect intervals={[4, 8]} />,
+            font,
+          },
+        ]}>
+        {({ points }) => (
+          <>
+            <Line points={points.bloodAlcoholContent} color={colors.foreground} strokeWidth={2} />
+            {isActive && (
+              <>
+                <Circle
+                  cx={state.x.position}
+                  cy={state.y.bloodAlcoholContent.position}
+                  r={4}
+                  color={colors.primary}
+                />
+              </>
+            )}
+          </>
+        )}
       </CartesianChart>
     </View>
   );
