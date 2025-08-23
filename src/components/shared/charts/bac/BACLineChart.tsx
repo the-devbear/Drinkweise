@@ -4,9 +4,11 @@ import { useColorScheme } from '@drinkweise/lib/useColorScheme';
 import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
-import { Circle, DashPathEffect, matchFont } from '@shopify/react-native-skia';
+import { DashPathEffect, matchFont } from '@shopify/react-native-skia';
 import { Platform, View } from 'react-native';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
+
+import { BACChartTooltip } from './BACChartTooltip';
 
 interface BACLineChartProps {
   className?: string;
@@ -40,9 +42,14 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
         data={bacDataPoints}
         xKey='time'
         yKeys={['bloodAlcoholContent']}
-        padding={{ left: 10 }}
-        domainPadding={{ left: 20, bottom: 5, top: 10, right: 10 }}
+        padding={{ left: 5 }}
+        domainPadding={{ left: 6, bottom: 5, top: 50, right: 10 }}
         chartPressState={state}
+        chartPressConfig={{
+          pan: {
+            activateAfterLongPress: 200,
+          },
+        }}
         xAxis={{
           labelColor: colors.foreground,
           font,
@@ -58,16 +65,27 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
             font,
           },
         ]}>
-        {({ points }) => (
+        {({ points, chartBounds }) => (
           <>
-            <Line points={points.bloodAlcoholContent} color={colors.foreground} strokeWidth={2} />
+            <Line
+              points={points.bloodAlcoholContent}
+              color={colors.primary}
+              opacity={0.7}
+              strokeWidth={2}
+              animate={{ type: 'timing' }}
+            />
             {isActive && (
               <>
-                <Circle
-                  cx={state.x.position}
-                  cy={state.y.bloodAlcoholContent.position}
-                  r={4}
-                  color={colors.primary}
+                <BACChartTooltip
+                  xPosition={state.x.position}
+                  yPosition={state.y.bloodAlcoholContent.position}
+                  chartBounds={chartBounds}
+                  activeBACLevel={state.y.bloodAlcoholContent.value}
+                  activeTime={state.x.value}
+                  textColor={colors.foreground}
+                  lineColor={colors.grey}
+                  indicatorColor={colors.primary}
+                  backgroundColor={colors.card}
                 />
               </>
             )}

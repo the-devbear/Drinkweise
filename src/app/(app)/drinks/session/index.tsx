@@ -1,6 +1,6 @@
 import { DrinkSessionDrinkItem } from '@drinkweise/components/drink-session/DrinkSessionDrinkItem';
 import { DrinkSessionFooter } from '@drinkweise/components/drink-session/DrinkSessionFooter';
-import { BACLineChart } from '@drinkweise/components/shared/BACLineChart';
+import { BACLineChart } from '@drinkweise/components/shared/charts/bac/BACLineChart';
 import { Button } from '@drinkweise/components/ui/Button';
 import { Text } from '@drinkweise/components/ui/Text';
 import { generateDataPointsForBACGraph } from '@drinkweise/lib/bac/generate-data-points-for-bac-graph';
