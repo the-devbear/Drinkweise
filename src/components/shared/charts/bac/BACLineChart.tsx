@@ -5,8 +5,10 @@ import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { DashPathEffect, matchFont } from '@shopify/react-native-skia';
+import * as Haptics from 'expo-haptics';
 import { useMemo } from 'react';
 import { Platform, View } from 'react-native';
+import { runOnJS, useAnimatedReaction } from 'react-native-reanimated';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
 
 import { BACChartTooltip } from './BACChartTooltip';
@@ -25,6 +27,12 @@ export function BACLineChart({
   showCurrentTimeIndicator = false,
 }: BACLineChartProps) {
   const { state, isActive } = useChartPressState({ x: 0, y: { bloodAlcoholContent: 0 } });
+  useAnimatedReaction(
+    () => state.x.value.value,
+    () => {
+      runOnJS(Haptics.selectionAsync)();
+    }
+  );
   const { colors } = useColorScheme();
   const fontFamily = Platform.select({ ios: 'Helvetica', default: 'serif' });
   const font = matchFont({
@@ -47,7 +55,7 @@ export function BACLineChart({
   if (bacDataPoints.length === 0) {
     return (
       <View className={cn('h-[270px] items-center justify-center bg-card', className)}>
-        <Ionicons name='analytics' size={64} className='bg-grey' />
+        <Ionicons name='analytics' size={64} className='text-muted' />
         <Text variant='body' className='mt-2 text-center text-muted'>
           No drinks yet
         </Text>
