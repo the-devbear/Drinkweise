@@ -5,6 +5,7 @@ import { shortTimeFormatter } from '@drinkweise/lib/utils/date/time-formatter';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { DashPathEffect, matchFont } from '@shopify/react-native-skia';
+import { useMemo } from 'react';
 import { Platform, View } from 'react-native';
 import { CartesianChart, Line, useChartPressState } from 'victory-native';
 
@@ -15,14 +16,33 @@ import { CurrentTimeIndicator } from './CurrentTimeIndicator';
 interface BACLineChartProps {
   className?: string;
   bacDataPoints: BACDataPoint[];
+  showCurrentTimeIndicator?: boolean;
 }
 
-export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
+export function BACLineChart({
+  className,
+  bacDataPoints,
+  showCurrentTimeIndicator = false,
+}: BACLineChartProps) {
   const { state, isActive } = useChartPressState({ x: 0, y: { bloodAlcoholContent: 0 } });
   const { colors } = useColorScheme();
+  const fontFamily = Platform.select({ ios: 'Helvetica', default: 'serif' });
   const font = matchFont({
-    fontFamily: Platform.select({ ios: 'Helvetica Neue', default: 'serif' }),
+    fontFamily,
   });
+  const xAxisFont = matchFont({
+    fontFamily,
+    fontSize: 10,
+  });
+
+  const yAxisDomain = useMemo(
+    () =>
+      [0, Math.max(...bacDataPoints.map((point) => point.bloodAlcoholContent), 0.4)] satisfies [
+        number,
+        number,
+      ],
+    [bacDataPoints]
+  );
 
   if (bacDataPoints.length === 0) {
     return (
@@ -54,7 +74,7 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
         }}
         xAxis={{
           labelColor: colors.foreground,
-          font,
+          font: xAxisFont,
           lineWidth: 0,
           formatXLabel: (value) => shortTimeFormatter.format(value),
         }}
@@ -62,12 +82,13 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
           {
             labelColor: colors.foreground,
             lineColor: colors.grey,
+            domain: yAxisDomain,
             formatYLabel: (value) => `${value.toFixed(2)} ‰`,
             linePathEffect: <DashPathEffect intervals={[4, 8]} />,
             font,
           },
         ]}>
-        {({ points, chartBounds, yScale }) => (
+        {({ points, chartBounds, xScale, yScale }) => (
           <>
             <BACThresholdBands chartBounds={chartBounds} yScale={yScale} />
             <Line
