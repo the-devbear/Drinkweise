@@ -22,18 +22,19 @@ export function CurrentTimeIndicator({ chartBounds, xScale, color }: ChartNowLin
     const currentDate = new Date();
     const nextMinute = startOfMinute(addMinutes(currentDate, 1));
     const timeUntilNextMinute = differenceInMilliseconds(nextMinute, currentDate);
+    let interval: ReturnType<typeof setInterval> | undefined;
 
     const initialTimeout = setTimeout(() => {
       setCurrentTime(now());
-
-      const interval = setInterval(() => {
-        setCurrentTime(now());
-      }, minutesToMilliseconds(1));
-
-      return () => clearInterval(interval);
+      interval = setInterval(() => setCurrentTime(now()), minutesToMilliseconds(1));
     }, timeUntilNextMinute);
 
-    return () => clearTimeout(initialTimeout);
+    return () => {
+      clearTimeout(initialTimeout);
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, []);
 
   const font = matchFont({
