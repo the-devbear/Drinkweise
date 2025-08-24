@@ -152,7 +152,9 @@ export default function SessionPage() {
         <FlashList
           data={drinks}
           estimatedItemSize={250}
-          ListHeaderComponent={<BACLineChart className='pt-4' bacDataPoints={bacDataPoints} />}
+          ListHeaderComponent={
+            <BACLineChart className='pt-4' bacDataPoints={bacDataPoints} showCurrentTimeIndicator />
+          }
           keyboardShouldPersistTaps='handled'
           keyboardDismissMode='on-drag'
           keyExtractor={keyExtractor}
