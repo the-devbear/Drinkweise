@@ -10,6 +10,7 @@ import { CartesianChart, Line, useChartPressState } from 'victory-native';
 
 import { BACChartTooltip } from './BACChartTooltip';
 import { BACThresholdBands } from './BACThresholdBands';
+import { CurrentTimeIndicator } from './CurrentTimeIndicator';
 
 interface BACLineChartProps {
   className?: string;
@@ -76,6 +77,13 @@ export function BACLineChart({ className, bacDataPoints }: BACLineChartProps) {
               strokeWidth={2}
               animate={{ type: 'timing' }}
             />
+            {showCurrentTimeIndicator && (
+              <CurrentTimeIndicator
+                chartBounds={chartBounds}
+                xScale={xScale}
+                color={colors.primary}
+              />
+            )}
             {isActive && (
               <>
                 <BACChartTooltip
