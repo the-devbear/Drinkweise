@@ -81,7 +81,6 @@
     "react-hook-form": "^7.54.2",
     "react-native": "0.76.9",
     "react-native-gesture-handler": "~2.20.2",
-    "react-native-gifted-charts": "^1.4.63",
     "react-native-keyboard-controller": "^1.17.5",
     "react-native-mmkv": "^3.2.0",
     "react-native-pager-view": "6.5.1",
@@ -94,6 +93,7 @@
     "react-redux": "^9.2.0",
     "redux-devtools-expo-dev-plugin": "^1.0.0",
     "tailwind-merge": "^2.2.1",
+    "victory-native": "^41.19.3",
     "zod": "^3.24.1"
   },
   "devDependencies": {

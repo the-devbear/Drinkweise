@@ -88,6 +88,9 @@ export class DrinkSessionService implements IDrinkSessionService {
           end_time,
           user:users (
             username,
+            height,
+            weight,
+            gender,
             profile_picture
           ),
           consumptions (
@@ -122,6 +125,9 @@ export class DrinkSessionService implements IDrinkSessionService {
       note: data.note ?? undefined,
       user: {
         userName: data.user.username,
+        height: data.user.height,
+        weight: data.user.weight,
+        gender: data.user.gender ?? undefined,
         profilePictureUrl: data.user.profile_picture ?? undefined,
       },
       startTime: data.start_time,

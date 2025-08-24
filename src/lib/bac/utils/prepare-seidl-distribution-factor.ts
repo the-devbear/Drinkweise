@@ -1,4 +1,4 @@
-import { Gender, Genders } from '@drinkweise/store/user/enums/gender';
+import { type Gender, Genders } from '@drinkweise/store/user/enums/gender';
 
 const DISTRIBUTION_FACTORS: Record<
   Gender,
@@ -23,10 +23,10 @@ const DISTRIBUTION_FACTORS: Record<
 };
 
 export const prepareSeidlDistributionFactor = (
-  gender: Gender,
   weight: number,
-  height: number
+  height: number,
+  gender?: Gender
 ): number => {
-  const factors = DISTRIBUTION_FACTORS[gender];
+  const factors = DISTRIBUTION_FACTORS[gender ?? Genders.OTHER];
   return factors.base + factors.weightFactor * weight + factors.heightFactor * height;
 };

@@ -6,6 +6,9 @@ export interface DrinkSessionResponse {
   endTime: string;
   user: {
     userName: string;
+    height: number;
+    weight: number;
+    gender?: string;
     profilePictureUrl?: string;
   };
   consumptions: {

@@ -5,7 +5,7 @@ import type { ConsumptionData } from './consumption-data.model';
 export interface BACCalculationInput {
   startTime: number;
   consumptions: ConsumptionData[];
-  gender: Gender;
+  gender?: Gender;
   weight: number;
   height: number;
   intervalMinutes?: number;
