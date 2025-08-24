@@ -29,8 +29,10 @@ export function BACLineChart({
   const { state, isActive } = useChartPressState({ x: 0, y: { bloodAlcoholContent: 0 } });
   useAnimatedReaction(
     () => state.x.value.value,
-    () => {
-      runOnJS(Haptics.selectionAsync)();
+    (_, previous) => {
+      if (previous !== null) {
+        runOnJS(Haptics.selectionAsync)();
+      }
     }
   );
   const { colors } = useColorScheme();
