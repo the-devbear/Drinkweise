@@ -1,16 +1,54 @@
 import { SettingsSection } from '@drinkweise/components/profile/settings/SettingsSection';
 import { useAppDispatch } from '@drinkweise/store';
 import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
+import { userSlice } from '@drinkweise/store/user/user.slice';
 import { Button } from '@drinkweise/ui/Button';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
+import { useQueryClient } from '@tanstack/react-query';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
+import { useCallback } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
+import { useMMKV } from 'react-native-mmkv';
 
 export default function ProfileSettingsPage() {
+  const queryClient = useQueryClient();
+  const storage = useMMKV();
   const router = useRouter();
   const dispatch = useAppDispatch();
+
+  const clearStorageData = useCallback(() => {
+    Alert.alert(
+      'Reset Local Data',
+      'This will clear all local data except your user account information. If you have a session running the data might be lost as well. This action cannot be undone.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Reset',
+          style: 'destructive',
+          onPress: () => {
+            queryClient.clear();
+            const keys = storage.getAllKeys();
+
+            for (const key of keys) {
+              if (key === userSlice) {
+                continue;
+              }
+              storage.delete(key);
+            }
+
+            Alert.alert('Data Reset', 'Local data has been reset successfully.', [{ text: 'OK' }]);
+          },
+        },
+      ],
+      { cancelable: true }
+    );
+  }, [queryClient, storage]);
+
   return (
     <ScrollView className='flex-1'>
       <View className='pt-6'>
@@ -31,6 +69,16 @@ export default function ProfileSettingsPage() {
               title: 'Theme',
               icon: 'moon-outline',
               onPress: () => router.push('/profile/settings/theme'),
+            },
+          ]}
+        />
+        <SettingsSection
+          title='Data & Storage'
+          items={[
+            {
+              title: 'Reset Local Data',
+              icon: 'refresh-outline',
+              onPress: clearStorageData,
             },
           ]}
         />
