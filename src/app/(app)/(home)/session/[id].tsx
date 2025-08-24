@@ -1,8 +1,13 @@
 import { SessionHeader } from '@drinkweise/components/session/SessionHeader';
 import { SessionSummaryCard } from '@drinkweise/components/session/SessionSummaryCard';
 import { SessionTimelineCard } from '@drinkweise/components/session/SessionTimelineCard';
+import { BACLineChart } from '@drinkweise/components/shared/charts/bac/BACLineChart';
 import { ErrorDisplay } from '@drinkweise/components/ui/ErrorDisplay';
+import { generateDataPointsForBACGraph } from '@drinkweise/lib/bac/generate-data-points-for-bac-graph';
+import { prepareConsumptionsForBACCalculation } from '@drinkweise/lib/bac/utils/prepare-consumptions-for-bac-calculation';
 import { useSessionByIdQuery } from '@drinkweise/lib/sessions/query/use-session-by-id-query';
+import { tryMapToEnum } from '@drinkweise/lib/utils/enum';
+import { Genders } from '@drinkweise/store/user/enums/gender';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { ScrollView } from 'react-native';
@@ -38,6 +43,14 @@ export default function SessionDetailPage() {
 
   const sessionStartTime = new Date(session.startTime);
   const sessionEndTime = new Date(session.endTime);
+  const bacDataPoints = generateDataPointsForBACGraph({
+    startTime: sessionStartTime.getTime(),
+    consumptions: prepareConsumptionsForBACCalculation(session.consumptions),
+    height: session.user.height,
+    weight: session.user.weight,
+    gender: tryMapToEnum(Genders, session.user.gender),
+    endTime: sessionEndTime.getTime(),
+  });
 
   return (
     <ScrollView className='flex-col gap-4' contentContainerClassName='gap-3 pb-20'>
@@ -52,6 +65,8 @@ export default function SessionDetailPage() {
           router.navigate('/profile');
         }}
       />
+
+      <BACLineChart bacDataPoints={bacDataPoints} />
 
       <SessionSummaryCard
         sessionStartTime={sessionStartTime}
