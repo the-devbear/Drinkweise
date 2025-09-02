@@ -66,6 +66,12 @@ export default function ProfileSettingsPage() {
           title='Preferences'
           items={[
             {
+              title: 'Notifications',
+              icon: 'notifications-outline',
+              onPress: () => router.push('/profile/settings/notifications'),
+            },
+
+            {
               title: 'Theme',
               icon: 'moon-outline',
               onPress: () => router.push('/profile/settings/theme'),
