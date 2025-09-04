@@ -1,4 +1,4 @@
-import type { NotificationPreferencesModel } from './notification-settings.model';
+import type { NotificationPreferencesModel } from './notification-preferences.model';
 import type { Gender } from '../enums/gender';
 
 export interface UserModel {
