@@ -2,6 +2,10 @@ import type { Failure, Result } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
 import { isCodedError } from '@drinkweise/lib/utils/error/is-coded-error';
 import {
+  defaultNotificationPreferences,
+  notificationPreferencesSchema,
+} from '@drinkweise/store/user/models/notification-preferences.model';
+import {
   GoogleSignin,
   isErrorWithCode as isGoogleSignInError,
   statusCodes,
@@ -220,12 +224,25 @@ export class AuthService implements IAuthService {
   ): Result<SignInSuccessResponseModel['user'], PostgrestError> {
     const { data, error } = await this.supabase
       .from('users')
-      .select('username, profile_picture, height, weight, gender, has_completed_onboarding')
+      .select(
+        'username, profile_picture, height, weight, gender, has_completed_onboarding, notification_preferences'
+      )
       .eq('id', id)
       .single();
 
     if (error) {
       return { error };
+    }
+
+    const parsedNotificationPreferences = notificationPreferencesSchema.safeParse(
+      data.notification_preferences
+    );
+
+    if (!parsedNotificationPreferences.success) {
+      console.error(
+        'Failed to parse notification preferences:',
+        parsedNotificationPreferences.error
+      );
     }
 
     return {
@@ -237,6 +254,8 @@ export class AuthService implements IAuthService {
         weight: data.weight,
         gender: data.gender ?? undefined,
         hasCompletedOnboarding: data.has_completed_onboarding,
+        notificationPreferences:
+          parsedNotificationPreferences.data ?? defaultNotificationPreferences,
       },
     };
   }
