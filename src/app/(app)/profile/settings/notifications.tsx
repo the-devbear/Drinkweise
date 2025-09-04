@@ -1,12 +1,73 @@
+import { useAppSelector } from '@drinkweise/store';
+import { userNotificationPreferencesSelector } from '@drinkweise/store/user';
+import type { NotificationPreferencesModel } from '@drinkweise/store/user/models/notification-preferences.model';
 import { Button } from '@drinkweise/ui/Button';
 import { Text } from '@drinkweise/ui/Text';
+import { Ionicons } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
-import { useEffect, useState } from 'react';
-import { AppState, Linking, View } from 'react-native';
+import { useEffect, useMemo, useState } from 'react';
+import { AppState, Linking, ScrollView, View } from 'react-native';
+
+type NotificationPreferencesConfiguration = {
+  [Group in keyof NotificationPreferencesModel]: {
+    title: string;
+    groupKey: Group;
+    description: string;
+    icon: keyof typeof Ionicons.glyphMap;
+    settings: {
+      [Key in keyof NotificationPreferencesModel[Group]]: {
+        title: string;
+        description: string;
+        key: Key;
+        enabled: boolean;
+      };
+    };
+  };
+};
 
 export default function NotificationsSettingsPage() {
   const [notificationsPermission, setNotificationsPermission] = useState(
     Notifications.PermissionStatus.UNDETERMINED
+  );
+
+  const notificationPreferences = useAppSelector(userNotificationPreferencesSelector);
+  const notificationPreferencesConfig: NotificationPreferencesConfiguration = useMemo(
+    () => ({
+      drinkSession: {
+        title: 'Drink Session',
+        description: 'Updates about your drink session',
+        groupKey: 'drinkSession',
+        icon: 'beer-outline',
+        settings: {
+          reminders: {
+            title: 'Session Reminders',
+            description: 'Receive reminders for your drink session',
+            key: 'reminders',
+            enabled: notificationPreferences.drinkSession.reminders,
+          },
+        },
+      },
+    }),
+    [notificationPreferences]
+  );
+
+  const notificationGroups = useMemo(
+    () =>
+      Object.values(notificationPreferencesConfig).map((group) => {
+        return {
+          title: group.title,
+          description: group.description,
+          icon: group.icon,
+          group: group.groupKey,
+          settings: Object.values(group.settings).map((setting) => ({
+            key: setting.key,
+            title: setting.title,
+            description: setting.description,
+            enabled: setting.enabled,
+          })),
+        };
+      }),
+    [notificationPreferencesConfig]
   );
 
   useEffect(() => {
@@ -42,8 +103,9 @@ export default function NotificationsSettingsPage() {
   }
 
   return (
-    <View className='flex-1 items-center justify-center'>
+    <ScrollView className='flex-1'>
       <Text className='text-lg font-semibold'>Notifications Settings</Text>
-    </View>
+      <Text>{JSON.stringify(notificationGroups, null, 2)}</Text>
+    </ScrollView>
   );
 }
