@@ -1,19 +1,23 @@
+import { userService } from '@drinkweise/api/user';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import {
   updateNotificationPreferencesAction,
+  userIdSelector,
   userNotificationPreferencesSelector,
 } from '@drinkweise/store/user';
 import type { NotificationPreferencesModel } from '@drinkweise/store/user/models/notification-preferences.model';
+import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Button } from '@drinkweise/ui/Button';
 import { Divider } from '@drinkweise/ui/Divider';
 import { Text } from '@drinkweise/ui/Text';
 import { Toggle } from '@drinkweise/ui/Toggle';
 import { Ionicons } from '@expo/vector-icons';
-import * as Notifications from 'expo-notifications';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AppState, Linking, ScrollView, View } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { usePreventRemove } from '@react-navigation/native';
+import * as Notifications from 'expo-notifications';
+import { useNavigation } from 'expo-router';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert, AppState, Linking, Modal, ScrollView, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 
 type NotificationPreferencesConfiguration = {
   [Group in keyof NotificationPreferencesModel]: {
@@ -34,9 +38,13 @@ type NotificationPreferencesConfiguration = {
 
 export default function NotificationsSettingsPage() {
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
   const [notificationsPermission, setNotificationsPermission] = useState(
     Notifications.PermissionStatus.UNDETERMINED
   );
+
+  const userId = useAppSelector(userIdSelector);
+  const [isSaving, setIsSaving] = useState(false);
 
   const notificationPreferences = useAppSelector(userNotificationPreferencesSelector);
   const [initialNotificationPreferences] = useState(notificationPreferences);
@@ -145,8 +153,47 @@ export default function NotificationsSettingsPage() {
 
   usePreventRemove(
     JSON.stringify(notificationPreferences) !== JSON.stringify(initialNotificationPreferences),
-    () => {
-      console.log('Notification preferences changed');
+    async ({ data: { action } }) => {
+      try {
+        if (userId === undefined) {
+          console.error('User ID is undefined');
+          return;
+        }
+
+        setIsSaving(true);
+
+        const result = await userService.updateNotificationPreferences(
+          userId,
+          notificationPreferences
+        );
+
+        if (result === undefined) {
+          navigation.dispatch(action);
+          return;
+        }
+
+        setIsSaving(false);
+
+        Alert.alert(
+          'Failed to save changes',
+          result.error.message + '\n If you discard your changes will be lost.',
+          [
+            {
+              text: 'Discard',
+              style: 'destructive',
+              onPress: () => {
+                dispatch(updateNotificationPreferencesAction(initialNotificationPreferences));
+                navigation.dispatch(action);
+              },
+            },
+            { text: 'Ok' },
+          ]
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsSaving(false);
+      }
     }
   );
 
@@ -166,6 +213,14 @@ export default function NotificationsSettingsPage() {
 
   return (
     <ScrollView className='flex-1'>
+      <Modal visible={isSaving} transparent animationType='fade' presentationClassName='bg-red-500'>
+        <View className='absolute inset-0 z-10 items-center justify-center'>
+          <View className='bg-background/90 rounded-xl px-6 py-4 shadow-lg'>
+            <ActivityIndicator size='large' />
+            <Text className='mt-4'>Saving changes...</Text>
+          </View>
+        </View>
+      </Modal>
       <View className='px-6 py-4'>
         <View className='mb-6'>
           <Text variant='title2' className='mb-2 font-semibold'>
