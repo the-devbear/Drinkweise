@@ -13,6 +13,7 @@ import * as Notifications from 'expo-notifications';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AppState, Linking, ScrollView, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { usePreventRemove } from '@react-navigation/native';
 
 type NotificationPreferencesConfiguration = {
   [Group in keyof NotificationPreferencesModel]: {
@@ -38,6 +39,7 @@ export default function NotificationsSettingsPage() {
   );
 
   const notificationPreferences = useAppSelector(userNotificationPreferencesSelector);
+  const [initialNotificationPreferences] = useState(notificationPreferences);
   const notificationPreferencesConfig: NotificationPreferencesConfiguration = useMemo(
     () => ({
       drinkSession: {
@@ -139,6 +141,13 @@ export default function NotificationsSettingsPage() {
       );
     },
     [dispatch, notificationPreferences]
+  );
+
+  usePreventRemove(
+    JSON.stringify(notificationPreferences) !== JSON.stringify(initialNotificationPreferences),
+    () => {
+      console.log('Notification preferences changed');
+    }
   );
 
   if (notificationsPermission !== Notifications.PermissionStatus.GRANTED) {
