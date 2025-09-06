@@ -33,7 +33,10 @@ export const inactivityRemindersListener = startListening({
     signOutAction.fulfilled.match(action) ||
     updateNotificationPreferencesAction.match(action),
   effect: async (action, listenerApi) => {
+    listenerApi.cancelActiveListeners();
+
     const state = listenerApi.getState();
+
     const userWantsToReceiveReminderNotifications =
       state.user.user?.notificationPreferences.drinkSession.reminders;
     const isSessionActive = state.drinkSession.status === 'active';
@@ -54,10 +57,12 @@ export const inactivityRemindersListener = startListening({
     }
 
     if (!userWantsToReceiveReminderNotifications) {
+      console.info(
+        '[NOTIFICATIONS] User does not want to receive session reminder notifications, skipping...'
+      );
+      await cancelSessionReminderNotifications();
       return;
     }
-
-    listenerApi.cancelActiveListeners();
 
     if (shouldCancelReminderNotifications(action)) {
       console.info('[NOTIFICATIONS] Canceling session reminder notifications reason:', action.type);
