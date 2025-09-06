@@ -79,7 +79,7 @@ export default function ProfileSettingsPage() {
           onUploadComplete={(imageUrl) => setValue('profilePicture', imageUrl, { shouldDirty: true })}
           onUploadError={(error) => Alert.alert('Upload Error', error)}
           className='mb-4 self-center'
-          size='lg'
+          size='md'
         />
         <View className='gap-3'>
           <Text variant='title3' className='font-semibold'>

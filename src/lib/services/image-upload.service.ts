@@ -21,17 +21,29 @@ export class ImageUploadService {
    */
   async uploadProfilePicture(userId: string, imageAsset: ImagePickerAsset): Promise<ImageUploadResult> {
     try {
+      console.log('Starting profile picture upload for user:', userId);
+      console.log('Original image asset:', { uri: imageAsset.uri, width: imageAsset.width, height: imageAsset.height });
+      
       // First, optimize the image
       const optimizedImage = await this.optimizeImage(imageAsset.uri);
+      console.log('Optimized image result:', { uri: optimizedImage.uri, width: optimizedImage.width, height: optimizedImage.height });
       
-      // Convert to blob for upload
+      // Convert to proper format for upload in React Native
       const response = await fetch(optimizedImage.uri);
       const blob = await response.blob();
+      
+      console.log('Blob created:', { size: blob.size, type: blob.type });
+      
+      // Ensure blob has proper size - check if optimization worked
+      if (blob.size === 0) {
+        throw new Error('Image processing resulted in empty file');
+      }
       
       // Generate unique filename
       const filename = `${userId}/profile-${Date.now()}.jpg`;
       
       // Upload to Supabase storage
+      console.log('Uploading to Supabase with filename:', filename);
       const { data, error } = await this.supabaseClient.storage
         .from(PROFILE_PICTURES_BUCKET)
         .upload(filename, blob, {
@@ -40,11 +52,14 @@ export class ImageUploadService {
         });
 
       if (error) {
+        console.error('Supabase upload error:', error);
         return {
           success: false,
           error: `Upload failed: ${error.message}`,
         };
       }
+
+      console.log('Upload successful:', data);
 
       // Get the public URL
       const { data: urlData } = this.supabaseClient.storage
@@ -91,7 +106,7 @@ export class ImageUploadService {
    */
   private async optimizeImage(imageUri: string): Promise<ImageManipulator.ImageResult> {
     try {
-      return await ImageManipulator.manipulateAsync(
+      const result = await ImageManipulator.manipulateAsync(
         imageUri,
         [
           {
@@ -104,8 +119,16 @@ export class ImageUploadService {
         {
           compress: IMAGE_QUALITY,
           format: ImageManipulator.SaveFormat.JPEG,
+          base64: false, // Ensure we don't get base64, we want URI
         }
       );
+      
+      // Verify the result has a valid URI
+      if (!result.uri) {
+        throw new Error('Image manipulation returned empty URI');
+      }
+      
+      return result;
     } catch (error) {
       // If image manipulation fails, throw an error
       throw new Error(`Image optimization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
