@@ -99,7 +99,14 @@ export default function OnboardingPage() {
         isValid = await trigger(['height', 'weight', 'gender']);
         break;
       case 'COMPLETE':
-        await Notifications.requestPermissionsAsync();
+        try {
+          const { status } = await Notifications.getPermissionsAsync();
+          if (status !== 'granted') {
+            await Notifications.requestPermissionsAsync();
+          }
+        } catch (error) {
+          console.warn('Notification permissions request failed:', error);
+        }
         break;
       default:
         never(currentStep);
