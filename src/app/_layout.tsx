@@ -3,6 +3,7 @@ import 'expo-dev-client';
 import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
+import { useNotificationRoutingObserver } from '@drinkweise/lib/notifications/hooks/use-notificiation-routing-observer';
 import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
 import { queryClient } from '@drinkweise/lib/utils/query/query-client';
 import {
@@ -19,6 +20,7 @@ import NetInfo from '@react-native-community/netinfo';
 import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
 import { onlineManager } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import * as Notifications from 'expo-notifications';
 import { Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -33,6 +35,14 @@ SplashScreen.preventAutoHideAsync();
 SplashScreen.setOptions({
   duration: 500,
   fade: true,
+});
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
 });
 
 onlineManager.setEventListener((setOnline) => {
@@ -54,6 +64,7 @@ export default function RootLayout() {
   useMMKVDevTools();
 
   useInitialAndroidBarSync();
+  useNotificationRoutingObserver();
   const { isDarkColorScheme } = useColorScheme();
   React.useEffect(() => {
     // Set small timeout, so the splash screen doesn't flicker.
