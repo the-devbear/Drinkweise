@@ -5,14 +5,16 @@ values ('public', 'public', true)
 on conflict (id) do nothing;
 
 -- Public read access to files in the public bucket
-create policy if not exists "Public read access to public bucket"
+drop policy if exists "Public read access to public bucket" on storage.objects;
+create policy "Public read access to public bucket"
 on storage.objects
 for select
 to public
 using (bucket_id = 'public');
 
 -- Allow authenticated users to upload their own avatar under avatars/<userId>.*
-create policy if not exists "Users can upload their own avatar"
+drop policy if exists "Users can upload their own avatar" on storage.objects;
+create policy "Users can upload their own avatar"
 on storage.objects
 for insert
 to authenticated
@@ -23,7 +25,8 @@ with check (
 );
 
 -- Allow authenticated users to update their own avatar object
-create policy if not exists "Users can update their own avatar"
+drop policy if exists "Users can update their own avatar" on storage.objects;
+create policy "Users can update their own avatar"
 on storage.objects
 for update
 to authenticated
@@ -39,7 +42,8 @@ with check (
 );
 
 -- Allow authenticated users to delete their own avatar object
-create policy if not exists "Users can delete their own avatar"
+drop policy if exists "Users can delete their own avatar" on storage.objects;
+create policy "Users can delete their own avatar"
 on storage.objects
 for delete
 to authenticated
