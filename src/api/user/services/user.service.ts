@@ -41,6 +41,7 @@ export class UserService implements IUserService {
         height: userDetails.height,
         weight: userDetails.weight,
         gender: userDetails.gender,
+        profile_picture: userDetails.profilePicture,
         updated_at: new Date().toISOString(),
       })
       .eq('id', userId)

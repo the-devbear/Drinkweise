@@ -1,4 +1,4 @@
-import { UserAvatar } from '@drinkweise/components/shared/UserAvatar';
+import { ProfilePictureUpload } from '@drinkweise/components/profile/ProfilePictureUpload';
 import { useProfileUpdateForm } from '@drinkweise/lib/forms/profile-update';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { userSelector } from '@drinkweise/store/user';
@@ -24,6 +24,7 @@ export default function ProfileSettingsPage() {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { isValid, isSubmitted, isSubmitting, isDirty },
     setFocus,
   } = useProfileUpdateForm();
@@ -71,11 +72,14 @@ export default function ProfileSettingsPage() {
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior='automatic'>
       <Card className='m-6 p-6'>
-        <UserAvatar
-          className='mb-4 h-20 w-20 self-center'
-          fallbackClassName='bg-primary'
+        <ProfilePictureUpload
+          userId={user.id}
+          currentImageUrl={user.profilePicture || undefined}
           username={user.username}
-          avatarUrl={user.profilePicture}
+          onUploadComplete={(imageUrl) => setValue('profilePicture', imageUrl, { shouldDirty: true })}
+          onUploadError={(error) => Alert.alert('Upload Error', error)}
+          className='mb-4 self-center'
+          size='lg'
         />
         <View className='gap-3'>
           <Text variant='title3' className='font-semibold'>

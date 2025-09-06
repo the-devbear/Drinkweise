@@ -16,6 +16,7 @@ export function useProfileUpdateForm() {
       height: user?.height === -1 ? undefined : user?.height,
       weight: user?.weight === -1 ? undefined : user?.weight,
       gender: user?.gender,
+      profilePicture: user?.profilePicture ?? undefined,
     },
     shouldFocusError: false,
     mode: 'onChange',

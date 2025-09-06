@@ -3,4 +3,5 @@ export interface UserDetailsRequestModel {
   height: number;
   weight: number;
   gender?: 'male' | 'female' | 'other';
+  profilePicture?: string;
 }

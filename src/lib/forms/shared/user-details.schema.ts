@@ -27,6 +27,7 @@ export const userDetailsSchema = z.object({
       'Weight must have at most two decimal places'
     ),
   gender: z.custom<UserModel['gender']>(),
+  profilePicture: z.string().url().optional(),
 });
 
 export type UserDetailsFormData = z.infer<typeof userDetailsSchema>;
