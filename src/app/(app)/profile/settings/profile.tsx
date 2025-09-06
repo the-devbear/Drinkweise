@@ -1,4 +1,4 @@
-import { UserAvatar } from '@drinkweise/components/shared/UserAvatar';
+import { ProfilePictureSelector } from '@drinkweise/components/profile/ProfilePictureSelector';
 import { useProfileUpdateForm } from '@drinkweise/lib/forms/profile-update';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { userSelector } from '@drinkweise/store/user';
@@ -71,11 +71,11 @@ export default function ProfileSettingsPage() {
       showsVerticalScrollIndicator={false}
       contentInsetAdjustmentBehavior='automatic'>
       <Card className='m-6 p-6'>
-        <UserAvatar
-          className='mb-4 h-20 w-20 self-center'
-          fallbackClassName='bg-primary'
+        <ProfilePictureSelector
+          className='mb-4 self-center'
           username={user.username}
-          avatarUrl={user.profilePicture}
+          currentAvatarUrl={user.profilePicture}
+          size='lg'
         />
         <View className='gap-3'>
           <Text variant='title3' className='font-semibold'>

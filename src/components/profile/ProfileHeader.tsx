@@ -1,4 +1,4 @@
-import { UserAvatar } from '@drinkweise/components/shared/UserAvatar';
+import { ProfilePictureSelector } from '@drinkweise/components/profile/ProfilePictureSelector';
 import { roundedNumberFormatter } from '@drinkweise/lib/utils/number/number-formatters';
 import { Text } from '@drinkweise/ui/Text';
 import { View } from 'react-native';
@@ -22,7 +22,12 @@ export function ProfileHeader({
 
   return (
     <View className='flex-row items-center p-4'>
-      <UserAvatar className='mr-6' username={username} avatarUrl={profilePicture} />
+      <ProfilePictureSelector
+        className='mr-6'
+        username={username}
+        currentAvatarUrl={profilePicture}
+        size='md'
+      />
       <View className='flex-1 justify-between'>
         <Text className='pb-1 text-xl font-bold'>{username}</Text>
         <View className='flex-row justify-between'>

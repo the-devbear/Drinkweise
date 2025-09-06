@@ -7,6 +7,7 @@ import { completeOnboardingAction } from './actions/complete-onboarding.action';
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
 import { signOutAction } from './actions/sign-out.action';
 import { signUpWithPasswordAction } from './actions/sign-up-with-password.action';
+import { updateProfilePictureAction } from './actions/update-profile-picture.action';
 import { updateUserDataAction } from './actions/update-user-data.action';
 import type { SessionModel } from './models/session.model';
 import { initialUserState, type UserState } from './models/user-state.model';
@@ -58,6 +59,16 @@ export const userStateSlice = createSlice({
         }
       )
       .addCase(updateUserDataAction.fulfilled, (state, { payload }) => {
+        if (state.status === 'signedOut') {
+          return state;
+        }
+
+        state.user = {
+          ...state.user,
+          ...payload,
+        };
+      })
+      .addCase(updateProfilePictureAction.fulfilled, (state, { payload }) => {
         if (state.status === 'signedOut') {
           return state;
         }
