@@ -3,7 +3,7 @@ import 'expo-dev-client';
 import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
-import { useNotificationRoutingObserver } from '@drinkweise/lib/notifications/hooks/use-notificiation-routing-observer';
+import { useNotificationRoutingObserver } from '@drinkweise/lib/notifications/hooks/use-notification-routing-observer';
 import { resetBadgeCount } from '@drinkweise/lib/notifications/session-reminder-notifications';
 import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
 import { queryClient } from '@drinkweise/lib/utils/query/query-client';
