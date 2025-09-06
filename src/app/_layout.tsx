@@ -29,6 +29,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@drinkweise/components/css-interopts';
+import { resetBadgeCount } from '@drinkweise/lib/notifications/session-reminder-notifications';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -72,6 +73,10 @@ export default function RootLayout() {
     new Promise((resolve) => setTimeout(resolve, 250)).then(() => {
       SplashScreen.hide();
     });
+
+    // We are currently only using the badge count for the reminder notifications, so
+    // we can safely reset it here.
+    resetBadgeCount();
   }, []);
 
   return (
