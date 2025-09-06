@@ -65,6 +65,7 @@ export class UserService implements IUserService {
       .from('users')
       .update({
         notification_preferences: notificationSettings as unknown as Json,
+        updated_at: new Date().toISOString(),
       })
       .eq('id', userId);
 
