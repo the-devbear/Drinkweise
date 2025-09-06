@@ -22,49 +22,44 @@ export class ProfilePictureService {
     console.log('Image URI:', imageUri);
 
     try {
-      // Step 1: Fetch the image
-      console.log('Step 1: Fetching image from URI...');
-      const response = await fetch(imageUri);
+      // Step 1: Create FormData for React Native file upload
+      console.log('Step 1: Creating FormData for React Native...');
       
-      if (!response.ok) {
-        const errorMsg = `Failed to fetch image: HTTP ${response.status}`;
-        console.error(errorMsg);
-        throw new Error(errorMsg);
+      // Determine file type from URI
+      let fileType = 'image/jpeg';
+      let fileExtension = 'jpg';
+      
+      if (imageUri.toLowerCase().includes('.png')) {
+        fileType = 'image/png';
+        fileExtension = 'png';
       }
+      
+      console.log('Detected file type:', fileType);
 
-      // Step 2: Convert to blob
-      console.log('Step 2: Converting to blob...');
-      const blob = await response.blob();
-      console.log('Blob created - Size:', blob.size, 'bytes, Type:', blob.type);
-      
-      // Step 3: Basic validations
-      console.log('Step 3: Validating image...');
-      if (blob.size === 0) {
-        throw new Error('Image file is empty');
-      }
-      
-      if (blob.size > 10 * 1024 * 1024) {
-        throw new Error('Image file is too large (>10MB)');
-      }
-      
-      if (!blob.type || !blob.type.startsWith('image/')) {
-        console.log('Invalid blob type:', blob.type);
-        throw new Error('Invalid image format');
-      }
-
-      // Step 4: Generate filename
-      console.log('Step 4: Generating filename...');
+      // Step 2: Generate filename
+      console.log('Step 2: Generating filename...');
       const timestamp = Date.now();
-      const fileExtension = blob.type.includes('png') ? 'png' : 'jpg';
       const fileName = `${userId}/profile-${timestamp}.${fileExtension}`;
       console.log('Generated filename:', fileName);
 
-      // Step 5: Upload to Supabase
-      console.log('Step 5: Uploading to Supabase storage...');
+      // Step 3: Create file object for React Native
+      console.log('Step 3: Creating file object...');
+      const fileObject = {
+        uri: imageUri,
+        type: fileType,
+        name: `profile-${timestamp}.${fileExtension}`,
+      };
+      
+      console.log('File object:', fileObject);
+
+      // Step 4: Upload using Supabase client with proper file handling
+      console.log('Step 4: Uploading with Supabase client...');
+      
+      // Try using the Supabase client with the file object directly
       const { data, error } = await this.supabase.storage
         .from(this.bucketName)
-        .upload(fileName, blob, {
-          contentType: blob.type,
+        .upload(fileName, fileObject as any, {
+          contentType: fileType,
           upsert: true,
         });
 
@@ -77,10 +72,10 @@ export class ProfilePictureService {
         throw new Error('No data returned from upload');
       }
 
-      console.log('Upload successful! Path:', data.path);
+      console.log('Upload successful! Data:', data);
 
-      // Step 6: Get public URL
-      console.log('Step 6: Getting public URL...');
+      // Step 5: Get public URL
+      console.log('Step 5: Getting public URL...');
       const { data: urlData } = this.supabase.storage
         .from(this.bucketName)
         .getPublicUrl(data.path);
