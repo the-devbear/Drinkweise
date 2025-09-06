@@ -4,6 +4,7 @@ import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
 import { useNotificationRoutingObserver } from '@drinkweise/lib/notifications/hooks/use-notificiation-routing-observer';
+import { resetBadgeCount } from '@drinkweise/lib/notifications/session-reminder-notifications';
 import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
 import { queryClient } from '@drinkweise/lib/utils/query/query-client';
 import {
@@ -29,7 +30,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@drinkweise/components/css-interopts';
-import { resetBadgeCount } from '@drinkweise/lib/notifications/session-reminder-notifications';
 
 SplashScreen.preventAutoHideAsync();
 
