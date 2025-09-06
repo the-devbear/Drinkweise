@@ -64,6 +64,7 @@
     "expo-dev-client": "~5.0.20",
     "expo-device": "~7.0.3",
     "expo-haptics": "~14.0.1",
+    "expo-image-picker": "^16.1.4",
     "expo-linear-gradient": "~14.0.2",
     "expo-linking": "~7.0.5",
     "expo-localization": "~16.0.1",
