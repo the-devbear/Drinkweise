@@ -174,7 +174,7 @@ function ProfilePictureUploadContent({
       </Avatar>
 
       {/* Upload indicator/button overlay */}
-      <View className="absolute -bottom-1 -right-1 h-8 w-8 items-center justify-center rounded-full bg-primary shadow-sm">
+      <View className="absolute -bottom-1 -right-1 h-8 w-8 items-center justify-center rounded-full bg-primary border-2 border-background shadow-sm">
         {isUploading ? (
           <ActivityIndicator size="small" color="white" />
         ) : (

@@ -90,21 +90,26 @@ export class ImageUploadService {
    * Optimizes an image by resizing and compressing it
    */
   private async optimizeImage(imageUri: string): Promise<ImageManipulator.ImageResult> {
-    return await ImageManipulator.manipulateAsync(
-      imageUri,
-      [
-        {
-          resize: {
-            width: MAX_IMAGE_SIZE,
-            height: MAX_IMAGE_SIZE,
+    try {
+      return await ImageManipulator.manipulateAsync(
+        imageUri,
+        [
+          {
+            resize: {
+              width: MAX_IMAGE_SIZE,
+              height: MAX_IMAGE_SIZE,
+            },
           },
-        },
-      ],
-      {
-        compress: IMAGE_QUALITY,
-        format: ImageManipulator.SaveFormat.JPEG,
-      }
-    );
+        ],
+        {
+          compress: IMAGE_QUALITY,
+          format: ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+    } catch (error) {
+      // If image manipulation fails, throw an error
+      throw new Error(`Image optimization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 }
 
