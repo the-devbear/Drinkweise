@@ -60,7 +60,7 @@ VALUES (
         NULL,
         'beer',
         '2025-07-18 22:51:20.267747+00',
-        'Guiness'
+        'Guinness'
     ),
     (
         '51fc610c-ccd2-4142-b35c-d3815936e162',
