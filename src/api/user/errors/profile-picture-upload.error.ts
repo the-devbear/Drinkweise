@@ -7,9 +7,9 @@ export class ProfilePictureUploadError extends Error {
     this.name = 'ProfilePictureUploadError';
   }
 
-  static fromCompressionFailure(cause?: Error): ProfilePictureUploadError {
+  static fromImageProcessingFailure(cause?: Error): ProfilePictureUploadError {
     return new ProfilePictureUploadError(
-      'Failed to compress image. Please try with a different image.',
+      'Failed to process image. Please try with a different image.',
       cause
     );
   }

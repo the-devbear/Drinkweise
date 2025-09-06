@@ -1,5 +1,4 @@
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
-import { compressImage } from '@drinkweise/lib/utils/image/image-compression';
 import type { FileObject } from '@supabase/storage-js';
 
 import { ProfilePictureUploadError } from '../errors/profile-picture-upload.error';
@@ -18,90 +17,92 @@ export class ProfilePictureService {
     userId: string,
     imageUri: string
   ): Promise<UploadProfilePictureResult> {
-    try {
-      console.log('Starting profile picture upload for user:', userId);
-      console.log('Image URI:', imageUri);
+    console.log('=== PROFILE PICTURE UPLOAD START ===');
+    console.log('User ID:', userId);
+    console.log('Image URI:', imageUri);
 
-      // Convert image to blob directly without compression
-      let response: Response;
-      let blob: Blob;
+    try {
+      // Step 1: Fetch the image
+      console.log('Step 1: Fetching image from URI...');
+      const response = await fetch(imageUri);
       
-      try {
-        console.log('Fetching image from URI...');
-        response = await fetch(imageUri);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        blob = await response.blob();
-        console.log('Image blob created, size:', blob.size, 'type:', blob.type);
-        
-        // Check file size (10MB limit - increased for debugging)
-        if (blob.size > 10 * 1024 * 1024) {
-          throw ProfilePictureUploadError.fromFileTooLarge();
-        }
-        
-        // Check file type
-        if (!blob.type.startsWith('image/')) {
-          throw ProfilePictureUploadError.fromInvalidFormat();
-        }
-        
-      } catch (error) {
-        console.error('Error processing image:', error);
-        if (error instanceof ProfilePictureUploadError) {
-          throw error;
-        }
-        throw new ProfilePictureUploadError('Failed to process image: ' + (error as Error).message);
+      if (!response.ok) {
+        const errorMsg = `Failed to fetch image: HTTP ${response.status}`;
+        console.error(errorMsg);
+        throw new Error(errorMsg);
       }
 
-      // Generate unique filename with original extension
+      // Step 2: Convert to blob
+      console.log('Step 2: Converting to blob...');
+      const blob = await response.blob();
+      console.log('Blob created - Size:', blob.size, 'bytes, Type:', blob.type);
+      
+      // Step 3: Basic validations
+      console.log('Step 3: Validating image...');
+      if (blob.size === 0) {
+        throw new Error('Image file is empty');
+      }
+      
+      if (blob.size > 10 * 1024 * 1024) {
+        throw new Error('Image file is too large (>10MB)');
+      }
+      
+      if (!blob.type || !blob.type.startsWith('image/')) {
+        console.log('Invalid blob type:', blob.type);
+        throw new Error('Invalid image format');
+      }
+
+      // Step 4: Generate filename
+      console.log('Step 4: Generating filename...');
       const timestamp = Date.now();
-      const fileExtension = blob.type === 'image/png' ? 'png' : 'jpg';
+      const fileExtension = blob.type.includes('png') ? 'png' : 'jpg';
       const fileName = `${userId}/profile-${timestamp}.${fileExtension}`;
       console.log('Generated filename:', fileName);
 
-      // Upload to Supabase Storage using blob directly
-      try {
-        console.log('Uploading to Supabase storage...');
-        const { data, error } = await this.supabase.storage
-          .from(this.bucketName)
-          .upload(fileName, blob, {
-            contentType: blob.type,
-            upsert: true,
-          });
+      // Step 5: Upload to Supabase
+      console.log('Step 5: Uploading to Supabase storage...');
+      const { data, error } = await this.supabase.storage
+        .from(this.bucketName)
+        .upload(fileName, blob, {
+          contentType: blob.type,
+          upsert: true,
+        });
 
-        if (error) {
-          console.error('Supabase storage error:', error);
-          throw ProfilePictureUploadError.fromStorageFailure(new Error(error.message));
-        }
-
-        console.log('Upload successful, data:', data);
-
-        // Get public URL
-        const { data: urlData } = this.supabase.storage
-          .from(this.bucketName)
-          .getPublicUrl(data.path);
-
-        console.log('Public URL generated:', urlData.publicUrl);
-
-        return {
-          url: urlData.publicUrl,
-          path: data.path,
-        };
-      } catch (error) {
-        console.error('Error during upload:', error);
-        if (error instanceof ProfilePictureUploadError) {
-          throw error;
-        }
-        throw ProfilePictureUploadError.fromStorageFailure(error as Error);
+      if (error) {
+        console.error('Supabase upload error:', error);
+        throw new Error(`Upload failed: ${error.message}`);
       }
+
+      if (!data) {
+        throw new Error('No data returned from upload');
+      }
+
+      console.log('Upload successful! Path:', data.path);
+
+      // Step 6: Get public URL
+      console.log('Step 6: Getting public URL...');
+      const { data: urlData } = this.supabase.storage
+        .from(this.bucketName)
+        .getPublicUrl(data.path);
+
+      console.log('Public URL:', urlData.publicUrl);
+      console.log('=== PROFILE PICTURE UPLOAD SUCCESS ===');
+
+      return {
+        url: urlData.publicUrl,
+        path: data.path,
+      };
+
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
+      console.error('=== PROFILE PICTURE UPLOAD FAILED ===');
+      console.error('Error:', error);
+      console.error('Error type:', typeof error);
+      console.error('Error name:', (error as any)?.name);
+      console.error('Error message:', (error as any)?.message);
       
-      if (error instanceof ProfilePictureUploadError) {
-        throw error;
-      }
-      
-      throw new ProfilePictureUploadError('An unexpected error occurred while uploading the image: ' + (error as Error).message);
+      // Re-throw the error with a simple message
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      throw new Error(`Profile picture upload failed: ${errorMessage}`);
     }
   }
 
