@@ -156,7 +156,10 @@ export default function NotificationsSettingsPage() {
     async ({ data: { action } }) => {
       try {
         if (userId === undefined) {
-          console.error('User ID is undefined');
+          console.warn('userId is undefined; skipping save and leaving.');
+          // Revert unsaved changes to the initial snapshot, then navigate.
+          dispatch(updateNotificationPreferencesAction(initialNotificationPreferences));
+          navigation.dispatch(action);
           return;
         }
 
@@ -213,7 +216,7 @@ export default function NotificationsSettingsPage() {
 
   return (
     <ScrollView className='flex-1'>
-      <Modal visible={isSaving} transparent animationType='fade' presentationClassName='bg-red-500'>
+      <Modal visible={isSaving} transparent animationType='fade' presentationStyle='overFullScreen'>
         <View className='absolute inset-0 z-10 items-center justify-center'>
           <View className='bg-background/90 rounded-xl px-6 py-4 shadow-lg'>
             <ActivityIndicator size='large' />
@@ -313,7 +316,7 @@ export default function NotificationsSettingsPage() {
         })}
         <View>
           <Text variant='footnote' color='tertiary' className='mb-4 text-center'>
-            If you would like to disable notifications compleltely, you can do so in your device
+            If you would like to disable notifications completely, you can do so in your device
             settings.
           </Text>
           <Button variant='tonal' size='sm' onPress={Linking.openSettings}>
