@@ -1,3 +1,4 @@
+import type { Json } from '@drinkweise/lib/types/generated/supabase.types';
 import type { Failure } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
 import type { PostgrestError } from '@supabase/supabase-js';
@@ -63,7 +64,7 @@ export class UserService implements IUserService {
     const { error } = await this.supabase
       .from('users')
       .update({
-        notification_preferences: JSON.stringify(notificationSettings),
+        notification_preferences: notificationSettings as unknown as Json,
       })
       .eq('id', userId);
 
