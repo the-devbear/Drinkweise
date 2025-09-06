@@ -11,4 +11,5 @@ export interface IUserService {
     userId: string,
     userDetails: Partial<UserDetailsRequestModel>
   ): Promise<Failure | undefined>;
+  updateProfilePicture(userId: string, profilePictureUrl: string): Promise<Failure | undefined>;
 }

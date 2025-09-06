@@ -54,4 +54,23 @@ export class UserService implements IUserService {
       return { error: UserProfileNotUpdated.fromEmpty() };
     }
   }
+
+  public async updateProfilePicture(
+    userId: string,
+    profilePictureUrl: string
+  ): Promise<Failure<PostgrestError | UserProfileNotUpdated> | undefined> {
+    const { data, error } = await this.supabase
+      .from('users')
+      .update({ profile_picture: profilePictureUrl, updated_at: new Date().toISOString() })
+      .eq('id', userId)
+      .select('id');
+
+    if (error) {
+      return { error };
+    }
+
+    if (!data || data.length === 0) {
+      return { error: UserProfileNotUpdated.fromEmpty() };
+    }
+  }
 }

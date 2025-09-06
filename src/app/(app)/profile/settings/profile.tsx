@@ -2,7 +2,8 @@ import { UserAvatar } from '@drinkweise/components/shared/UserAvatar';
 import { useProfileUpdateForm } from '@drinkweise/lib/forms/profile-update';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import { userSelector } from '@drinkweise/store/user';
-import { updateUserDataAction } from '@drinkweise/store/user/actions/update-user-data.action';
+import { updateUserDataAction, uploadUserProfilePictureFromUriAction } from '@drinkweise/store/user/actions/update-user-data.action';
+import * as ImagePicker from 'expo-image-picker';
 import { BottomSheetPicker } from '@drinkweise/ui/BottomSheetPicker';
 import { Button } from '@drinkweise/ui/Button';
 import { Card } from '@drinkweise/ui/Card';
@@ -11,7 +12,7 @@ import { NumberInput } from '@drinkweise/ui/NumberInput';
 import { Text } from '@drinkweise/ui/Text';
 import { TextInput } from '@drinkweise/ui/TextInput';
 import { useRouter } from 'expo-router';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { Alert, Keyboard, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-controller';
@@ -20,6 +21,7 @@ export default function ProfileSettingsPage() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const user = useAppSelector(userSelector);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
 
   const {
     control,
@@ -77,6 +79,90 @@ export default function ProfileSettingsPage() {
           username={user.username}
           avatarUrl={user.profilePicture}
         />
+        <View className='mb-2 flex-row justify-center gap-3'>
+          <Button
+            size='sm'
+            variant='secondary'
+            loading={isUploadingAvatar}
+            disabled={isUploadingAvatar}
+            onPress={async () => {
+              setIsUploadingAvatar(true);
+              const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+              if (!permission.granted) {
+                setIsUploadingAvatar(false);
+                Alert.alert('Permission required', 'Please allow gallery access to select a photo.');
+                return;
+              }
+
+              const picker = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [1,1], quality: 0.7 });
+              if (picker.canceled) {
+                setIsUploadingAvatar(false);
+                return;
+              }
+
+              const asset = picker.assets?.[0];
+              if (!asset?.uri) {
+                setIsUploadingAvatar(false);
+                Alert.alert('Selection error', 'No image URI returned.');
+                return;
+              }
+              const response = await dispatch(
+                uploadUserProfilePictureFromUriAction({ uri: asset.uri })
+              );
+              setIsUploadingAvatar(false);
+              if (uploadUserProfilePictureFromUriAction.rejected.match(response)) {
+                const error = response.payload;
+                Alert.alert('Upload failed',
+                  typeof error === 'object' && error && 'message' in error
+                    ? (error as { message: string }).message
+                    : 'Could not upload profile picture');
+              }
+            }}
+          >
+            <Text>Choose Photo</Text>
+          </Button>
+          <Button
+            size='sm'
+            variant='secondary'
+            loading={isUploadingAvatar}
+            disabled={isUploadingAvatar}
+            onPress={async () => {
+              setIsUploadingAvatar(true);
+              const permission = await ImagePicker.requestCameraPermissionsAsync();
+              if (!permission.granted) {
+                setIsUploadingAvatar(false);
+                Alert.alert('Permission required', 'Please allow camera access to take a photo.');
+                return;
+              }
+
+              const picker = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [1,1], quality: 0.7 });
+              if (picker.canceled) {
+                setIsUploadingAvatar(false);
+                return;
+              }
+
+              const asset = picker.assets?.[0];
+              if (!asset?.uri) {
+                setIsUploadingAvatar(false);
+                Alert.alert('Capture error', 'No image URI returned.');
+                return;
+              }
+              const response = await dispatch(
+                uploadUserProfilePictureFromUriAction({ uri: asset.uri })
+              );
+              setIsUploadingAvatar(false);
+              if (uploadUserProfilePictureFromUriAction.rejected.match(response)) {
+                const error = response.payload;
+                Alert.alert('Upload failed',
+                  typeof error === 'object' && error && 'message' in error
+                    ? (error as { message: string }).message
+                    : 'Could not upload profile picture');
+              }
+            }}
+          >
+            <Text>Take Photo</Text>
+          </Button>
+        </View>
         <View className='gap-3'>
           <Text variant='title3' className='font-semibold'>
             Personal Information

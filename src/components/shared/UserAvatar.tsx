@@ -25,7 +25,9 @@ export function UserAvatar({
 
   return (
     <Avatar className={cn('h-16 w-16', className)} alt={username}>
-      <AvatarImage className={avatarClassName} source={{ uri: avatarUrl }} />
+      {!!avatarUrl ? (
+        <AvatarImage className={avatarClassName} source={{ uri: avatarUrl }} />
+      ) : null}
       <AvatarFallback className={cn('bg-primary text-white', fallbackClassName)}>
         <Text className={cn('', userInitialsClassName)}>{userInitials}</Text>
       </AvatarFallback>

@@ -7,7 +7,7 @@ import { completeOnboardingAction } from './actions/complete-onboarding.action';
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
 import { signOutAction } from './actions/sign-out.action';
 import { signUpWithPasswordAction } from './actions/sign-up-with-password.action';
-import { updateUserDataAction } from './actions/update-user-data.action';
+import { updateUserDataAction, uploadUserProfilePictureFromUriAction } from './actions/update-user-data.action';
 import type { SessionModel } from './models/session.model';
 import { initialUserState, type UserState } from './models/user-state.model';
 import { userSlice } from './user.slice';
@@ -66,6 +66,12 @@ export const userStateSlice = createSlice({
           ...state.user,
           ...payload,
         };
+      })
+      .addCase(uploadUserProfilePictureFromUriAction.fulfilled, (state, { payload }) => {
+        if (state.status !== 'signedIn') {
+          return;
+        }
+        state.user.profilePicture = payload.profilePicture;
       })
       .addMatcher(
         isAnyOf(
