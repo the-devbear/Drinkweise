@@ -150,6 +150,7 @@ export default function SessionPage() {
         className='flex-1'
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <FlashList
+          contentContainerClassName='pb-10'
           data={drinks}
           estimatedItemSize={250}
           ListHeaderComponent={

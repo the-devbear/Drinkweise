@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import devToolsEnhancer from 'redux-devtools-expo-dev-plugin';
 
 import { drinkSessionStateSlice } from './drink-session';
+import { inactivityRemindersMiddleware } from './drink-session/middleware/inactivity-reminders.middleware';
 import { persistDrinkSessionStateMiddleware } from './drink-session/middleware/persist-drink-session-state.middleware';
 import { userStateSlice } from './user';
 import { persistUserStateMiddleware } from './user/middleware/persist-user-state.middleware';
@@ -16,7 +17,8 @@ export const rootStore = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(
       persistUserStateMiddleware.middleware,
-      persistDrinkSessionStateMiddleware.middleware
+      persistDrinkSessionStateMiddleware.middleware,
+      inactivityRemindersMiddleware.middleware
     ),
   enhancers: (getDefaultEnhancers) =>
     getDefaultEnhancers().concat(

@@ -12,6 +12,7 @@ import {
 import { never } from '@drinkweise/lib/utils/never';
 import { useAppDispatch } from '@drinkweise/store';
 import { completeOnboardingAction } from '@drinkweise/store/user/actions/complete-onboarding.action';
+import * as Notifications from 'expo-notifications';
 import React, { ReactElement, useCallback, useRef, useState } from 'react';
 import {
   Alert,
@@ -98,6 +99,14 @@ export default function OnboardingPage() {
         isValid = await trigger(['height', 'weight', 'gender']);
         break;
       case 'COMPLETE':
+        try {
+          const { status } = await Notifications.getPermissionsAsync();
+          if (status !== 'granted') {
+            await Notifications.requestPermissionsAsync();
+          }
+        } catch (error) {
+          console.warn('Notification permissions request failed:', error);
+        }
         break;
       default:
         never(currentStep);

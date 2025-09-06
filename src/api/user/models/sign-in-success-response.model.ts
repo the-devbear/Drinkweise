@@ -7,6 +7,11 @@ export interface SignInSuccessResponseModel {
     weight: number;
     gender?: 'male' | 'female' | 'other';
     hasCompletedOnboarding: boolean;
+    notificationPreferences: {
+      drinkSession: {
+        reminders: boolean;
+      };
+    };
   };
   session: {
     accessToken: string;

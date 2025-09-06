@@ -165,6 +165,7 @@ export type Database = {
           has_completed_onboarding: boolean
           height: number
           id: string
+          notification_preferences: Json
           profile_picture: string | null
           updated_at: string
           username: string
@@ -176,6 +177,7 @@ export type Database = {
           has_completed_onboarding?: boolean
           height?: number
           id: string
+          notification_preferences?: Json
           profile_picture?: string | null
           updated_at?: string
           username?: string
@@ -187,6 +189,7 @@ export type Database = {
           has_completed_onboarding?: boolean
           height?: number
           id?: string
+          notification_preferences?: Json
           profile_picture?: string | null
           updated_at?: string
           username?: string

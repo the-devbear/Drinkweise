@@ -49,6 +49,13 @@ export default ({ config }) => ({
         cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera, so you can scan barcodes.',
       },
     ],
+    'expo-background-task',
+    [
+      'expo-notifications',
+      {
+        enableBackgroundRemoteNotifications: true,
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,
