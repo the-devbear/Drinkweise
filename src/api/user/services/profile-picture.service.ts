@@ -19,75 +19,76 @@ export class ProfilePictureService {
     imageUri: string
   ): Promise<UploadProfilePictureResult> {
     try {
-      // Compress the image
-      let compressedUri: string;
-      try {
-        compressedUri = await compressImage(imageUri, {
-          maxWidth: 400,
-          maxHeight: 400,
-          quality: 0.8,
-        });
-      } catch (error) {
-        throw ProfilePictureUploadError.fromCompressionFailure(error as Error);
-      }
+      console.log('Starting profile picture upload for user:', userId);
+      console.log('Image URI:', imageUri);
 
-      // Convert image to base64
+      // Convert image to blob directly without compression
       let response: Response;
       let blob: Blob;
-      let arrayBuffer: ArrayBuffer;
-
+      
       try {
-        response = await fetch(compressedUri);
+        console.log('Fetching image from URI...');
+        response = await fetch(imageUri);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         blob = await response.blob();
-
-        // Check file size (5MB limit)
-        if (blob.size > 5 * 1024 * 1024) {
+        console.log('Image blob created, size:', blob.size, 'type:', blob.type);
+        
+        // Check file size (10MB limit - increased for debugging)
+        if (blob.size > 10 * 1024 * 1024) {
           throw ProfilePictureUploadError.fromFileTooLarge();
         }
-
+        
         // Check file type
         if (!blob.type.startsWith('image/')) {
           throw ProfilePictureUploadError.fromInvalidFormat();
         }
-
-        arrayBuffer = await blob.arrayBuffer();
+        
       } catch (error) {
+        console.error('Error processing image:', error);
         if (error instanceof ProfilePictureUploadError) {
           throw error;
         }
-        throw ProfilePictureUploadError.fromCompressionFailure(error as Error);
+        throw new ProfilePictureUploadError('Failed to process image: ' + (error as Error).message);
       }
 
-      // Generate unique filename
+      // Generate unique filename with original extension
       const timestamp = Date.now();
-      const fileName = `${userId}/profile-${timestamp}.jpg`;
+      const fileExtension = blob.type === 'image/png' ? 'png' : 'jpg';
+      const fileName = `${userId}/profile-${timestamp}.${fileExtension}`;
+      console.log('Generated filename:', fileName);
 
-      // Upload to Supabase Storage using arrayBuffer directly
+      // Upload to Supabase Storage using blob directly
       try {
+        console.log('Uploading to Supabase storage...');
         const { data, error } = await this.supabase.storage
           .from(this.bucketName)
-          .upload(fileName, arrayBuffer, {
-            contentType: 'image/jpeg',
+          .upload(fileName, blob, {
+            contentType: blob.type,
             upsert: true,
           });
 
         if (error) {
+          console.error('Supabase storage error:', error);
           throw ProfilePictureUploadError.fromStorageFailure(new Error(error.message));
         }
+
+        console.log('Upload successful, data:', data);
 
         // Get public URL
         const { data: urlData } = this.supabase.storage
           .from(this.bucketName)
           .getPublicUrl(data.path);
 
+        console.log('Public URL generated:', urlData.publicUrl);
+
         return {
           url: urlData.publicUrl,
           path: data.path,
         };
       } catch (error) {
+        console.error('Error during upload:', error);
         if (error instanceof ProfilePictureUploadError) {
           throw error;
         }
@@ -95,12 +96,12 @@ export class ProfilePictureService {
       }
     } catch (error) {
       console.error('Error uploading profile picture:', error);
-
+      
       if (error instanceof ProfilePictureUploadError) {
         throw error;
       }
-
-      throw new ProfilePictureUploadError('An unexpected error occurred while uploading the image');
+      
+      throw new ProfilePictureUploadError('An unexpected error occurred while uploading the image: ' + (error as Error).message);
     }
   }
 

@@ -36,19 +36,25 @@ export function ProfilePictureSelector({
 
   const uploadMutation = useMutation({
     mutationFn: async (imageUri: string) => {
+      console.log('ProfilePictureSelector: Starting upload mutation with URI:', imageUri);
       const result = await dispatch(updateProfilePictureAction({ imageUri }));
+      console.log('ProfilePictureSelector: Redux action result:', result);
+      
       if (updateProfilePictureAction.rejected.match(result)) {
+        console.error('ProfilePictureSelector: Upload rejected:', result.payload);
         throw new Error(result.payload?.message ?? 'Failed to update profile picture');
       }
       return result.payload;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log('ProfilePictureSelector: Upload successful:', data);
       // Don't show success alert for better UX, the image update is visual feedback enough
     },
     onError: (error: Error) => {
+      console.error('ProfilePictureSelector: Upload error:', error);
       Alert.alert(
         'Upload Failed',
-        error.message ?? 'Failed to update profile picture. Please try again.',
+        `Error: ${error.message ?? 'Failed to update profile picture. Please try again.'}\n\nCheck the console for more details.`,
         [{ text: 'OK' }]
       );
     },

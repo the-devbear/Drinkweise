@@ -58,11 +58,14 @@ export function useImagePicker(options: UseImagePickerOptions = {}): UseImagePic
 
   const pickFromLibrary = async (): Promise<string | null> => {
     try {
+      console.log('useImagePicker: Requesting permissions for library...');
       const hasPermission = await requestPermissions();
       if (!hasPermission) {
+        console.log('useImagePicker: Permissions denied');
         return null;
       }
 
+      console.log('useImagePicker: Launching image library picker...');
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing,
@@ -70,11 +73,16 @@ export function useImagePicker(options: UseImagePickerOptions = {}): UseImagePic
         quality,
       });
 
+      console.log('useImagePicker: Image library result:', result);
+
       if (result.canceled || !result.assets || result.assets.length === 0) {
+        console.log('useImagePicker: Image selection canceled or no assets');
         return null;
       }
 
-      return result.assets[0]?.uri ?? null;
+      const selectedUri = result.assets[0]?.uri ?? null;
+      console.log('useImagePicker: Selected image URI:', selectedUri);
+      return selectedUri;
     } catch (error) {
       console.error('Error picking image from library:', error);
       Alert.alert('Error', 'Failed to select image from library');
@@ -84,11 +92,14 @@ export function useImagePicker(options: UseImagePickerOptions = {}): UseImagePic
 
   const takePhoto = async (): Promise<string | null> => {
     try {
+      console.log('useImagePicker: Requesting permissions for camera...');
       const hasPermission = await requestPermissions();
       if (!hasPermission) {
+        console.log('useImagePicker: Camera permissions denied');
         return null;
       }
 
+      console.log('useImagePicker: Launching camera...');
       const result = await ImagePicker.launchCameraAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing,
@@ -96,11 +107,16 @@ export function useImagePicker(options: UseImagePickerOptions = {}): UseImagePic
         quality,
       });
 
+      console.log('useImagePicker: Camera result:', result);
+
       if (result.canceled || !result.assets || result.assets.length === 0) {
+        console.log('useImagePicker: Camera canceled or no assets');
         return null;
       }
 
-      return result.assets[0]?.uri ?? null;
+      const selectedUri = result.assets[0]?.uri ?? null;
+      console.log('useImagePicker: Camera image URI:', selectedUri);
+      return selectedUri;
     } catch (error) {
       console.error('Error taking photo:', error);
       Alert.alert('Error', 'Failed to take photo');
