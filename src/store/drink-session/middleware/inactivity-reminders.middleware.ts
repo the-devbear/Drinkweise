@@ -3,6 +3,7 @@ import {
   scheduleSessionReminderNotifications,
 } from '@drinkweise/lib/notifications/session-reminder-notifications';
 import type { AppDispatch, RootState } from '@drinkweise/store';
+import { updateNotificationPreferencesAction } from '@drinkweise/store/user';
 import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
 import { createListenerMiddleware, isAnyOf } from '@reduxjs/toolkit';
 
@@ -28,10 +29,29 @@ const shouldCancelReminderNotifications = isAnyOf(
 
 export const inactivityRemindersListener = startListening({
   predicate: (action) =>
-    action.type.startsWith(drinkSessionSlice) || signOutAction.fulfilled.match(action),
+    action.type.startsWith(drinkSessionSlice) ||
+    signOutAction.fulfilled.match(action) ||
+    updateNotificationPreferencesAction.match(action),
   effect: async (action, listenerApi) => {
+    const state = listenerApi.getState();
     const userWantsToReceiveReminderNotifications =
-      listenerApi.getState().user.user?.notificationPreferences.drinkSession.reminders;
+      state.user.user?.notificationPreferences.drinkSession.reminders;
+    const isSessionActive = state.drinkSession.status === 'active';
+
+    if (updateNotificationPreferencesAction.match(action)) {
+      if (action.payload.drinkSession.reminders && isSessionActive) {
+        console.info(
+          '[NOTIFICATIONS] Scheduling session reminder notifications reason: user enabled reminders'
+        );
+        await scheduleSessionReminderNotifications();
+      } else {
+        console.info(
+          '[NOTIFICATIONS] Canceling session reminder notifications reason: user disabled reminders'
+        );
+        await cancelSessionReminderNotifications();
+      }
+      return;
+    }
 
     if (!userWantsToReceiveReminderNotifications) {
       return;
