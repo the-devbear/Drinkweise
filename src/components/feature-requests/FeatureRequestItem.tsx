@@ -58,13 +58,38 @@ export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) 
   return (
     <Card className='mx-6 mb-4 p-4'>
       <View className='flex-row items-start justify-between'>
-        <View className='flex-1 pr-3'>
-          <Text variant='heading' className='mb-2'>
-            {featureRequest.title}
-          </Text>
+        <View className='flex-1'>
+          <View className='flex-row items-start justify-between'>
+            <View className='flex-1 pr-3'>
+              <Text variant='heading' className='mb-2'>
+                {featureRequest.title}
+              </Text>
+            </View>
+            <View className='ml-3'>
+              <Button
+                variant={isUpvoted ? 'primary' : 'secondary'}
+                size='sm'
+                onPress={handleUpvote}
+                disabled={toggleUpvoteMutation.isPending || !userId}
+                className='min-w-[60px]'>
+                <Ionicons 
+                  name={isUpvoted ? 'heart' : 'heart-outline'} 
+                  size={16} 
+                  className={isUpvoted ? 'text-white' : 'text-foreground'} 
+                />
+                <Text 
+                  variant='caption1' 
+                  className={`font-medium ${isUpvoted ? 'text-white' : 'text-foreground'}`}>
+                  {featureRequest.upvotes_count}
+                </Text>
+              </Button>
+            </View>
+          </View>
+          
           <Text variant='body' className='mb-3 text-muted-foreground'>
             {featureRequest.description}
           </Text>
+          
           <View className='flex-row items-center justify-between'>
             <Text variant='caption1' className='flex-1 text-muted-foreground'>
               By {featureRequest.username} • {formatDate(featureRequest.created_at)}
@@ -80,25 +105,6 @@ export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) 
               </Button>
             )}
           </View>
-        </View>
-        <View className='ml-3'>
-          <Button
-            variant={isUpvoted ? 'primary' : 'secondary'}
-            size='sm'
-            onPress={handleUpvote}
-            disabled={toggleUpvoteMutation.isPending || !userId}
-            className='min-w-[60px]'>
-            <Ionicons 
-              name={isUpvoted ? 'heart' : 'heart-outline'} 
-              size={16} 
-              className={isUpvoted ? 'text-white' : 'text-foreground'} 
-            />
-            <Text 
-              variant='caption1' 
-              className={`font-medium ${isUpvoted ? 'text-white' : 'text-foreground'}`}>
-              {featureRequest.upvotes_count}
-            </Text>
-          </Button>
         </View>
       </View>
     </Card>

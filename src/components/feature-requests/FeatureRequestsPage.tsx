@@ -1,5 +1,5 @@
 import { useFeatureRequestsQuery } from '@drinkweise/lib/feature-requests';
-import { useHeaderSearchBar } from '@drinkweise/lib/useHeaderSearchBar';
+import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Button } from '@drinkweise/ui/Button';
 import { ErrorDisplay } from '@drinkweise/ui/ErrorDisplay';
@@ -14,7 +14,8 @@ import { RefreshControl, View } from 'react-native';
 import { FeatureRequestItem } from './FeatureRequestItem';
 
 export function FeatureRequestsPage() {
-  const [searchQuery, setSearchQuery] = useState('');
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search);
   
   const {
     data,
@@ -26,13 +27,7 @@ export function FeatureRequestsPage() {
     hasNextPage,
     isFetchingNextPage,
     isRefetching,
-  } = useFeatureRequestsQuery(searchQuery);
-
-  useHeaderSearchBar({
-    searchQuery,
-    onSearchQueryChange: setSearchQuery,
-    placeholder: 'Search feature requests...',
-  });
+  } = useFeatureRequestsQuery(debouncedSearch);
 
   const allFeatureRequests = data?.pages.flatMap((page) => page.data) ?? [];
 
@@ -65,10 +60,10 @@ export function FeatureRequestsPage() {
       <View className='flex-1 items-center justify-center px-6 py-12'>
         <Ionicons name='bulb-outline' size={64} className='mb-4 text-muted-foreground' />
         <Text variant='title2' className='mb-2 text-center font-semibold'>
-          {searchQuery ? 'No Results Found' : 'No Feature Requests Yet'}
+          {search ? 'No Results Found' : 'No Feature Requests Yet'}
         </Text>
         <Text variant='body' className='mb-6 text-center text-muted-foreground'>
-          {searchQuery
+          {search
             ? 'Try adjusting your search terms or be the first to request this feature.'
             : 'Be the first to suggest a feature that would make Drinkweise even better!'}
         </Text>
@@ -94,13 +89,16 @@ export function FeatureRequestsPage() {
 
   return (
     <View className='flex-1'>
-      {/* Search Bar - Mobile Only */}
-      <View className='px-6 py-3 web:hidden'>
+      {/* Search Bar */}
+      <View className='px-4 py-2'>
         <TextInput
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder='Search feature requests...'
+          clearButtonMode='while-editing'
+          value={search}
+          leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
           variant='card'
+          placeholder='Search feature requests...'
+          onChangeText={setSearch}
+          onBlur={() => setSearch(search.trim())}
         />
       </View>
 

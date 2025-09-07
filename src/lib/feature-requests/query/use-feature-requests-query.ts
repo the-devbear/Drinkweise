@@ -13,7 +13,7 @@ export function useFeatureRequestsQuery(searchQuery?: string) {
   const userId = useAppSelector(userIdSelector);
 
   return useInfiniteQuery({
-    queryKey: [FEATURE_REQUESTS_QUERY_KEY, searchQuery],
+    queryKey: [FEATURE_REQUESTS_QUERY_KEY, searchQuery || ''],
     initialPageParam: 0,
     queryFn: async ({ pageParam }) => {
       const result = await featureRequestsService.getFeatureRequests(
