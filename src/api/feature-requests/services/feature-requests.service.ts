@@ -18,6 +18,22 @@ export class FeatureRequestsService implements IFeatureRequestsService {
     page = 0,
     limit = 20
   ): Promise<Success<PaginatedFeatureRequestsModel> | Failure<PostgrestError>> {
+    // First get the total count for pagination
+    let countQuery = this.supabase
+      .from('feature_requests')
+      .select('*', { count: 'exact', head: true });
+
+    if (searchQuery) {
+      countQuery = countQuery.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+    }
+
+    const { count, error: countError } = await countQuery;
+
+    if (countError) {
+      return { error: countError };
+    }
+
+    // Get all data for proper sorting (we'll implement pagination after sorting)
     let query = this.supabase
       .from('feature_requests')
       .select(
@@ -25,24 +41,21 @@ export class FeatureRequestsService implements IFeatureRequestsService {
         *,
         users!feature_requests_user_id_fkey(username),
         feature_request_upvotes!left(user_id)
-      `,
-        { count: 'exact' }
-      )
-      .order('upvotes_count', { ascending: false })
-      .order('created_at', { ascending: false })
-      .range(page * limit, (page + 1) * limit - 1);
+      `
+      );
 
     if (searchQuery) {
       query = query.or(`title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
     }
 
-    const { data, error, count } = await query;
+    const { data, error } = await query;
 
     if (error) {
       return { error };
     }
 
-    const featureRequests: FeatureRequestModel[] = (data || []).map((request) => ({
+    // Map and sort the data
+    const allFeatureRequests: FeatureRequestModel[] = (data || []).map((request) => ({
       id: request.id,
       title: request.title,
       description: request.description,
@@ -56,6 +69,29 @@ export class FeatureRequestsService implements IFeatureRequestsService {
         ? request.feature_request_upvotes?.some((upvote: any) => upvote.user_id === userId)
         : false,
     }));
+
+    // Custom sorting: rejected to bottom, then by upvotes, then by date
+    const sortedFeatureRequests = allFeatureRequests.sort((a, b) => {
+      // First, sort by status (rejected goes to bottom)
+      const aIsRejected = a.status === FeatureRequestStatus.REJECTED;
+      const bIsRejected = b.status === FeatureRequestStatus.REJECTED;
+      
+      if (aIsRejected && !bIsRejected) return 1;
+      if (!aIsRejected && bIsRejected) return -1;
+      
+      // If both have same rejection status, sort by upvotes (descending)
+      if (a.upvotes_count !== b.upvotes_count) {
+        return b.upvotes_count - a.upvotes_count;
+      }
+      
+      // If upvotes are equal, sort by creation date (newest first)
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    // Apply pagination after sorting
+    const startIndex = page * limit;
+    const endIndex = startIndex + limit;
+    const featureRequests = sortedFeatureRequests.slice(startIndex, endIndex);
 
     return {
       data: {
