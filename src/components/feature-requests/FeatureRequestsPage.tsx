@@ -1,20 +1,23 @@
+import type { FeatureRequestModel } from '@drinkweise/api/feature-requests';
 import { useFeatureRequestsQuery } from '@drinkweise/lib/feature-requests';
+import { useHeaderSearchBar } from '@drinkweise/lib/useHeaderSearchBar';
 import { useDebounce } from '@drinkweise/lib/utils/hooks/use-debounce';
 import { ActivityIndicator } from '@drinkweise/ui/ActivityIndicator';
 import { Button } from '@drinkweise/ui/Button';
 import { ErrorDisplay } from '@drinkweise/ui/ErrorDisplay';
 import { Text } from '@drinkweise/ui/Text';
-import { TextInput } from '@drinkweise/ui/TextInput';
 import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { router } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback } from 'react';
 import { RefreshControl, View } from 'react-native';
 
 import { FeatureRequestItem } from './FeatureRequestItem';
 
 export function FeatureRequestsPage() {
-  const [search, setSearch] = useState('');
+  const search = useHeaderSearchBar({
+    placeholder: 'Search feature requests...',
+  });
   const debouncedSearch = useDebounce(search);
   
   const {
@@ -36,7 +39,7 @@ export function FeatureRequestsPage() {
   };
 
   const renderItem = useCallback(
-    ({ item }: { item: any }) => <FeatureRequestItem featureRequest={item} />,
+    ({ item }: { item: FeatureRequestModel }) => <FeatureRequestItem featureRequest={item} />,
     []
   );
 
@@ -79,8 +82,7 @@ export function FeatureRequestsPage() {
     return (
       <View className='flex-1 px-6 py-6'>
         <ErrorDisplay
-          title='Failed to Load Feature Requests'
-          message={error?.message || 'Something went wrong while loading feature requests.'}
+          message={error?.message || 'Failed to load feature requests. Something went wrong.'}
           onRetry={refetch}
         />
       </View>
@@ -89,19 +91,6 @@ export function FeatureRequestsPage() {
 
   return (
     <View className='flex-1'>
-      {/* Search Bar */}
-      <View className='px-4 py-2'>
-        <TextInput
-          clearButtonMode='while-editing'
-          value={search}
-          leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
-          variant='card'
-          placeholder='Search feature requests...'
-          onChangeText={setSearch}
-          onBlur={() => setSearch(search.trim())}
-        />
-      </View>
-
       {/* Feature Requests List */}
       <FlashList
         data={allFeatureRequests}
