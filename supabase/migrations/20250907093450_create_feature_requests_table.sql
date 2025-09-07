@@ -1,10 +1,19 @@
+-- Create enum for feature request status
+create type "public"."feature_request_status" as enum (
+    'submitted',
+    'under_review',
+    'in_progress',
+    'completed',
+    'rejected'
+);
+
 -- Create feature_requests table
 create table "public"."feature_requests" (
     "id" uuid not null default gen_random_uuid(),
     "title" text not null,
     "description" text not null,
     "user_id" uuid not null,
-    "status" text not null default 'submitted',
+    "status" feature_request_status not null default 'submitted'::feature_request_status,
     "upvotes_count" integer not null default 0,
     "created_at" timestamp with time zone not null default now(),
     "updated_at" timestamp with time zone not null default now()
