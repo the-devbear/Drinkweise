@@ -156,3 +156,7 @@ grant all on table "public"."feature_requests" to "service_role";
 grant all on table "public"."feature_request_upvotes" to "anon";
 grant all on table "public"."feature_request_upvotes" to "authenticated";
 grant all on table "public"."feature_request_upvotes" to "service_role";
+
+-- Enable real-time for the tables
+alter publication supabase_realtime add table feature_requests;
+alter publication supabase_realtime add table feature_request_upvotes;
