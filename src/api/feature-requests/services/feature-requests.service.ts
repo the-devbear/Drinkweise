@@ -1,5 +1,6 @@
 import type { Failure, Success } from '@drinkweise/lib/types/result.types';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
+import { FeatureRequestStatus } from '@drinkweise/lib/types/feature-request-status.enum';
 import type { PostgrestError } from '@supabase/supabase-js';
 
 import { FeatureRequestNotFoundError } from '../errors/feature-request-not-found.error';
@@ -46,7 +47,7 @@ export class FeatureRequestsService implements IFeatureRequestsService {
       title: request.title,
       description: request.description,
       user_id: request.user_id,
-      status: request.status,
+      status: request.status as FeatureRequestStatus,
       upvotes_count: request.upvotes_count,
       created_at: request.created_at,
       updated_at: request.updated_at,
@@ -93,7 +94,7 @@ export class FeatureRequestsService implements IFeatureRequestsService {
       title: data.title,
       description: data.description,
       user_id: data.user_id,
-      status: data.status,
+      status: data.status as FeatureRequestStatus,
       upvotes_count: data.upvotes_count,
       created_at: data.created_at,
       updated_at: data.updated_at,

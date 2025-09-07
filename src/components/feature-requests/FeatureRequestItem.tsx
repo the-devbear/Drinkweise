@@ -1,3 +1,7 @@
+import { 
+  FEATURE_REQUEST_STATUS_LABELS,
+  FEATURE_REQUEST_STATUS_COLORS
+} from '@drinkweise/api/feature-requests';
 import type { FeatureRequestModel } from '@drinkweise/api/feature-requests';
 import { useDeleteFeatureRequestMutation, useToggleUpvoteMutation } from '@drinkweise/lib/feature-requests';
 import { Button } from '@drinkweise/ui/Button';
@@ -13,62 +17,6 @@ interface FeatureRequestItemProps {
   featureRequest: FeatureRequestModel;
 }
 
-function getStatusLabel(status: string): string {
-  switch (status.toLowerCase()) {
-    case 'submitted':
-      return 'New';
-    case 'in-progress':
-    case 'in_progress':
-      return 'In Progress';
-    case 'completed':
-      return 'Completed';
-    case 'rejected':
-      return 'Rejected';
-    case 'under-review':
-    case 'under_review':
-      return 'Under Review';
-    default:
-      return status.charAt(0).toUpperCase() + status.slice(1);
-  }
-}
-
-function getStatusStyle(status: string): string {
-  switch (status.toLowerCase()) {
-    case 'submitted':
-      return 'bg-blue-100 dark:bg-blue-900/30';
-    case 'in-progress':
-    case 'in_progress':
-      return 'bg-yellow-100 dark:bg-yellow-900/30';
-    case 'completed':
-      return 'bg-green-100 dark:bg-green-900/30';
-    case 'rejected':
-      return 'bg-red-100 dark:bg-red-900/30';
-    case 'under-review':
-    case 'under_review':
-      return 'bg-purple-100 dark:bg-purple-900/30';
-    default:
-      return 'bg-gray-100 dark:bg-gray-900/30';
-  }
-}
-
-function getStatusTextColor(status: string): string {
-  switch (status.toLowerCase()) {
-    case 'submitted':
-      return 'text-blue-700 dark:text-blue-300';
-    case 'in-progress':
-    case 'in_progress':
-      return 'text-yellow-700 dark:text-yellow-300';
-    case 'completed':
-      return 'text-green-700 dark:text-green-300';
-    case 'rejected':
-      return 'text-red-700 dark:text-red-300';
-    case 'under-review':
-    case 'under_review':
-      return 'text-purple-700 dark:text-purple-300';
-    default:
-      return 'text-gray-700 dark:text-gray-300';
-  }
-}
 
 export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) {
   const userId = useAppSelector(userIdSelector);
@@ -122,9 +70,9 @@ export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) 
                 <Text variant='heading' className='flex-1'>
                   {featureRequest.title}
                 </Text>
-                <View className={`ml-2 rounded-full px-2 py-1 ${getStatusStyle(featureRequest.status)}`}>
-                  <Text variant='caption1' className={`font-medium ${getStatusTextColor(featureRequest.status)}`}>
-                    {getStatusLabel(featureRequest.status)}
+                <View className={`ml-2 rounded-full px-2 py-1 ${FEATURE_REQUEST_STATUS_COLORS[featureRequest.status]?.bg || 'bg-gray-100 dark:bg-gray-900/30'}`}>
+                  <Text variant='caption1' className={`font-medium ${FEATURE_REQUEST_STATUS_COLORS[featureRequest.status]?.text || 'text-gray-700 dark:text-gray-300'}`}>
+                    {FEATURE_REQUEST_STATUS_LABELS[featureRequest.status] || featureRequest.status}
                   </Text>
                 </View>
               </View>
