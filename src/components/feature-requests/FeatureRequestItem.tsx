@@ -59,30 +59,29 @@ export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) 
     <Card className='mx-6 mb-4 p-4'>
       <View className='flex-row items-start justify-between'>
         <View className='flex-1 pr-3'>
-          <Text variant='headline' className='mb-2 font-semibold'>
+          <Text variant='heading' className='mb-2'>
             {featureRequest.title}
           </Text>
           <Text variant='body' className='mb-3 text-muted-foreground'>
             {featureRequest.description}
           </Text>
           <View className='flex-row items-center justify-between'>
-            <View className='flex-row items-center'>
-              <Text variant='caption1' className='text-muted-foreground'>
-                By {featureRequest.username} • {formatDate(featureRequest.created_at)}
-              </Text>
-            </View>
+            <Text variant='caption1' className='flex-1 text-muted-foreground'>
+              By {featureRequest.username} • {formatDate(featureRequest.created_at)}
+            </Text>
             {isOwner && (
               <Button
                 variant='plain'
-                size='sm'
+                size='icon'
                 onPress={handleDelete}
-                disabled={deleteFeatureRequestMutation.isPending}>
+                disabled={deleteFeatureRequestMutation.isPending}
+                className='h-8 w-8'>
                 <Ionicons name='trash-outline' size={16} className='text-destructive' />
               </Button>
             )}
           </View>
         </View>
-        <View className='items-center'>
+        <View className='ml-3'>
           <Button
             variant={isUpvoted ? 'primary' : 'secondary'}
             size='sm'
