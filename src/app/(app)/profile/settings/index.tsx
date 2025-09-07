@@ -79,6 +79,16 @@ export default function ProfileSettingsPage() {
           ]}
         />
         <SettingsSection
+          title='Feedback & Support'
+          items={[
+            {
+              title: 'Feature Requests',
+              icon: 'bulb-outline',
+              onPress: () => router.push('/profile/settings/feature-requests'),
+            },
+          ]}
+        />
+        <SettingsSection
           title='Data & Storage'
           items={[
             {

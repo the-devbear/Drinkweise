@@ -11,6 +11,17 @@ export default function ProfileTabLayout() {
         name='settings/notifications'
         options={{ headerTitle: 'Notifications', gestureEnabled: false }}
       />
+      <Stack.Screen 
+        name='settings/feature-requests' 
+        options={{ headerTitle: 'Feature Requests' }} 
+      />
+      <Stack.Screen 
+        name='settings/feature-requests/create' 
+        options={{ 
+          headerTitle: 'Request Feature',
+          presentation: 'modal'
+        }} 
+      />
     </Stack>
   );
 }
