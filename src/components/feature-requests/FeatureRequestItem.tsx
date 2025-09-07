@@ -13,6 +13,63 @@ interface FeatureRequestItemProps {
   featureRequest: FeatureRequestModel;
 }
 
+function getStatusLabel(status: string): string {
+  switch (status.toLowerCase()) {
+    case 'submitted':
+      return 'New';
+    case 'in-progress':
+    case 'in_progress':
+      return 'In Progress';
+    case 'completed':
+      return 'Completed';
+    case 'rejected':
+      return 'Rejected';
+    case 'under-review':
+    case 'under_review':
+      return 'Under Review';
+    default:
+      return status.charAt(0).toUpperCase() + status.slice(1);
+  }
+}
+
+function getStatusStyle(status: string): string {
+  switch (status.toLowerCase()) {
+    case 'submitted':
+      return 'bg-blue-100 dark:bg-blue-900/30';
+    case 'in-progress':
+    case 'in_progress':
+      return 'bg-yellow-100 dark:bg-yellow-900/30';
+    case 'completed':
+      return 'bg-green-100 dark:bg-green-900/30';
+    case 'rejected':
+      return 'bg-red-100 dark:bg-red-900/30';
+    case 'under-review':
+    case 'under_review':
+      return 'bg-purple-100 dark:bg-purple-900/30';
+    default:
+      return 'bg-gray-100 dark:bg-gray-900/30';
+  }
+}
+
+function getStatusTextColor(status: string): string {
+  switch (status.toLowerCase()) {
+    case 'submitted':
+      return 'text-blue-700 dark:text-blue-300';
+    case 'in-progress':
+    case 'in_progress':
+      return 'text-yellow-700 dark:text-yellow-300';
+    case 'completed':
+      return 'text-green-700 dark:text-green-300';
+    case 'rejected':
+      return 'text-red-700 dark:text-red-300';
+    case 'under-review':
+    case 'under_review':
+      return 'text-purple-700 dark:text-purple-300';
+    default:
+      return 'text-gray-700 dark:text-gray-300';
+  }
+}
+
 export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) {
   const userId = useAppSelector(userIdSelector);
   const toggleUpvoteMutation = useToggleUpvoteMutation();
@@ -61,9 +118,16 @@ export function FeatureRequestItem({ featureRequest }: FeatureRequestItemProps) 
         <View className='flex-1'>
           <View className='flex-row items-start justify-between'>
             <View className='flex-1 pr-3'>
-              <Text variant='heading' className='mb-2'>
-                {featureRequest.title}
-              </Text>
+              <View className='mb-2 flex-row items-center'>
+                <Text variant='heading' className='flex-1'>
+                  {featureRequest.title}
+                </Text>
+                <View className={`ml-2 rounded-full px-2 py-1 ${getStatusStyle(featureRequest.status)}`}>
+                  <Text variant='caption1' className={`font-medium ${getStatusTextColor(featureRequest.status)}`}>
+                    {getStatusLabel(featureRequest.status)}
+                  </Text>
+                </View>
+              </View>
             </View>
             <View className='ml-3'>
               <Button
