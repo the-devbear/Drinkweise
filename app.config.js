@@ -19,6 +19,8 @@ export default ({ config }) => ({
     'expo-router',
     'expo-apple-authentication',
     'expo-localization',
+    'expo-web-browser',
+    'expo-font',
     [
       '@react-native-google-signin/google-signin',
       {
