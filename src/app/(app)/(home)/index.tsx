@@ -133,7 +133,6 @@ export default function HomePage() {
       <FlashList
         data={data?.pages.flat() ?? []}
         className='py-4'
-        estimatedItemSize={200}
         onRefresh={refetch}
         refreshing={isRefetching}
         renderItem={({ item }) => (

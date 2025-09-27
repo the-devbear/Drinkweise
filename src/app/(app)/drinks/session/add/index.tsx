@@ -150,7 +150,6 @@ export default function AddDrinkPage() {
       <FlashList
         data={drinks}
         keyExtractor={(item) => item.id}
-        estimatedItemSize={84}
         keyboardShouldPersistTaps='handled'
         keyboardDismissMode='on-drag'
         contentContainerStyle={{ paddingBottom: 50 }}

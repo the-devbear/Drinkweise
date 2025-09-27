@@ -190,7 +190,6 @@ export default function ProfilePage() {
       <FlashList
         className='flex-1 pb-16'
         data={data?.pages.flat() ?? []}
-        estimatedItemSize={200}
         refreshing={isLoading}
         onRefresh={() => {
           refetchSessions();
