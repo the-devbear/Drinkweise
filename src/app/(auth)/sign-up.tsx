@@ -22,11 +22,12 @@ cssInterop(Ionicons, {
 
 const signUpSchema = z.object({
   email: z
-    .string({ required_error: 'Email is required' })
-    .min(1, 'Email is required')
-    .email('Invalid email format'),
+    .email({ error: (issue) => (issue.input === undefined ? 'Email is required' : issue.message) })
+    .min(1, 'Email is required'),
   password: z
-    .string({ required_error: 'Password is required' })
+    .string({
+      error: (issue) => (issue.input === undefined ? 'Password is required' : issue.message),
+    })
     .min(1, 'Password is required')
     .min(8, 'Password must be at least 8 characters long'),
 });

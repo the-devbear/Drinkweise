@@ -22,10 +22,13 @@ cssInterop(Ionicons, {
 
 const signInSchema = z.object({
   email: z
-    .string({ required_error: 'Email is required' })
-    .min(1, 'Email is required')
-    .email('Invalid email format'),
-  password: z.string({ required_error: 'Password is required' }).min(1, 'Password is required'),
+    .email({ error: (issue) => (issue.input === undefined ? 'Email is required' : issue.message) })
+    .min(1, 'Email is required'),
+  password: z
+    .string({
+      error: (issue) => (issue.input === undefined ? 'Password is required' : issue.message),
+    })
+    .min(1, 'Password is required'),
 });
 
 export default function SignInPage() {

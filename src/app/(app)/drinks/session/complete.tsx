@@ -23,8 +23,11 @@ import { z } from 'zod';
 
 const completeDrinkSessionSchema = z.object({
   name: z
-    .string({ required_error: 'Name is required' })
-    .min(1, 'Name is required')
+    .string({ error: (issue) => (issue.input === undefined ? 'Name is required' : issue.message) })
+    .refine(
+      (value) => value.trim().length === value.length,
+      'Name can not contain leading or trailing spaces'
+    )
     .max(255, 'Name is too long, max 255 characters'),
   note: z.string().max(500, 'Note is too long, max 500 characters').optional(),
 });

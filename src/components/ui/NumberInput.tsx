@@ -45,7 +45,7 @@ const NumberInput = forwardRef<RNTextInput, NumberInputProps>(
 
     const handleChangeText: (value: string) => void = useCallback(
       (value: string) => {
-        if (value === '') {
+        if (value.trim() === '') {
           onValueChange?.(undefined);
           setDisplayValue('');
           return;
