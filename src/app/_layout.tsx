@@ -13,7 +13,7 @@ import {
   shouldDehydrateQuery,
 } from '@drinkweise/lib/utils/query/tanstack-query.config';
 import { AuthProvider } from '@drinkweise/providers/AuthProvider';
-import { rootStore } from '@drinkweise/store';
+import { rootStore, useAppSelector } from '@drinkweise/store';
 import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
@@ -40,9 +40,10 @@ SplashScreen.setOptions({
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
     shouldPlaySound: false,
     shouldSetBadge: false,
+    shouldShowList: false,
   }),
 });
 
@@ -101,11 +102,7 @@ export default function RootLayout() {
                 <ActionSheetProvider>
                   <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
                     <AuthProvider>
-                      <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name='(auth)' />
-                        <Stack.Screen name='(app)' />
-                        <Stack.Screen name='onboarding' />
-                      </Stack>
+                      <AuthLayout />
                     </AuthProvider>
                   </NavThemeProvider>
                 </ActionSheetProvider>
@@ -115,5 +112,24 @@ export default function RootLayout() {
         </KeyboardProvider>
       </GestureHandlerRootView>
     </>
+  );
+}
+
+function AuthLayout() {
+  const isSignedIn = useAppSelector((state) => !!state.user.user);
+  const completedOnboarding = useAppSelector((state) => state.user.user?.hasCompletedOnboarding);
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isSignedIn && completedOnboarding === true}>
+        <Stack.Screen name='(app)' />
+      </Stack.Protected>
+      <Stack.Protected guard={isSignedIn && !completedOnboarding}>
+        <Stack.Screen name='onboarding' />
+      </Stack.Protected>
+      <Stack.Protected guard={!isSignedIn}>
+        <Stack.Screen name='(auth)' />
+      </Stack.Protected>
+    </Stack>
   );
 }

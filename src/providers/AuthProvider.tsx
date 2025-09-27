@@ -1,14 +1,12 @@
 import { supabase } from '@drinkweise/lib/supabase';
 import { useAppDispatch, useAppSelector } from '@drinkweise/store';
 import {
-  userSelector,
   supabaseSignOutAction,
   updateUserSessionAction,
   userSessionSelector,
 } from '@drinkweise/store/user';
 import { useNetInfo } from '@react-native-community/netinfo';
 import { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { useRouter, useSegments } from 'expo-router';
 import React, { useEffect, useCallback, useRef } from 'react';
 import { AppState, AppStateStatus } from 'react-native';
 
@@ -48,11 +46,8 @@ const useInitializeSupabaseSession = () => {
 };
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const router = useRouter();
   const dispatch = useAppDispatch();
-  const segments = useSegments();
   const { isInternetReachable } = useNetInfo();
-  const user = useAppSelector(userSelector);
 
   const handleAuthStateChange = useCallback(
     (event: AuthChangeEvent, session: Session | null) => {
@@ -120,28 +115,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, [isInternetReachable, handleAuthStateChange, handleAppStateChange]);
 
   useInitializeSupabaseSession();
-
-  useEffect(() => {
-    const isAuthRoute = segments[0] === '(auth)';
-    const isOnboardingRoute = segments[0] === 'onboarding';
-
-    if (!user && !isAuthRoute) {
-      console.log('[ROUTE] Redirecting to sign-in (no user) ');
-      router.replace('/(auth)/sign-in');
-      return;
-    }
-
-    if (user && !user.hasCompletedOnboarding) {
-      console.log('[ROUTE] User needs to complete onboarding');
-      router.replace('/onboarding');
-      return;
-    }
-
-    if (user && (isAuthRoute || isOnboardingRoute)) {
-      console.log('[ROUTE] Redirecting to home (user already signed in)');
-      router.replace('/');
-    }
-  }, [router, user, segments]);
 
   return <>{children}</>;
 }
