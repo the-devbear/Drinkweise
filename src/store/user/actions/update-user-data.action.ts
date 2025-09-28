@@ -28,7 +28,7 @@ export const updateUserDataAction = createAsyncThunk<
     return rejectWithValue(result.error);
   }
 
-  queryClient.invalidateQueries({
+  await queryClient.invalidateQueries({
     predicate: ({ queryKey }) => queryKey.findIndex((key) => key === userId) !== -1,
   });
 

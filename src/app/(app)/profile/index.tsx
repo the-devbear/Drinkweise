@@ -43,9 +43,9 @@ export default function ProfilePage() {
         <ErrorDisplay
           message={error.message}
           isRetrying={isFetchingNextPage}
-          onRetry={() => {
-            refetchSessions();
-            refetchSessionCount();
+          onRetry={async () => {
+            await refetchSessions();
+            await refetchSessionCount();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -103,9 +103,9 @@ export default function ProfilePage() {
         <ErrorDisplay
           message={error.message}
           isRetrying={isFetchingNextPage}
-          onRetry={() => {
-            refetchSessions();
-            refetchSessionCount();
+          onRetry={async () => {
+            await refetchSessions();
+            await refetchSessionCount();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -190,11 +190,10 @@ export default function ProfilePage() {
       <FlashList
         className='flex-1 pb-16'
         data={data?.pages.flat() ?? []}
-        estimatedItemSize={200}
         refreshing={isLoading}
-        onRefresh={() => {
-          refetchSessions();
-          refetchSessionCount();
+        onRefresh={async () => {
+          await refetchSessions();
+          await refetchSessionCount();
         }}
         ListHeaderComponent={
           <View>
@@ -228,9 +227,9 @@ export default function ProfilePage() {
         contentContainerStyle={{ paddingBottom: 20 }}
         ListEmptyComponent={renderListEmpty}
         ListFooterComponent={renderListFooter}
-        onEndReached={() => {
+        onEndReached={async () => {
           if (hasNextPage && !isFetchNextPageError && !isFetchingNextPage) {
-            fetchNextPage();
+            await fetchNextPage();
           }
         }}
       />

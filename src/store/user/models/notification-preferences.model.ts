@@ -18,7 +18,7 @@ export const notificationPreferencesSchema = z.preprocess(
       case 'string': {
         try {
           return JSON.parse(value as string);
-        } catch (error) {
+        } catch (_) {
           console.error(`Failed to parse JSON string: ${value}`);
           return {};
         }

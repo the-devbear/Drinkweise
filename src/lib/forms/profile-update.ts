@@ -10,7 +10,7 @@ export type ProfileUpdateFormData = UserDetailsFormData;
 
 export function useProfileUpdateForm() {
   const user = useAppSelector(userSelector);
-  return useForm({
+  return useForm<ProfileUpdateFormData>({
     defaultValues: {
       username: user?.username ?? '',
       height: user?.height === -1 ? undefined : user?.height,

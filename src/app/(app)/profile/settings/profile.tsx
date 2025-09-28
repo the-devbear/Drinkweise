@@ -52,7 +52,7 @@ export default function ProfileSettingsPage() {
   if (!user) {
     return (
       <View className='flex-1 items-center justify-center bg-background p-8'>
-        <Card className='m-6 p-6 '>
+        <Card className='m-6 p-6'>
           <Text variant='title3' className='text-center font-semibold text-destructive'>
             Unable to load profile
           </Text>

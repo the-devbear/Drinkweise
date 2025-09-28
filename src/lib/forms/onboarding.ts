@@ -17,7 +17,7 @@ export type OnboardingFormData = UserDetailsFormData;
 
 export function useOnboardingForm() {
   const user = useAppSelector(userSelector);
-  return useForm({
+  return useForm<OnboardingFormData>({
     defaultValues: {
       username: user?.username.includes('@') ? '' : (user?.username ?? ''),
       height: user?.height === -1 ? undefined : user?.height,

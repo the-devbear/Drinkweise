@@ -152,7 +152,6 @@ export default function SessionPage() {
         <FlashList
           contentContainerClassName='pb-10'
           data={drinks}
-          estimatedItemSize={250}
           ListHeaderComponent={
             <BACLineChart className='pt-4' bacDataPoints={bacDataPoints} showCurrentTimeIndicator />
           }

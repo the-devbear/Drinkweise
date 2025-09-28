@@ -47,7 +47,7 @@ export const completeDrinkSessionAction = createAsyncThunk<
       return rejectWithValue(serializePostgrestError(error));
     }
 
-    queryClient.invalidateQueries({
+    await queryClient.invalidateQueries({
       queryKey: userId ? [SESSIONS_QUERY_KEY, userId] : [SESSIONS_QUERY_KEY],
     });
   }

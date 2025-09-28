@@ -47,6 +47,7 @@ export function CompleteOnboardingStep({ isActive }: { isActive: boolean }) {
 
   const openBrowser = useCallback((path: string) => {
     // TODO: This URL is going to be changed when we deploy the app
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     WebBrowser.openBrowserAsync(`https://sipcious.vercel.app/${path}`, {
       dismissButtonStyle: 'done',
       enableBarCollapsing: true,

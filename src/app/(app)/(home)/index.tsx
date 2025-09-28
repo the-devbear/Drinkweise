@@ -45,8 +45,8 @@ export default function HomePage() {
         <ErrorDisplay
           message={error.message}
           isRetrying={isFetchingNextPage}
-          onRetry={() => {
-            refetch();
+          onRetry={async () => {
+            await refetch();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -102,8 +102,8 @@ export default function HomePage() {
         <ErrorDisplay
           message={error.message}
           isRetrying={isFetchingNextPage}
-          onRetry={() => {
-            refetch();
+          onRetry={async () => {
+            await refetch();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -133,7 +133,6 @@ export default function HomePage() {
       <FlashList
         data={data?.pages.flat() ?? []}
         className='py-4'
-        estimatedItemSize={200}
         onRefresh={refetch}
         refreshing={isRefetching}
         renderItem={({ item }) => (
@@ -152,9 +151,9 @@ export default function HomePage() {
         ListHeaderComponent={renderListHeader}
         ListEmptyComponent={renderListEmpty}
         ListFooterComponent={renderListFooter}
-        onEndReached={() => {
+        onEndReached={async () => {
           if (hasNextPage && !isFetchNextPageError && !isFetchingNextPage) {
-            fetchNextPage();
+            await fetchNextPage();
           }
         }}
       />
