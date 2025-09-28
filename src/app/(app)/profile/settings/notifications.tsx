@@ -93,6 +93,7 @@ export default function NotificationsSettingsPage() {
       setNotificationsPermission(status);
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     requestPermission();
 
     // We want to check the status again when the users comes back from the settings

@@ -54,9 +54,9 @@ export default function DrinksPage() {
             {
               text: 'Open Settings',
               isPreferred: true,
-              onPress: () => {
+              onPress: async () => {
                 setAlreadyAsked(true);
-                Linking.openSettings();
+                await Linking.openSettings();
                 dispatch(startDrinkSessionAction());
               },
             },

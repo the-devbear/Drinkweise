@@ -120,7 +120,7 @@ export default function CreateDrinkPage() {
   useEffect(() => {
     const subscription = CameraView.onModernBarcodeScanned(async (event) => {
       setValue('barcode', event.data);
-      CameraView.dismissScanner();
+      await CameraView.dismissScanner();
     });
     return () => {
       subscription.remove();
@@ -143,7 +143,7 @@ export default function CreateDrinkPage() {
     }
 
     if (permission.canAskAgain) {
-      requestPermission();
+      await requestPermission();
     } else {
       Alert.alert(
         'Camera Permission Required',
@@ -155,8 +155,8 @@ export default function CreateDrinkPage() {
           },
           {
             text: 'Open Settings',
-            onPress: () => {
-              Linking.openSettings();
+            onPress: async () => {
+              await Linking.openSettings();
             },
           },
         ]

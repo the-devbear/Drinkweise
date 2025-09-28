@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 const { hairlineWidth, platformSelect } = require('nativewind/theme');
 
 /** @type {import('tailwindcss').Config} */

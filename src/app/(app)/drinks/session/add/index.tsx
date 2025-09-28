@@ -29,13 +29,13 @@ export default function AddDrinkPage() {
     debounceSearch
   );
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     if (search.length === 0) {
-      infiniteDrinksQuery.refetch();
+      await infiniteDrinksQuery.refetch();
       return;
     }
     if (search.length > 0 && isSearchQueryActive) {
-      searchQuery.refetch();
+      await searchQuery.refetch();
     }
   }, [search, isSearchQueryActive, infiniteDrinksQuery, searchQuery]);
 
@@ -61,8 +61,8 @@ export default function AddDrinkPage() {
       return (
         <ErrorDisplay
           message={infiniteDrinksQuery.error.message}
-          onRetry={() => {
-            infiniteDrinksQuery.fetchNextPage();
+          onRetry={async () => {
+            await infiniteDrinksQuery.fetchNextPage();
           }}
           isRetrying={infiniteDrinksQuery.isFetchingNextPage}
           canRetry={infiniteDrinksQuery.errorUpdateCount < 2}
@@ -160,14 +160,14 @@ export default function AddDrinkPage() {
         ListHeaderComponent={renderListHeader}
         ListFooterComponent={renderListFooter}
         ListEmptyComponent={renderListEmpty}
-        onEndReached={() => {
+        onEndReached={async () => {
           if (
             search.length === 0 &&
             !infiniteDrinksQuery.isError &&
             infiniteDrinksQuery.hasNextPage &&
             !infiniteDrinksQuery.isFetchingNextPage
           ) {
-            infiniteDrinksQuery.fetchNextPage();
+            await infiniteDrinksQuery.fetchNextPage();
           }
         }}
       />

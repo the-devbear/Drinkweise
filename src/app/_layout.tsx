@@ -18,7 +18,10 @@ import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import NetInfo from '@react-native-community/netinfo';
-import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
+import {
+  type NavigationContainerRef,
+  ThemeProvider as NavThemeProvider,
+} from '@react-navigation/native';
 import { onlineManager } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import * as Notifications from 'expo-notifications';
@@ -31,6 +34,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@drinkweise/components/css-interopts';
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
@@ -62,7 +66,7 @@ export {
 export default function RootLayout() {
   const navigationRef = useNavigationContainerRef();
   useReactQueryDevTools(queryClient);
-  useReactNavigationDevTools(navigationRef);
+  useReactNavigationDevTools(navigationRef as React.RefObject<NavigationContainerRef<object>>);
   useMMKVDevTools();
 
   useInitialAndroidBarSync();
@@ -71,12 +75,13 @@ export default function RootLayout() {
   React.useEffect(() => {
     // Set small timeout, so the splash screen doesn't flicker.
     // Also so the user doesn't get to see the home screen for a second before maybe being redirected
-    new Promise((resolve) => setTimeout(resolve, 250)).then(() => {
-      SplashScreen.hide();
-    });
+    new Promise((resolve) => setTimeout(resolve, 250))
+      .then(SplashScreen.hide)
+      .catch((error) => console.error('[SPLASHSCREEN] This should never happen', error));
 
     // We are currently only using the badge count for the reminder notifications, so
     // we can safely reset it here.
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     resetBadgeCount();
   }, []);
 

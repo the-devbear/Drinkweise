@@ -39,7 +39,8 @@ const useInitializeSupabaseSession = () => {
         } else {
           console.log('[SUPABASE]: Supabase session initialized successfully');
         }
-      });
+      })
+      .catch((error) => console.error('[SUPABASE]: Failed to set Supabase session:', error));
 
     initialized.current = true;
   }, [session]);
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   // Handle app state changes (foreground/background)
   const handleAppStateChange = useCallback(
-    (state: AppStateStatus) => {
+    async (state: AppStateStatus) => {
       console.log('[APP STATE] State:', state);
       console.log('[APP STATE] Internet reachable:', isInternetReachable);
 
@@ -91,9 +92,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // When the app does not have internet access, Supabase will not be able to refresh the token
       // otherwise, a sign out event would be triggered
       if (state === 'active' && isInternetReachable) {
-        supabase.auth.startAutoRefresh();
+        await supabase.auth.startAutoRefresh();
       } else {
-        supabase.auth.stopAutoRefresh();
+        await supabase.auth.stopAutoRefresh();
       }
     },
     [isInternetReachable]
