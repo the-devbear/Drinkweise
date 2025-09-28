@@ -15,9 +15,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Remove yarn.lock
-        run: rm -f yarn.lock
-
       - name: Code Review GPT
         uses: mattzcarey/shippie@v0.20.0
         with:
