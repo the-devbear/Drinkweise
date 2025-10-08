@@ -3,6 +3,8 @@ import 'expo-dev-client';
 import { useMMKVDevTools } from '@dev-plugins/react-native-mmkv';
 import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 import { useReactQueryDevTools } from '@dev-plugins/react-query';
+import { useNotificationRoutingObserver } from '@drinkweise/lib/notifications/hooks/use-notification-routing-observer';
+import { resetBadgeCount } from '@drinkweise/lib/notifications/session-reminder-notifications';
 import { useColorScheme, useInitialAndroidBarSync } from '@drinkweise/lib/useColorScheme';
 import { queryClient } from '@drinkweise/lib/utils/query/query-client';
 import {
@@ -11,14 +13,18 @@ import {
   shouldDehydrateQuery,
 } from '@drinkweise/lib/utils/query/tanstack-query.config';
 import { AuthProvider } from '@drinkweise/providers/AuthProvider';
-import { rootStore } from '@drinkweise/store';
+import { rootStore, useAppSelector } from '@drinkweise/store';
 import { NAV_THEME } from '@drinkweise/theme';
 import { ActionSheetProvider } from '@expo/react-native-action-sheet';
 import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import NetInfo from '@react-native-community/netinfo';
-import { ThemeProvider as NavThemeProvider } from '@react-navigation/native';
+import {
+  type NavigationContainerRef,
+  ThemeProvider as NavThemeProvider,
+} from '@react-navigation/native';
 import { onlineManager } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import * as Notifications from 'expo-notifications';
 import { Stack, useNavigationContainerRef } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -28,11 +34,21 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { Provider as ReduxProvider } from 'react-redux';
 import '@drinkweise/components/css-interopts';
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 SplashScreen.preventAutoHideAsync();
 
 SplashScreen.setOptions({
   duration: 500,
   fade: true,
+});
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowBanner: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowList: false,
+  }),
 });
 
 onlineManager.setEventListener((setOnline) => {
@@ -50,17 +66,23 @@ export {
 export default function RootLayout() {
   const navigationRef = useNavigationContainerRef();
   useReactQueryDevTools(queryClient);
-  useReactNavigationDevTools(navigationRef);
+  useReactNavigationDevTools(navigationRef as React.RefObject<NavigationContainerRef<object>>);
   useMMKVDevTools();
 
   useInitialAndroidBarSync();
+  useNotificationRoutingObserver();
   const { isDarkColorScheme } = useColorScheme();
   React.useEffect(() => {
     // Set small timeout, so the splash screen doesn't flicker.
     // Also so the user doesn't get to see the home screen for a second before maybe being redirected
-    new Promise((resolve) => setTimeout(resolve, 250)).then(() => {
-      SplashScreen.hide();
-    });
+    new Promise((resolve) => setTimeout(resolve, 250))
+      .then(SplashScreen.hide)
+      .catch((error) => console.error('[SPLASHSCREEN] This should never happen', error));
+
+    // We are currently only using the badge count for the reminder notifications, so
+    // we can safely reset it here.
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+    resetBadgeCount();
   }, []);
 
   return (
@@ -85,11 +107,7 @@ export default function RootLayout() {
                 <ActionSheetProvider>
                   <NavThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
                     <AuthProvider>
-                      <Stack initialRouteName='(auth)' screenOptions={{ headerShown: false }}>
-                        <Stack.Screen name='(auth)' />
-                        <Stack.Screen name='(app)' />
-                        <Stack.Screen name='onboarding' />
-                      </Stack>
+                      <AuthLayout />
                     </AuthProvider>
                   </NavThemeProvider>
                 </ActionSheetProvider>
@@ -99,5 +117,24 @@ export default function RootLayout() {
         </KeyboardProvider>
       </GestureHandlerRootView>
     </>
+  );
+}
+
+function AuthLayout() {
+  const isSignedIn = useAppSelector((state) => !!state.user.user);
+  const completedOnboarding = useAppSelector((state) => state.user.user?.hasCompletedOnboarding);
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isSignedIn && completedOnboarding === true}>
+        <Stack.Screen name='(app)' />
+      </Stack.Protected>
+      <Stack.Protected guard={isSignedIn && !completedOnboarding}>
+        <Stack.Screen name='onboarding' />
+      </Stack.Protected>
+      <Stack.Protected guard={!isSignedIn}>
+        <Stack.Screen name='(auth)' />
+      </Stack.Protected>
+    </Stack>
   );
 }

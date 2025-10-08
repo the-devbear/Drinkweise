@@ -61,6 +61,12 @@ export default [
           },
         },
       ],
+      '@typescript-eslint/no-confusing-void-expression': [
+        'warn',
+        {
+          ignoreArrowShorthand: true,
+        },
+      ],
     },
   },
   {

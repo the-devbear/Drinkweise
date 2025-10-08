@@ -1,6 +1,7 @@
 import { storage } from '@drinkweise/lib/storage/mmkv';
 import { now } from '@drinkweise/lib/utils/date/now';
 import { createSlice, isAnyOf, PayloadAction } from '@reduxjs/toolkit';
+import { isBefore } from 'date-fns';
 
 import { completeDrinkSessionAction } from './actions/complete-drink-session.action';
 import { drinkSessionSlice } from './drink-session.slice';
@@ -119,7 +120,7 @@ export const drinkSessionStateSlice = createSlice({
     updateConsumption: (
       state,
       {
-        payload,
+        payload: { consumptionIndex, drinkId, updatedConsumption },
       }: PayloadAction<{
         drinkId: string;
         consumptionIndex: number;
@@ -130,19 +131,23 @@ export const drinkSessionStateSlice = createSlice({
         return;
       }
 
-      const drink = state.drinks.find((currentDrink) => currentDrink.id === payload.drinkId);
+      const drink = state.drinks.find((currentDrink) => currentDrink.id === drinkId);
       if (!drink) {
         return;
       }
 
-      const consumption = drink.consumptions[payload.consumptionIndex];
+      const consumption = drink.consumptions[consumptionIndex];
       if (!consumption) {
         return;
       }
 
-      drink.consumptions[payload.consumptionIndex] = {
+      if (updatedConsumption.startTime && isBefore(updatedConsumption.startTime, state.startTime)) {
+        state.startTime = updatedConsumption.startTime;
+      }
+
+      drink.consumptions[consumptionIndex] = {
         ...consumption,
-        ...payload.updatedConsumption,
+        ...updatedConsumption,
       };
     },
     finishConsumption: (
@@ -234,6 +239,8 @@ export const drinkSessionStateSlice = createSlice({
     isDrinkSessionActiveSelector: (state): boolean => state.status === 'active',
     drinksSelector: (state) => (state.status === 'active' ? state.drinks : undefined),
     activeDrinkSessionSelector: (state) => (state.status === 'active' ? state : undefined),
+    drinkSessionStartTimeSelector: (state) =>
+      state.status === 'active' ? state.startTime : undefined,
   },
 });
 
@@ -251,5 +258,9 @@ export const {
   updateSessionName: updateSessionNameAction,
   updateSessionNote: updateSessionNoteAction,
 } = drinkSessionStateSlice.actions;
-export const { isDrinkSessionActiveSelector, drinksSelector, activeDrinkSessionSelector } =
-  drinkSessionStateSlice.selectors;
+export const {
+  isDrinkSessionActiveSelector,
+  drinksSelector,
+  activeDrinkSessionSelector,
+  drinkSessionStartTimeSelector,
+} = drinkSessionStateSlice.selectors;

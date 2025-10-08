@@ -21,7 +21,7 @@ export const TimelinePoint = memo(function TimelinePoint({
         </View>
         {drinks.map((consumption) => (
           <View key={consumption.id} className='mb-3 rounded-lg bg-gray-50 p-3 dark:bg-gray-800'>
-            <View className=' flex-row items-center justify-between'>
+            <View className='flex-row items-center justify-between'>
               <View className='flex-1 flex-row items-center'>
                 <Avatar className='mr-2' alt=''>
                   <DrinkAvatarFallback

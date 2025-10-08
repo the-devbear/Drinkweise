@@ -1,12 +1,18 @@
 import { storage } from '@drinkweise/lib/storage/mmkv';
 import { signInWithAppleAction } from '@drinkweise/store/user/actions/sign-in-with-apple.action';
 import { signInWithGoogleAction } from '@drinkweise/store/user/actions/sign-in-with-google.action';
-import { createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
+import { createSelector, createSlice, isAnyOf, type PayloadAction } from '@reduxjs/toolkit';
 
 import { completeOnboardingAction } from './actions/complete-onboarding.action';
 import { signInWithPasswordAction } from './actions/sign-in-with-password.action';
 import { signOutAction } from './actions/sign-out.action';
 import { signUpWithPasswordAction } from './actions/sign-up-with-password.action';
+import { updateUserDataAction } from './actions/update-user-data.action';
+import {
+  defaultNotificationPreferences,
+  type NotificationPreferencesModel,
+  notificationPreferencesSchema,
+} from './models/notification-preferences.model';
 import type { SessionModel } from './models/session.model';
 import { initialUserState, type UserState } from './models/user-state.model';
 import { userSlice } from './user.slice';
@@ -40,6 +46,12 @@ export const userStateSlice = createSlice({
       state.session = action.payload.session;
     },
     supabaseSignOut: () => initialUserState,
+    updateNotificationPreferences: (state, action: PayloadAction<NotificationPreferencesModel>) => {
+      if (state.status !== 'signedIn') {
+        return;
+      }
+      state.user.notificationPreferences = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -56,6 +68,16 @@ export const userStateSlice = createSlice({
           state.user.hasCompletedOnboarding = true;
         }
       )
+      .addCase(updateUserDataAction.fulfilled, (state, { payload }) => {
+        if (state.status === 'signedOut') {
+          return state;
+        }
+
+        state.user = {
+          ...state.user,
+          ...payload,
+        };
+      })
       .addMatcher(
         isAnyOf(
           signInWithPasswordAction.fulfilled,
@@ -86,12 +108,26 @@ export const userStateSlice = createSlice({
     userSessionSelector: (state) => state.session,
     userWeightSelector: (state) => state.user?.weight,
     userIdSelector: (state) => state.user?.id,
+    userNotificationPreferencesSelector: createSelector(
+      (userState: UserState) => userState.user?.notificationPreferences,
+      (notificationPreferences) => {
+        if (!notificationPreferences) return defaultNotificationPreferences;
+        const parsed = notificationPreferencesSchema.safeParse(notificationPreferences);
+        return parsed.success ? parsed.data : defaultNotificationPreferences;
+      }
+    ),
   },
 });
 
 export const {
   updateUserSession: updateUserSessionAction,
   supabaseSignOut: supabaseSignOutAction,
+  updateNotificationPreferences: updateNotificationPreferencesAction,
 } = userStateSlice.actions;
-export const { userSelector, userSessionSelector, userWeightSelector, userIdSelector } =
-  userStateSlice.selectors;
+export const {
+  userSelector,
+  userSessionSelector,
+  userWeightSelector,
+  userIdSelector,
+  userNotificationPreferencesSelector,
+} = userStateSlice.selectors;

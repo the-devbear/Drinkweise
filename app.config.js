@@ -19,6 +19,8 @@ export default ({ config }) => ({
     'expo-router',
     'expo-apple-authentication',
     'expo-localization',
+    'expo-web-browser',
+    'expo-font',
     [
       '@react-native-google-signin/google-signin',
       {
@@ -47,6 +49,13 @@ export default ({ config }) => ({
       'expo-camera',
       {
         cameraPermission: 'Allow $(PRODUCT_NAME) to access your camera, so you can scan barcodes.',
+      },
+    ],
+    'expo-background-task',
+    [
+      'expo-notifications',
+      {
+        enableBackgroundRemoteNotifications: true,
       },
     ],
   ],

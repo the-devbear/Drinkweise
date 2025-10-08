@@ -15,6 +15,7 @@ import { memo, useCallback, useMemo } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 interface SessionListItemProps {
+  className?: string;
   id: string;
   name: string;
   note?: string;
@@ -24,6 +25,7 @@ interface SessionListItemProps {
 }
 
 export const SessionListItem = memo(function SessionListItem({
+  className,
   id,
   name,
   note,
@@ -47,7 +49,10 @@ export const SessionListItem = memo(function SessionListItem({
   }, [startTime, endTime]);
 
   return (
-    <TouchableOpacity className='mb-4' activeOpacity={0.7} onPress={() => navigateToDetail(id)}>
+    <TouchableOpacity
+      className={cn('mb-4', className)}
+      activeOpacity={0.7}
+      onPress={() => navigateToDetail(id)}>
       <Card>
         <CardHeader className='flex-row items-center justify-between pb-2'>
           <CardTitle className='text-xl'>{name}</CardTitle>

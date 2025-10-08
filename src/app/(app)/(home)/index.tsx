@@ -45,8 +45,8 @@ export default function HomePage() {
         <ErrorDisplay
           message={error.message}
           isRetrying={isFetchingNextPage}
-          onRetry={() => {
-            refetch();
+          onRetry={async () => {
+            await refetch();
           }}
           canRetry={errorUpdateCount < 2}
         />
@@ -54,7 +54,11 @@ export default function HomePage() {
     }
 
     if (isLoading) {
-      return null;
+      return (
+        <View className='flex-1 items-center justify-center py-10'>
+          <ActivityIndicator size='large' />
+        </View>
+      );
     }
 
     return (
@@ -72,7 +76,7 @@ export default function HomePage() {
           }}>
           <Text>Create Session</Text>
         </Button>
-        <Text variant='caption2' className='mt-2 text-center text-muted'>
+        <Text variant='caption2' className='mt-5 text-center text-muted'>
           Tracking your alcohol consumption is for informational purposes only. Please drink
           responsibly.
         </Text>
@@ -98,14 +102,15 @@ export default function HomePage() {
         <ErrorDisplay
           message={error.message}
           isRetrying={isFetchingNextPage}
-          onRetry={() => {
-            refetch();
+          onRetry={async () => {
+            await refetch();
           }}
           canRetry={errorUpdateCount < 2}
         />
       );
     }
-    if (!hasNextPage && !!data && data?.pageParams.length > 1) {
+    const hasLoadedSessions = (data?.pages.flat().length ?? 0) > 0;
+    if (!hasNextPage && !!data && hasLoadedSessions) {
       return (
         <Text variant='footnote' className='py-4 text-center text-muted'>
           No more sessions to load
@@ -128,7 +133,6 @@ export default function HomePage() {
       <FlashList
         data={data?.pages.flat() ?? []}
         className='py-4'
-        estimatedItemSize={200}
         onRefresh={refetch}
         refreshing={isRefetching}
         renderItem={({ item }) => (
@@ -147,9 +151,9 @@ export default function HomePage() {
         ListHeaderComponent={renderListHeader}
         ListEmptyComponent={renderListEmpty}
         ListFooterComponent={renderListFooter}
-        onEndReached={() => {
+        onEndReached={async () => {
           if (hasNextPage && !isFetchNextPageError && !isFetchingNextPage) {
-            fetchNextPage();
+            await fetchNextPage();
           }
         }}
       />

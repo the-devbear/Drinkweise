@@ -24,27 +24,25 @@ import { z } from 'zod';
 
 const createDrinkSchema = z.object({
   name: z
-    .string({ required_error: 'Name is required' })
+    .string({
+      error: (issue) => (issue.input === undefined ? 'Name is required' : issue.message),
+    })
     .min(1, 'Name is required')
     .max(100, 'Name must be less than 100 characters'),
-  type: z.enum(
-    [
-      DrinkTypeEnum.BEER,
-      DrinkTypeEnum.RED_WINE,
-      DrinkTypeEnum.WHITE_WINE,
-      DrinkTypeEnum.SPIRIT,
-      DrinkTypeEnum.OTHER,
-    ],
-    {
-      required_error: 'Please select a drink type',
-    }
-  ),
+  type: z.enum(DrinkTypeEnum, {
+    error: (issue) => (issue.input === undefined ? 'Please select a drink type' : issue.message),
+  }),
   alcohol: z
-    .number({ required_error: 'Alcohol percentage is required' })
+    .number({
+      error: (issue) =>
+        issue.input === undefined ? 'Alcohol percentage is required' : issue.message,
+    })
     .min(0, 'Alcohol percentage must be at least 0')
     .max(100, 'Alcohol percentage cannot exceed 100'),
   volume: z
-    .number({ required_error: 'Volume is required' })
+    .number({
+      error: (issue) => (issue.input === undefined ? 'Volume is required' : issue.message),
+    })
     .min(1, 'Volume must be at least 1 ml')
     .max(10000, 'Volume cannot exceed 10000 ml'),
   barcode: z.string().optional(),
@@ -111,7 +109,7 @@ export default function CreateDrinkPage() {
           return;
         }
 
-        queryClient.removeQueries({
+        await queryClient.invalidateQueries({
           predicate: ({ queryKey }) => queryKey[0] === SEARCH_DRINKS_QUERY_KEY,
         });
 
@@ -123,7 +121,7 @@ export default function CreateDrinkPage() {
   useEffect(() => {
     const subscription = CameraView.onModernBarcodeScanned(async (event) => {
       setValue('barcode', event.data);
-      CameraView.dismissScanner();
+      await CameraView.dismissScanner();
     });
     return () => {
       subscription.remove();
@@ -146,7 +144,7 @@ export default function CreateDrinkPage() {
     }
 
     if (permission.canAskAgain) {
-      requestPermission();
+      await requestPermission();
     } else {
       Alert.alert(
         'Camera Permission Required',
@@ -158,8 +156,8 @@ export default function CreateDrinkPage() {
           },
           {
             text: 'Open Settings',
-            onPress: () => {
-              Linking.openSettings();
+            onPress: async () => {
+              await Linking.openSettings();
             },
           },
         ]
@@ -222,7 +220,7 @@ export default function CreateDrinkPage() {
                 onValueChange={onChange}
                 errorMessage={error?.message}
                 enterKeyHint='next'
-                onSubmitEditing={() => setFocus('barcode')}
+                onSubmitEditing={() => setFocus('volume')}
                 onBlur={onBlur}
               />
             )}

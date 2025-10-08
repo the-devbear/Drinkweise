@@ -1,3 +1,4 @@
+import type { NotificationPreferencesModel } from './notification-preferences.model';
 import type { Gender } from '../enums/gender';
 
 export interface UserModel {
@@ -8,4 +9,5 @@ export interface UserModel {
   weight: number;
   gender?: Gender;
   hasCompletedOnboarding: boolean;
+  notificationPreferences: NotificationPreferencesModel;
 }

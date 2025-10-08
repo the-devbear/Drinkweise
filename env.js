@@ -1,7 +1,9 @@
 // This file is used to load environment variables from a .env files or EAS Secrets.
 // It needs to be a JavaScript file because it is used in the app.config.js file.
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const z = require('zod');
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const packageJson = require('./package.json');
 const APP_ENV = process.env.EXPO_PUBLIC_APP_ENV ?? 'eas';
 

@@ -1,14 +1,17 @@
 import { authService } from '@drinkweise/api/user';
-import { SerializedAuthError, SerializedPostgrestError } from '@drinkweise/lib/types/redux/errors';
+import type {
+  SerializedAuthError,
+  SerializedPostgrestError,
+} from '@drinkweise/lib/types/redux/errors';
 import {
   serializeAuthError,
   serializePostgrestError,
 } from '@drinkweise/lib/utils/redux/serialize-errors';
-import { createAsyncThunk, miniSerializeError, SerializedError } from '@reduxjs/toolkit';
+import { createAsyncThunk, miniSerializeError, type SerializedError } from '@reduxjs/toolkit';
 import { isAuthError } from '@supabase/supabase-js';
 
-import { SessionModel } from '../models/session.model';
-import { UserModel } from '../models/user.model';
+import type { SessionModel } from '../models/session.model';
+import type { UserModel } from '../models/user.model';
 import { userSlice } from '../user.slice';
 
 export const signUpWithPasswordAction = createAsyncThunk<

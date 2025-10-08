@@ -6,8 +6,8 @@
     "noUncheckedIndexedAccess": true,
     "baseUrl": ".",
     "paths": {
-      "@drinkweise/*": ["./src/*"],
       "@drinkweise/ui/*": ["./src/components/ui/*"],
+      "@drinkweise/*": ["./src/*"],
       "@env": ["./src/lib/environment.js"]
     }
   },
