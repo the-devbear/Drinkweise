@@ -55,7 +55,7 @@ export const SessionListItem = memo(function SessionListItem({
       onPress={() => navigateToDetail(id)}>
       <Card>
         <CardHeader className='flex-row items-center justify-between pb-2'>
-          <CardTitle className='text-xl'>{name}</CardTitle>
+          <CardTitle className='text-xl text-primary'>{name}</CardTitle>
           <Ionicons name='chevron-forward-outline' size={20} className='text-muted' />
         </CardHeader>
         <CardContent
