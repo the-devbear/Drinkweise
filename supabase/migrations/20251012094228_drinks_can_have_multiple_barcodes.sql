@@ -15,7 +15,7 @@ insert into
 select drinks.id, drinks.barcode, drinks.created_at
 from "public"."drinks"
 where
-    "public.drinks".barcode is null;
+    "public"."drinks".barcode is null;
 
 alter table "public"."drinks" drop constraint "drinks_barcode_key";
 
