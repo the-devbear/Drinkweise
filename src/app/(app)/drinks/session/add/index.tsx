@@ -1,5 +1,6 @@
 import { AddDrinkListItem } from '@drinkweise/components/drink-session/add/AddDrinkListItem';
 import { AddDrinkSkeletonItem } from '@drinkweise/components/drink-session/add/AddDrinkSkeletonItem';
+import { BarcodeScannerModal } from '@drinkweise/components/drink-session/add/BarcodeScannerModal';
 import { ErrorDisplay } from '@drinkweise/components/ui/ErrorDisplay';
 import { Text } from '@drinkweise/components/ui/Text';
 import { TextInput } from '@drinkweise/components/ui/TextInput';
@@ -11,18 +12,23 @@ import { Ionicons } from '@expo/vector-icons';
 import { FlashList } from '@shopify/flash-list';
 import { useRouter } from 'expo-router';
 import { useCallback, useState } from 'react';
-import { View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 
 export default function AddDrinkPage() {
+  const [isBarcodeScannerVisible, setIsBarcodeScannerVisible] = useState(false);
   const [search, setSearch] = useState('');
   const debounceSearch = useDebounce(search);
   const router = useRouter();
   const navigateToCreateDrinkPage = useCallback(
     (search: string) => {
-      router.push(`/drinks/session/add/create?name=${search}`);
+      router.push(`/drinks/session/add/create?search=${search}`);
     },
     [router]
   );
+  const handleBarcodeScanned = (data: string) => {
+    setSearch(data);
+    setIsBarcodeScannerVisible(false);
+  };
 
   const { drinks, infiniteDrinksQuery, searchQuery, isSearchQueryActive } = useSearchDrinksQuery(
     search,
@@ -143,9 +149,14 @@ export default function AddDrinkPage() {
         className='bg-card px-4 py-2'
         leftIcon={<Ionicons name='search' className='text-2xl leading-none text-foreground' />}
         variant='card'
-        placeholder='Search...'
+        placeholder='Search by name or barcode'
         onChangeText={setSearch}
         onBlur={() => setSearch(search.trim())}
+        rightIcon={
+          <TouchableOpacity onPress={() => setIsBarcodeScannerVisible(true)}>
+            <Ionicons name='barcode-outline' className='text-2xl leading-none text-foreground' />
+          </TouchableOpacity>
+        }
       />
       <FlashList
         data={drinks}
@@ -170,6 +181,11 @@ export default function AddDrinkPage() {
             await infiniteDrinksQuery.fetchNextPage();
           }
         }}
+      />
+      <BarcodeScannerModal
+        isVisible={isBarcodeScannerVisible}
+        onClose={() => setIsBarcodeScannerVisible(false)}
+        onBarcodeScanned={handleBarcodeScanned}
       />
     </View>
   );

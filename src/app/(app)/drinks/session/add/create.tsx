@@ -1,5 +1,6 @@
 import { drinksService } from '@drinkweise/api/drinks';
 import { mapDrinkTypeToName } from '@drinkweise/lib/shared/map-drink-type-to-name';
+import { isValidBarcode } from '@drinkweise/lib/utils/barcode/is-valid-barcode';
 import { SEARCH_DRINKS_QUERY_KEY } from '@drinkweise/lib/utils/query/keys';
 import { useAppSelector } from '@drinkweise/store';
 import { DrinkTypeEnum } from '@drinkweise/store/drink-session/enums/drink-type.enum';
@@ -49,7 +50,7 @@ const createDrinkSchema = z.object({
 });
 
 export default function CreateDrinkPage() {
-  const { name } = useLocalSearchParams<{ name?: string }>();
+  const { search } = useLocalSearchParams<{ search?: string }>();
   const userId = useAppSelector(userIdSelector);
   const router = useRouter();
   const queryClient = useQueryClient();
@@ -71,9 +72,7 @@ export default function CreateDrinkPage() {
     setError,
     formState: { isSubmitting },
   } = useForm({
-    defaultValues: {
-      name,
-    },
+    defaultValues: search && isValidBarcode(search) ? { barcode: search } : { name: search },
     resolver: zodResolver(createDrinkSchema),
     shouldFocusError: false,
   });
@@ -86,12 +85,14 @@ export default function CreateDrinkPage() {
           return;
         }
 
+        const barcodes = data.barcode ? [data.barcode] : [];
+
         const { error } = await drinksService.createDrink(userId, {
           name: data.name,
           type: data.type,
           alcohol: data.alcohol,
           defaultVolume: data.volume,
-          barcode: data.barcode,
+          barcodes,
         });
 
         if (error) {

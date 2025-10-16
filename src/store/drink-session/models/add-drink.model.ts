@@ -6,5 +6,5 @@ export interface AddDrinkModel {
   type: DrinkType;
   alcohol: number;
   defaultVolume: number;
-  barcode?: string;
+  barcodes: string[];
 }
