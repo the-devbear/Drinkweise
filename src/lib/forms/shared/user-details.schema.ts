@@ -14,7 +14,7 @@ export const userDetailsSchema = z.object({
       error: (issue) =>
         issue.input === undefined
           ? 'A height between 80 and 250cm must be provided'
-          : 'Height must be a numer',
+          : 'Height must be a number',
     })
     .int('Height must be a whole number')
     .min(80, 'Height must be at least 80')

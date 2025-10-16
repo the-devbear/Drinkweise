@@ -79,6 +79,35 @@ export type Database = {
           },
         ]
       }
+      drink_barcodes: {
+        Row: {
+          barcode: string
+          created_at: string
+          drink_id: string
+          id: number
+        }
+        Insert: {
+          barcode: string
+          created_at?: string
+          drink_id: string
+          id?: number
+        }
+        Update: {
+          barcode?: string
+          created_at?: string
+          drink_id?: string
+          id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drink_barcodes_drink_id_fkey"
+            columns: ["drink_id"]
+            isOneToOne: false
+            referencedRelation: "drinks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       drink_sessions: {
         Row: {
           created_at: string
@@ -120,7 +149,6 @@ export type Database = {
       drinks: {
         Row: {
           alcohol: number
-          barcode: string | null
           created_at: string
           created_by: string | null
           default_volume: number
@@ -130,7 +158,6 @@ export type Database = {
         }
         Insert: {
           alcohol: number
-          barcode?: string | null
           created_at?: string
           created_by?: string | null
           default_volume: number
@@ -140,7 +167,6 @@ export type Database = {
         }
         Update: {
           alcohol?: number
-          barcode?: string | null
           created_at?: string
           created_by?: string | null
           default_volume?: number
