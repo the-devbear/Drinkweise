@@ -9,8 +9,10 @@ import type { PostgrestError } from '@supabase/supabase-js';
 
 type DrinkSelectResult = Pick<
   Tables<'drinks'>,
-  'id' | 'name' | 'default_volume' | 'alcohol' | 'barcode' | 'type'
->;
+  'id' | 'name' | 'default_volume' | 'alcohol' | 'type'
+> & {
+  barcodes: { barcode: string }[];
+};
 
 export class DrinksService implements IDrinkService {
   public readonly DEFAULT_PAGE_SIZE = 20;
@@ -59,30 +61,66 @@ export class DrinksService implements IDrinkService {
     return { value: data.map(this.mapDrink) };
   }
 
-  public async createDrink(
+  public async searchDrinksByBarcode(
     userId: string,
-    drink: Omit<AddDrinkModel, 'id'>
-  ): Result<void, PostgrestError> {
-    const { error } = await this.supabase.from('drinks').insert({
-      name: drink.name,
-      type: drink.type,
-      alcohol: drink.alcohol,
-      default_volume: drink.defaultVolume,
-      barcode: drink.barcode ?? null,
-      created_by: userId,
-    });
+    barcode: string
+  ): Result<AddDrinkModel[], PostgrestError> {
+    const { data, error } = await this.createDefaultQuery(userId, true).eq(
+      'barcodes.barcode',
+      barcode
+    );
 
     if (error) {
       return { error };
     }
 
+    if (!data) {
+      return { value: [] };
+    }
+
+    return { value: data.map(this.mapDrink) };
+  }
+
+  public async createDrink(
+    userId: string,
+    drink: Omit<AddDrinkModel, 'id'>
+  ): Result<void, PostgrestError> {
+    const { data, error } = await this.supabase
+      .from('drinks')
+      .insert({
+        name: drink.name,
+        type: drink.type,
+        alcohol: drink.alcohol,
+        default_volume: drink.defaultVolume,
+        created_by: userId,
+      })
+      .select('id')
+      .single();
+
+    if (error) {
+      return { error };
+    }
+
+    if (drink.barcodes.length !== 0) {
+      const { error: barcodeError } = await this.supabase
+        .from('drink_barcodes')
+        .insert(drink.barcodes.map((barcode) => ({ barcode, drink_id: data.id })));
+
+      if (barcodeError) {
+        return { error: barcodeError };
+      }
+    }
+
     return { value: undefined };
   }
 
-  private createDefaultQuery(userId: string) {
+  private createDefaultQuery(userId: string, innerJoin = false) {
+    const joinType = innerJoin ? '!inner' : '';
     return this.supabase
       .from('drinks')
-      .select('id, name, default_volume, alcohol, barcode, type')
+      .select(
+        `id, name, default_volume, alcohol, barcodes:drink_barcodes${joinType}(barcode), type`
+      )
       .or(`created_by.is.null, created_by.eq.${userId}`);
   }
 
@@ -92,7 +130,7 @@ export class DrinksService implements IDrinkService {
       name: supabaseDrink.name,
       defaultVolume: supabaseDrink.default_volume,
       alcohol: supabaseDrink.alcohol,
-      barcode: supabaseDrink.barcode ?? undefined,
+      barcodes: supabaseDrink.barcodes.map(({ barcode }) => barcode),
       type: tryMapToEnum(DrinkTypeEnum, supabaseDrink.type) ?? DrinkTypeEnum.OTHER,
     };
   }
