@@ -1,10 +1,11 @@
+import { Button } from '@drinkweise/ui/Button';
 import { Text } from '@drinkweise/ui/Text';
 import { Ionicons } from '@expo/vector-icons';
-import { type BarcodeScanningResult, CameraView } from 'expo-camera';
+import { type BarcodeScanningResult, CameraView, useCameraPermissions } from 'expo-camera';
 import * as Haptics from 'expo-haptics';
 import { cssInterop } from 'nativewind';
 import { useEffect, useState } from 'react';
-import { Modal, TouchableOpacity, View } from 'react-native';
+import { Linking, Modal, TouchableOpacity, View } from 'react-native';
 
 cssInterop(CameraView, {
   className: 'style',
@@ -21,6 +22,7 @@ export function BarcodeScannerModal({
   onClose,
   onBarcodeScanned,
 }: BarcodeScannerModalProps) {
+  const [status, requestPermission] = useCameraPermissions();
   const [isTorchEnabled, setIsTorchEnabled] = useState(false);
   const [isScanning, setIsScanning] = useState(true);
 
@@ -40,6 +42,30 @@ export function BarcodeScannerModal({
     onBarcodeScanned(result.data);
     onClose();
   };
+
+  if (status?.granted !== true) {
+    return (
+      <Modal
+        visible={isVisible}
+        animationType='slide'
+        presentationStyle='pageSheet'
+        onRequestClose={onClose}>
+        <View className='flex-1 items-center justify-center'>
+          <Text className='mb-4'>Camera access is required to scan barcodes.</Text>
+          <Button
+            onPress={async () => {
+              if (status?.canAskAgain === true) {
+                await requestPermission();
+                return;
+              }
+              await Linking.openSettings();
+            }}>
+            <Text>{status?.canAskAgain === true ? 'Grant permission' : 'Open settings'}</Text>
+          </Button>
+        </View>
+      </Modal>
+    );
+  }
 
   return (
     <Modal

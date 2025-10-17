@@ -15,7 +15,7 @@ insert into
 select drinks.id, drinks.barcode, drinks.created_at
 from "public"."drinks"
 where
-    "public"."drinks".barcode is null;
+    "public"."drinks".barcode is not null;
 
 alter table "public"."drinks" drop constraint "drinks_barcode_key";
 
@@ -74,3 +74,43 @@ grant trigger on table "public"."drink_barcodes" to "service_role";
 grant truncate on table "public"."drink_barcodes" to "service_role";
 
 grant update on table "public"."drink_barcodes" to "service_role";
+
+alter table "public"."drink_barcodes" enable row level security;
+
+create policy "Enable delete for users based on user_id" on "public"."drink_barcodes" as permissive for delete to public using (
+    (
+        EXISTS (
+            SELECT 1
+            FROM drinks d
+            WHERE (
+                    (
+                        d.id = drink_barcodes.drink_id
+                    )
+                    AND (d.created_by = auth.uid ())
+                )
+        )
+    )
+);
+
+create policy "Enable insert for authenticated users only" on "public"."drink_barcodes" as permissive for insert to authenticated
+with
+    check (true);
+
+create policy "Read barcodes of public or own drinks" on "public"."drink_barcodes" as permissive for
+select to authenticated using (
+        (
+            EXISTS (
+                SELECT 1
+                FROM drinks d
+                WHERE (
+                        (
+                            d.id = drink_barcodes.drink_id
+                        )
+                        AND (
+                            (d.created_by IS NULL)
+                            OR (d.created_by = auth.uid ())
+                        )
+                    )
+            )
+        )
+    );

@@ -1,7 +1,7 @@
 export function isValidBarcode(barcode: string): boolean {
   const cleanBarcode = barcode.trim();
 
-  if (!/^d+$/.test(cleanBarcode)) {
+  if (!/^\d+$/.test(cleanBarcode)) {
     return false;
   }
 

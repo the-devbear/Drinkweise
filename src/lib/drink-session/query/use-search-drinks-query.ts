@@ -65,7 +65,7 @@ export function useSearchDrinksQuery(searchString: string, debouncedSearchString
       }
 
       if (isValidBarcode(debouncedSearchString)) {
-        const { value, error } = await drinksService.searchDrinksByName(
+        const { value, error } = await drinksService.searchDrinksByBarcode(
           userId,
           debouncedSearchString
         );
