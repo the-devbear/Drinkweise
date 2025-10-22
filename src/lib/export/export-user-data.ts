@@ -1,6 +1,6 @@
 import { supabase } from '@drinkweise/lib/supabase';
 import type { TypedSupabaseClient } from '@drinkweise/lib/types/supabase.types';
-import { documentDirectory, writeAsStringAsync } from 'expo-file-system/legacy';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import z from 'zod';
 
@@ -23,6 +23,7 @@ export async function exportUserDataToJSON({
 }: ExportUserDataOptions): Promise<
   { success: true; message: string } | { success: false; message: string }
 > {
+  let file: File | undefined = undefined;
   try {
     if (signal?.aborted) {
       return {
@@ -67,6 +68,7 @@ export async function exportUserDataToJSON({
         )
       `
       )
+      .eq('user_id', userId)
       .abortSignal(signal ?? new AbortController().signal)
       .order('start_time', { ascending: false });
 
@@ -110,10 +112,13 @@ export async function exportUserDataToJSON({
       };
     });
 
-    const { data: parsedNotificationPreferences, error: notificationPreferencesError } =
-      exportedNotificationPreferencesSchema.safeParse(userData.notification_preferences);
+    const {
+      success: notificationPreferencesSuccess,
+      data: parsedNotificationPreferences,
+      error: notificationPreferencesError,
+    } = exportedNotificationPreferencesSchema.safeParse(userData.notification_preferences);
 
-    if (notificationPreferencesError) {
+    if (!notificationPreferencesSuccess) {
       return {
         success: false,
         message:
@@ -146,13 +151,13 @@ export async function exportUserDataToJSON({
 
     const timestamp = new Date().toISOString().split('T')[0];
     const filename = `drinkweise-data-export-${timestamp}.json`;
-    const fileUri = `${documentDirectory}${filename}`;
 
-    await writeAsStringAsync(fileUri, jsonString);
+    file = new File(Paths.cache.uri + filename);
+    file.write(jsonString);
 
     const canShare = await Sharing.isAvailableAsync();
     if (canShare) {
-      await Sharing.shareAsync(fileUri, {
+      await Sharing.shareAsync(file.uri, {
         mimeType: 'application/json',
         dialogTitle: 'Export Your Drinkweise Data',
         UTI: 'public.json',
@@ -163,11 +168,6 @@ export async function exportUserDataToJSON({
         message: 'Sharing is not available on this device.',
       };
     }
-
-    return {
-      success: true,
-      message: 'Your data has been exported successfully.',
-    };
   } catch (error) {
     console.error('Error exporting user data:', error);
     return {
@@ -178,4 +178,16 @@ export async function exportUserDataToJSON({
           : 'An unexpected error occurred while exporting your data.',
     };
   }
+
+  try {
+    file.delete();
+  } catch (error) {
+    // If we cant delete the file it's not a big deal, since it is in the cache directory
+    console.error('Error deleting temporary export file:', error);
+  }
+
+  return {
+    success: true,
+    message: 'Your data has been exported successfully.',
+  };
 }

@@ -17,9 +17,9 @@ export function ExportDataSettingsSection({ title, icon }: ExportDataSettingsSec
   const [exportStatus, setExportStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
   const handleExportData = async () => {
-    await exportData();
+    const { success } = await exportData();
 
-    if (!error) {
+    if (success) {
       setExportStatus('success');
     } else {
       setExportStatus('error');
@@ -35,6 +35,7 @@ export function ExportDataSettingsSection({ title, icon }: ExportDataSettingsSec
   };
 
   const handleClose = () => {
+    cancelExport();
     setIsVisible(false);
     setExportStatus('idle');
   };

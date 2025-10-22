@@ -1,10 +1,10 @@
 import { exportUserDataToJSON } from '@drinkweise/lib/export/export-user-data';
 import { useAppSelector } from '@drinkweise/store';
 import { userIdSelector } from '@drinkweise/store/user';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 interface UseExportUserDataReturn {
-  exportData: () => Promise<void>;
+  exportData: () => Promise<{ success: boolean }>;
   cancelExport: () => void;
   isExporting: boolean;
   error: string | null;
@@ -28,7 +28,7 @@ export function useExportUserData(): UseExportUserDataReturn {
   const exportData = useCallback(async () => {
     if (!userId) {
       setError('Unable to export data. Please try signing in again.');
-      return;
+      return { success: false };
     }
 
     if (abortControllerRef.current) {
@@ -45,15 +45,20 @@ export function useExportUserData(): UseExportUserDataReturn {
       const result = await exportUserDataToJSON({ userId, signal });
 
       if (signal.aborted) {
-        return;
+        setError('Export was cancelled.');
+        return { success: false };
       }
 
       if (!result.success) {
         setError(result.message);
+        return { success: false };
       }
+
+      return { success: true };
     } catch (err) {
       if (signal.aborted) {
-        return;
+        setError('Export was cancelled.');
+        return { success: false };
       }
 
       console.error('Error exporting data:', err);
@@ -62,6 +67,8 @@ export function useExportUserData(): UseExportUserDataReturn {
           ? err.message
           : 'An unexpected error occurred while exporting your data.'
       );
+
+      return { success: false };
     } finally {
       if (!signal.aborted) {
         setIsExporting(false);
@@ -69,6 +76,15 @@ export function useExportUserData(): UseExportUserDataReturn {
       }
     }
   }, [userId]);
+
+  useEffect(() => {
+    return () => {
+      const controller = abortControllerRef.current;
+      if (controller) {
+        controller.abort();
+      }
+    };
+  }, []);
 
   return {
     exportData,
