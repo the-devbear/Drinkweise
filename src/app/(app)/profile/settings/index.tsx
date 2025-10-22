@@ -1,3 +1,4 @@
+import { ExportDataSettingsSection } from '@drinkweise/components/export/ExportDataSettingsSection';
 import { SettingsSection } from '@drinkweise/components/profile/settings/SettingsSection';
 import { useAppDispatch } from '@drinkweise/store';
 import { signOutAction } from '@drinkweise/store/user/actions/sign-out.action';
@@ -70,7 +71,6 @@ export default function ProfileSettingsPage() {
               icon: 'notifications-outline',
               onPress: () => router.push('/profile/settings/notifications'),
             },
-
             {
               title: 'Theme',
               icon: 'moon-outline',
@@ -81,6 +81,14 @@ export default function ProfileSettingsPage() {
         <SettingsSection
           title='Data & Storage'
           items={[
+            {
+              title: 'Export Data',
+              icon: 'download-outline',
+              onPress: () => {},
+              customComponent: ({ title, icon }) => (
+                <ExportDataSettingsSection title={title} icon={icon} />
+              ),
+            },
             {
               title: 'Reset Local Data',
               icon: 'refresh-outline',
